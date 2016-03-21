@@ -1,0 +1,16 @@
+/*
+###############################################################################
+#   Licensing information found at: 
+#     https://github.com/hammy025/Hardware/
+#   In file LICENSING.md
+###############################################################################
+#
+#   File          :   
+#   Creator       :   Matt Hampton (hammy025@gmail.com)
+#   Owner         :   Matt Hampton (hammy025@gmail.com)
+#   Creation Date :   00/00/16
+#   Description   :   
+#
+###############################################################################
+*/
+
