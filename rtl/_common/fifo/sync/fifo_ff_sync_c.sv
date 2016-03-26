@@ -33,7 +33,7 @@ module fifo_ff_sync_c (
   parameter            ADDR = $clog2(DEPTH);
 
   logic [WIDTH-1:0]   mem [DEPTH-1:0];
-  logic [WIDTH-1:0]   rd_data_c,
+  logic [WIDTH-1:0]   rd_data_c;
   logic [ADDR:0]      occup_c;
   logic [ADDR:0]      occup_r;
   logic               empty_c;
