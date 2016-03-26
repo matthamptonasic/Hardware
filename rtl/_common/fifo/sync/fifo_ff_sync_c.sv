@@ -28,7 +28,7 @@ module fifo_ff_sync_c (
   );
 
   // synopsys template
-  parameter            WIDTH = 31;
+  parameter            WIDTH = 32;
   parameter            DEPTH = 16;
   parameter            ADDR = $clog2(DEPTH);
 

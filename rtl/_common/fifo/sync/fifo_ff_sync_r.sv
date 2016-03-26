@@ -5,7 +5,7 @@
 #   In file LICENSING.md
 ###############################################################################
 #
-#   File          :   fifo_ff_sync_c.v
+#   File          :   fifo_ff_sync_r.v
 #   Creator       :   Matt Hampton (hammy025@gmail.com)
 #   Owner         :   Matt Hampton (hammy025@gmail.com)
 #   Creation Date :   03/21/16
@@ -14,7 +14,7 @@
 #
 ###############################################################################
 */
-module fifo_ff_sync_c (
+module fifo_ff_sync_r (
   output logic              empty, 
   output logic              full,
   output logic [WIDTH-1:0]  rd_data,
@@ -28,7 +28,7 @@ module fifo_ff_sync_c (
   );
 
   // synopsys template
-  parameter            WIDTH = 31;
+  parameter            WIDTH = 32;
   parameter            DEPTH = 16;
   parameter            ADDR = $clog2(DEPTH);
 
