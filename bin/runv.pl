@@ -33,3 +33,20 @@ unless($no_run) {
 }
 ##=====================  End of Main  =====================##
 
+sub dbg
+{
+  if(!$quiet && ($debug != 0)) {
+    unless(@_ == 0) {
+      if(@_ == 1) {
+        print "$_[0]\n";
+      }
+      else {
+        foreach $str (@_) {
+          chomp($str);
+          print $str . "\n";
+        }
+      }
+    }
+  }
+}
+
