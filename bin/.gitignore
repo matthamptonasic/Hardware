@@ -1,0 +1,7 @@
+# Default iVerilog output types
+*.out
+*.vvp
+
+# Waveforms
+*.vcd
+
