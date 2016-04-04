@@ -236,6 +236,7 @@ sub v_sim
   }
   $vvp_cmd .= " $sim_plus_args";
 
+  &myprint($vvp_cmd);
   my $vvp_rslt = `$vvp_cmd`;
   &myprint("=== Simulation Output ===");
   &myprint($vvp_rslt);
