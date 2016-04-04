@@ -23,17 +23,20 @@ Env::import();
 
 my $dump_dir = $DUMP_DIR;
 my $gflag = "2012";
+my $sim_plus_args = "";
 
 GetOptions( "quiet" => \$quiet,
             "debug=s" => \$debug,
             "dump_dir=s" => \$dump_dir,
             "gflag=s" => \$gflag,
             "f=s" => \$cmd_file,
+            "plus_args=s" => \$sim_plus_args,
             "no_build" => \$no_build,
             "no_dump" => \$no_dump,
             "no_run" => \$no_run);
 
 my $dump_path;
+my $wave_file_name = "sim.vcd";
 my $base_path;
 my $full_path;
 my $cmd_file_path = "";
@@ -41,6 +44,8 @@ my @cmd_file_tests = ("verif", "rtl", "env");
 my $cmd_file_test;
 my $v_ofile_name = "a.vvp";
 my $v_ofile_path;
+my $v_build_dir = "/iVerilog";
+my $v_build_path;
 
 ##=====================  Main Entry  ======================##
 if(&set_paths == 0) {
@@ -150,10 +155,11 @@ sub set_dump_dir
   }
   $dump_path = $dump_dir . $base_path;
   chomp($dump_path);
-  if(not -d $dump_path) {
-    make_path $dump_path or die "Failed to create dump directory.";
+  $v_build_path = $dump_path . $v_build_dir;
+  if(not -d $v_build_path) {
+    make_path $v_build_path or die "Failed to create build directory.";
   }
-  $v_ofile_path = $dump_path . "/" . $v_ofile_name;
+  $v_ofile_path = $v_build_path . "/" . $v_ofile_name;
   return 1;
 }
 
@@ -222,11 +228,18 @@ sub v_build
 sub v_sim
 {
   my $vvp_cmd = "vvp $v_ofile_path";
+  
   # Add plus args.
-  # This needs to include where the dump file goes.
+  $sim_plus_args .= " +vcd_file=" . $dump_path . "/" . $wave_file_name;
+  if(!$no_dump) {
+    $sim_plus_args .= " +dump_on";
+  }
+  $vvp_cmd .= " $sim_plus_args";
 
   my $vvp_rslt = `$vvp_cmd`;
+  &myprint("=== Simulation Output ===");
   &myprint($vvp_rslt);
+  &myprint("====== End  Output ======");
   return 1;
 }
 
