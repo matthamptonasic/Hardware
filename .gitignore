@@ -5,3 +5,6 @@
 # Waveforms
 *.vcd
 
+# Swap files
+*.swp
+
