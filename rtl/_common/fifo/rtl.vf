@@ -11,6 +11,6 @@
 //  Description   :   List of all of the rtl files that may be verified.
 //
 //###########################################################################
--v $PROJECT_ROOT/rtl/_common/fifo/sync/fifo_ff_sync_c.sv
--v $PROJECT_ROOT/rtl/_common/fifo/sync/fifo_ff_sync_r.sv
+-v ${PROJECT_ROOT}/rtl/_common/fifo/sync/fifo_ff_sync_c.sv
+-v ${PROJECT_ROOT}/rtl/_common/fifo/sync/fifo_ff_sync_r.sv
 

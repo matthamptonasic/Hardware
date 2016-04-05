@@ -12,6 +12,6 @@
 //                    simulation.
 //
 //###########################################################################
--f $PROJECT_ROOT/rtl/_common/fifo/verif/env/env.vf
--f $PROJECT_ROOT/rtl/_common/fifo/rtl.vf
+-f ${PROJECT_ROOT}/rtl/_common/fifo/verif/env/env.vf
+-f ${PROJECT_ROOT}/rtl/_common/fifo/rtl.vf
 
