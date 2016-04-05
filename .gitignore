@@ -8,3 +8,6 @@
 # Swap files
 *.swp
 
+# Backup files
+*.bak
+
