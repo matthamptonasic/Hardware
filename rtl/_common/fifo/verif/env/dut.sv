@@ -21,8 +21,6 @@ module dut(
   output logic [WIDTH-1:0]  rd_data,
   output logic [ADDR:0]     occup,
 
-  input  wire               clk_r, 
-  input  wire               clk_w, 
   input  wire               rst_r, 
   input  wire               rst_w, 
   input  wire [WIDTH-1:0]   wr_data,
@@ -36,6 +34,9 @@ module dut(
 
   parameter NB_FIFOS = 2;
   
+  logic clk_r;
+  logic clk_w;
+
   int sel;
 
   always@(posedge clk_r) begin
