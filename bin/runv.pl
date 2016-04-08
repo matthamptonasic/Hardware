@@ -24,10 +24,12 @@ Env::import();
 my $dump_dir = $DUMP_DIR;
 my $gflag = "2012";
 my $sim_plus_args = "";
+my $wave_file_name = "sim.vcd";
 
 GetOptions( "quiet" => \$quiet,
             "debug=s" => \$debug,
             "dump_dir=s" => \$dump_dir,
+            "wave_file=s" => \$wave_file_name,
             "gflag=s" => \$gflag,
             "f=s" => \$cmd_file,
             "plus_args=s" => \$sim_plus_args,
@@ -36,7 +38,6 @@ GetOptions( "quiet" => \$quiet,
             "no_run" => \$no_run);
 
 my $dump_path;
-my $wave_file_name = "sim.vcd";
 my $base_path;
 my $full_path;
 my $cmd_file_path = "";
