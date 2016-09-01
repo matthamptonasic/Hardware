@@ -16,7 +16,7 @@ use POSIX;
 use Getopt::Long;
 use File::stat;
 use File::Find;
-use File::Path 'make_path';
+use File::Path 'make_path', 'remove_tree';
 use POSIX;
 use Env;
 Env::import();
@@ -28,11 +28,13 @@ my $wave_file_name = "sim.vcd";
 
 GetOptions( "quiet" => \$quiet,
             "debug=s" => \$debug,
+            "ivl_debug" => \$ivl_debug,
             "dump_dir=s" => \$dump_dir,
             "wave_file=s" => \$wave_file_name,
             "gflag=s" => \$gflag,
             "f=s" => \$cmd_file,
             "plus_args=s" => \$sim_plus_args,
+            "clean" => \$clean,
             "no_build" => \$no_build,
             "no_dump" => \$no_dump,
             "no_run" => \$no_run);
@@ -51,6 +53,22 @@ my $v_build_path;
 ##=====================  Main Entry  ======================##
 if(&set_paths == 0) {
   &myprint("ERROR: Could not set up paths.");
+  exit;
+}
+if($clean) {
+  my @tmp = glob "'$dump_path/*'";
+
+  my $rem_cnt = remove_tree(@tmp);
+  &myprint("Getting remaining directory list:");
+  @tmp = glob "'$dump_path/*'";
+  &myprint(@tmp);
+  &myprint("End of list.");
+  &myprint("rem_cnt: $rem_cnt.");
+  #exit;
+}
+
+if(&build_dump_dir == 0) {
+  &myprint("ERROR: Could not build the dump directory.");
   exit;
 }
 unless($no_build) {
@@ -157,10 +175,15 @@ sub set_dump_dir
   $dump_path = $dump_dir . $base_path;
   chomp($dump_path);
   $v_build_path = $dump_path . $v_build_dir;
+  $v_ofile_path = $v_build_path . "/" . $v_ofile_name;
+  return 1;
+}
+
+sub build_dump_dir
+{
   if(not -d $v_build_path) {
     make_path $v_build_path or die "Failed to create build directory.";
   }
-  $v_ofile_path = $v_build_path . "/" . $v_ofile_name;
   return 1;
 }
 
@@ -206,6 +229,9 @@ sub cmd_file_wanted
 sub v_build
 {
   my $ivl_cmd = "iverilog";
+  if($ivl_debug) {
+    $ivl_cmd .= "_dev";
+  }
   if($gflag ne "") {
     $ivl_cmd .= " -g" . $gflag;
   }
@@ -217,18 +243,26 @@ sub v_build
   #}
   $ivl_cmd .= " -o" . $v_ofile_path;
 
-
-  &myprint($ivl_cmd);
+&myprint($ivl_cmd);
 
 
   my $ivl_rslt = `$ivl_cmd`;
   &myprint($ivl_rslt);
+  my $filename = $dump_path . "/" . 'v_build.log';
+  open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+  print $fh $ivl_rslt;
+
+  close $fh;
   return 1;
 }
 
 sub v_sim
 {
-  my $vvp_cmd = "vvp $v_ofile_path";
+  my $vvp_cmd = "vvp";
+  if($ivl_debug) {
+    $vvp_cmd .= "_dev";
+  }
+  $vvp_cmd = " $v_ofile_path";
   
   # Add plus args.
   $sim_plus_args .= " +vcd_file=" . $dump_path . "/" . $wave_file_name;
