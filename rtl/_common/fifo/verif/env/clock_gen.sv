@@ -14,17 +14,33 @@
 ###############################################################################
 */
 `timescale 1ns/10ps
-module clock_gen();
+class clock_gen;
+
+  real rd_clk_period = 1.5;
+  real wr_clk_period = 1.0;
+
+  function new();
+    begin
+      $display("Creating clock generator object.");
+    end
+  endfunction
 
   task start();
-      $display("Starting clocks.");
-      top.dut0.clk_w = '0;
-      top.dut0.clk_r = '1;
-      repeat(100) begin
-        #1ns top.dut0.clk_w = ~top.dut0.clk_w;
-             top.dut0.clk_r = ~top.dut0.clk_r;
+    $display("Starting clocks.");
+      fork begin
+        top.dut0.clk_w = '0;
+        repeat(100) begin
+          #(wr_clk_period/2) top.dut0.clk_w = ~top.dut0.clk_w;
+        end
       end
+      begin
+        top.dut0.clk_r = '1;
+        forever begin
+          #(rd_clk_period/2) top.dut0.clk_r = ~top.dut0.clk_r;
+        end
+      end
+    join
   endtask
 
-endmodule
+endclass
 
