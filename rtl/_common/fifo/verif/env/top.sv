@@ -19,12 +19,13 @@ module top();
   logic rst_r, rst_w;
   logic init_done = '0;
   env env0;
+  clock_gen clks0;
 
-  //object obj;
-  //test tst;
+  main main_inst();
 
   initial begin
     env0 = new();
+    clks0 = new();
     fork begin
       $display("Starting env init at %t", $time);
       env0.env_init();
@@ -32,14 +33,16 @@ module top();
     end
     begin
       $display("Starting gen clocks at %t", $time);
-      clk_gen0.start();
+      clks0.start();
       $display("Finished gen clocks at %t", $time);
     end
-    join_none
-    //obj = new("obj");
-    //$display("obj name is '%s', type is '%s'", obj.Name, obj.Type);
-    //tst = new("tst");
-    //$display("tst name is '%s', type is '%s', full type is '%s'", tst.Name, tst.Type, tst.Type_Full);
+    begin
+      main_inst.run();
+      #10000ns;
+      $display("Test finished at %t", $time);
+      $finish;
+    end
+    join
     init_done = '1;
   end
 
@@ -63,9 +66,6 @@ module top();
   wire [`FIFO_FF_DUT_WIDTH-1:0]       wr_data;
   wire                                wr_en;
   wire                                rd_en;
-
-  // Clock Generator
-  clock_gen clk_gen0();
 
   // DUT Instantiation
   dut dut0(.*);
