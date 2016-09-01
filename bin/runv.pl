@@ -59,12 +59,7 @@ if($clean) {
   my @tmp = glob "'$dump_path/*'";
 
   my $rem_cnt = remove_tree(@tmp);
-  &myprint("Getting remaining directory list:");
-  @tmp = glob "'$dump_path/*'";
-  &myprint(@tmp);
-  &myprint("End of list.");
-  &myprint("rem_cnt: $rem_cnt.");
-  #exit;
+  &myprint("Cleaned $rem_cnt files/folders from the dump directory.");
 }
 
 if(&build_dump_dir == 0) {
