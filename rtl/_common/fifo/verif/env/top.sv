@@ -1,19 +1,21 @@
 /*
 ###############################################################################
 #   Licensing information found at: 
-#     https://github.com/hammy025/Hardware/
+#     https://github.com/matthamptonasic/Hardware/
 #   In file LICENSING.md
 ###############################################################################
 #
 #   File          :   top.sv 
-#   Creator       :   Matt Hampton (hammy025@gmail.com)
-#   Owner         :   Matt Hampton (hammy025@gmail.com)
+#   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
+#   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   04/02/16
 #   Description   :   
 #
 ###############################################################################
 */
 `timescale 1ns/10ps
+`define TEST_RESULT_PASS 0;
+`define TEST_RESULT_FAIL 1;
 module top();
 
   logic rst_r, rst_w;

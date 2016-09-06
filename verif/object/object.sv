@@ -1,13 +1,13 @@
 /*
 ###############################################################################
 #   Licensing information found at: 
-#     https://github.com/hammy025/Hardware/
+#     https://github.com/matthamptonasic/Hardware/
 #   In file LICENSING.md
 ###############################################################################
 #
 #   File          :   object.sv 
-#   Creator       :   Matt Hampton (hammy025@gmail.com)
-#   Owner         :   Matt Hampton (hammy025@gmail.com)
+#   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
+#   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   04/03/16
 #   Description   :   Base object class that everything inherits from.
 #

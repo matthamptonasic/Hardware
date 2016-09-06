@@ -1,13 +1,13 @@
 /*
 ###############################################################################
 #   Licensing information found at: 
-#     https://github.com/hammy025/Hardware/
+#     https://github.com/matthamptonasic/Hardware/
 #   In file LICENSING.md
 ###############################################################################
 #
 #   File          :   fifo_ff_sync_r.v
-#   Creator       :   Matt Hampton (hammy025@gmail.com)
-#   Owner         :   Matt Hampton (hammy025@gmail.com)
+#   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
+#   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   03/21/16
 #   Description   :   Synchronous flip-flop based fifo with 
 #                     registered outputs.

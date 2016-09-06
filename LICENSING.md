@@ -6,4 +6,4 @@ be it in credit of authorship or monitary.
 The designs belong to everyone, the hardware belongs to you.
 
 That being said, I would greatly appreciate it if any users would inform me of their intent to use of any of this code.
-Please email me directly at hammy025@gmail.com.
+Please email me directly at matthamptonasic@gmail.com.

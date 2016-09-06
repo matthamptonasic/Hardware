@@ -1,13 +1,13 @@
 /*
 ###############################################################################
 #   Licensing information found at: 
-#     https://github.com/hammy025/Hardware/
+#     https://github.com/matthamptonasic/Hardware/
 #   In file LICENSING.md
 ###############################################################################
 #
 #   File          :   dut.sv 
-#   Creator       :   Matt Hampton (hammy025@gmail.com)
-#   Owner         :   Matt Hampton (hammy025@gmail.com)
+#   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
+#   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   04/05/16
 #   Description   :   Instantiates the DUT and handles the selection of which
 #                     module(s) is(are) active.
