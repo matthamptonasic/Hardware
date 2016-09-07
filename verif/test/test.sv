@@ -14,9 +14,12 @@
 ###############################################################################
 */
 
+`define TEST_RESULT_PASS 0
+`define TEST_RESULT_FAIL 1
 class test extends object;
 
-  int errors = '0;
+  int errors;
+  int result;
 
   function new(string iName="test");
   begin
@@ -24,6 +27,14 @@ class test extends object;
     Name = iName;
     Type = "test";
     Type_Full = {Type_Full, ".test"};
+    this.init();
+  end
+  endfunction
+
+  local function void init();
+  begin
+    errors = '0;
+    result = `TEST_RESULT_FAIL;
   end
   endfunction
 
