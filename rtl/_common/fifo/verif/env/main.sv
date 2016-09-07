@@ -19,8 +19,6 @@ program main();
   `include "/home/matt/code/Hardware/verif/object/object.sv"
   `include "/home/matt/code/Hardware/verif/test/test.sv"
 
-  //typedef enum int {PASS, FAIL} TEST_RESULT;
-  //TEST_RESULT result = FAIL;
   object obj;
   test tst;
 
@@ -33,6 +31,9 @@ program main();
     $display("obj name is '%s', type is '%s'", obj.Name, obj.Type);
     tst = new("tst");
     $display("tst name is '%s', type is '%s', full type is '%s'", tst.Name, tst.Type, tst.Type_Full);
+    $display("result is %d", tst.result);
+    tst.result = `TEST_RESULT_PASS;
+    $display("result is %d", tst.result);
   end
 
   task run();
