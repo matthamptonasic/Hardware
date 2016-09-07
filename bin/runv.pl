@@ -14,9 +14,10 @@
 ###############################################################################
 use POSIX;
 use Getopt::Long;
-use File::stat;
+use File::Copy;
 use File::Find;
 use File::Path 'make_path', 'remove_tree';
+use File::stat;
 use POSIX;
 use Env;
 Env::import();
@@ -36,6 +37,8 @@ GetOptions( "quiet" => \$quiet,
             "plus_args=s" => \$sim_plus_args,
             "clean" => \$clean,
             "no_build" => \$no_build,
+            "no_build_c" => \$no_build_c,
+            "no_build_v" => \$no_build_v,
             "no_dump" => \$no_dump,
             "no_run" => \$no_run);
 
@@ -43,12 +46,19 @@ my $dump_path;
 my $base_path;
 my $full_path;
 my $cmd_file_path = "";
+my $vpi_file_path = "";
 my @cmd_file_tests = ("verif", "rtl", "env");
 my $cmd_file_test;
 my $v_ofile_name = "a.vvp";
+my $c_obj_file_name = "vpi_entry.o";
+my $c_vpi_file_name = "vpi_entry.vpi";
 my $v_ofile_path;
+my $c_obj_file_path;
+my $c_vpi_file_path;
 my $v_build_dir = "/iVerilog";
+my $c_build_dir = "/cpp";
 my $v_build_path;
+my $c_build_path;
 
 ##=====================  Main Entry  ======================##
 if(&set_paths == 0) {
@@ -67,6 +77,9 @@ if(&build_dump_dir == 0) {
   exit;
 }
 unless($no_build) {
+  if(&c_build() != 1) {
+    exit;
+  }
   if(&v_build() != 1) {
     exit;
   }
@@ -89,13 +102,17 @@ sub set_paths
   elsif(&set_cmd_file() == 0) {
     return 0;
   }
+  &set_vpi_file();
+
   &myprint("===============  AREA SETUP  ===============");
-  &myprint("DUMP_DIR      : $DUMP_DIR");
-  &myprint("dump_path     : $dump_path");
-  &myprint("v_ofile_path  : $v_ofile_path");
-  &myprint("base_path     : $base_path");
-  &myprint("full_path     : $full_path");
-  &myprint("cmd_file_path : $cmd_file_path");
+  &myprint("DUMP_DIR        : $DUMP_DIR");
+  &myprint("dump_path       : $dump_path");
+  &myprint("v_ofile_path    : $v_ofile_path");
+  &myprint("base_path       : $base_path");
+  &myprint("full_path       : $full_path");
+  &myprint("cmd_file_path   : $cmd_file_path");
+  &myprint("vpi_file_path   : $vpi_file_path");
+  &myprint("c_vpi_file_path : $c_vpi_file_path");
   &myprint("============================================");
   return 1;
 }
@@ -170,14 +187,20 @@ sub set_dump_dir
   $dump_path = $dump_dir . $base_path;
   chomp($dump_path);
   $v_build_path = $dump_path . $v_build_dir;
+  $c_build_path = $dump_path . $c_build_dir;
   $v_ofile_path = $v_build_path . "/" . $v_ofile_name;
+  $c_obj_file_path = $c_build_path . "/" . $c_obj_file_name;
+  $c_vpi_file_path = $c_build_path . "/" . $c_vpi_file_name;
   return 1;
 }
 
 sub build_dump_dir
 {
   if(not -d $v_build_path) {
-    make_path $v_build_path or die "Failed to create build directory.";
+    make_path $v_build_path or die "Failed to create v_build directory.";
+  }
+  if(not -d $c_build_path) {
+    make_path $c_build_path or die "Failed to create c_build directory.";
   }
   return 1;
 }
@@ -208,7 +231,6 @@ sub set_cmd_file
     }
   }
 
-
   return 1;
 }
 
@@ -221,8 +243,54 @@ sub cmd_file_wanted
   }
 }
 
+sub set_vpi_file
+{
+    find({wanted => \&vpi_file_wanted, no_chdir => 1}, $full_path);
+}
+
+sub vpi_file_wanted
+{
+  if($vpi_file_path eq "") {
+    if($File::Find::name =~ m|.*/vpi_entry\.c|) {
+      $vpi_file_path = $File::Find::name;
+    }
+  }
+}
+
+# Steps to building the VPI, RTL, and simulating are:
+# 1. iverilog_vpi vpi_entry.c
+#   => creates vpi_entry.o, then vpi_entry.vpi
+# 2. the vpi_entry.o/.vpi get moved to the output directory.
+#    (there is no built-in option to output these to a configurable location)
+# 3. the v_build happens normally, compiling the verilog only files.
+# 4. the v_sim step adds the -m option which specifies the .vpi file.
+sub c_build
+{
+  if($vpi_file_path eq "")
+  {
+    return 0;
+  }
+  if($no_build_c)
+  {
+    return 1;
+  }
+  my $vpi_cmd = "iverilog-vpi " . $vpi_file_path;
+  &myprint("vpi command:");
+  &myprint($vpi_cmd);
+  &nl();
+  my $ivl_vpi_rslt = `$vpi_cmd`;
+  move($c_obj_file_name, $c_obj_file_path);
+  move($c_vpi_file_name, $c_vpi_file_path);
+  &myprint($ivl_vpi_rslt);
+  return 1;
+}
+
 sub v_build
 {
+  if($no_build_v)
+  {
+    return 1;
+  }
   my $ivl_cmd = "iverilog";
   if($ivl_debug) {
     $ivl_cmd .= "_dev";
@@ -233,13 +301,12 @@ sub v_build
   if($cmd_file_path ne "") {
     $ivl_cmd .= " -f" . $cmd_file_path;
   }
-  #if(-e $v_ofile_path) {
-  #remove($v_ofile_path);
-  #}
   $ivl_cmd .= " -o" . $v_ofile_path;
 
-&myprint($ivl_cmd);
-
+  &nl();
+  &myprint("ivl command:");
+  &myprint($ivl_cmd);
+  &nl();
 
   my $ivl_rslt = `$ivl_cmd`;
   &myprint($ivl_rslt);
@@ -257,7 +324,8 @@ sub v_sim
   if($ivl_debug) {
     $vvp_cmd .= "_dev";
   }
-  $vvp_cmd = " $v_ofile_path";
+  $vvp_cmd .= " -m$c_vpi_file_path";
+  $vvp_cmd .= " $v_ofile_path";
   
   # Add plus args.
   $sim_plus_args .= " +vcd_file=" . $dump_path . "/" . $wave_file_name;
@@ -266,7 +334,9 @@ sub v_sim
   }
   $vvp_cmd .= " $sim_plus_args";
 
+  &myprint("vvp command:");
   &myprint($vvp_cmd);
+  &nl();
   my $vvp_rslt = `$vvp_cmd`;
   &myprint("=== Simulation Output ===");
   &myprint($vvp_rslt);
@@ -309,6 +379,20 @@ sub myprint
           chomp($str);
           print $str . "\n";
         }
+      }
+    }
+  }
+}
+
+sub nl
+{
+  if(!$quiet) {
+    if(@_ == 0) {
+      print "\n";
+    }
+    else {
+      for($ii = 0; $ii < $_[0]; $ii = $ii + 1) {
+        print "\n";
       }
     }
   }
