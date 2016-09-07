@@ -1,6 +1,10 @@
 This is the top-level status of things that I need to get done.
 Mainly a checklist for the initial environment setup.
 
+- Abandoning using SV OOP. There's just too many things that aren't working.
+  I'm spending 80% of my time trying to debug and coerce things to work.
+  - Moving to using VPI and C++.
+
 - Messaging (LOG, DEBUG, WARNING, ERROR, logging level, etc).
 - Test
   - The test.run task is what's executed based on the user input.
@@ -31,4 +35,6 @@ Mainly a checklist for the initial environment setup.
   - Will hold different headers as they are created.
   - Print and compare functions.
 - Header types added later.
+- Figure out how much randomization iVerilog supports.
+  - Fill in the gaps with randomization classes.
 
