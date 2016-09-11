@@ -251,14 +251,14 @@ sub set_vpi_file
 sub vpi_file_wanted
 {
   if($vpi_file_path eq "") {
-    if($File::Find::name =~ m|.*/vpi_entry\.c|) {
+    if($File::Find::name =~ m|.*/vpi_entry\.cc|) {
       $vpi_file_path = $File::Find::name;
     }
   }
 }
 
 # Steps to building the VPI, RTL, and simulating are:
-# 1. iverilog_vpi vpi_entry.c
+# 1. iverilog_vpi vpi_entry.cc
 #   => creates vpi_entry.o, then vpi_entry.vpi
 # 2. the vpi_entry.o/.vpi get moved to the output directory.
 #    (there is no built-in option to output these to a configurable location)
