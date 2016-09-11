@@ -14,11 +14,35 @@
 ###############################################################################
 */
 
+#ifndef __cplusplus
+#define __cplusplus
+#endif
+
+#ifndef UNUSED
+# ifdef __GNUC__
+#  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+# else
+#  define UNUSED(x) UNUSED_ ## x
+# endif
+#endif
+
+#ifndef UNUSED_FUNCTION
+# ifdef __GNUC__
+#  define UNUSED_FUNCTION(x) __attribute__((__unused__)) UNUSED_ ## x
+# else
+#  define UNUSED_FUNCTION(x) UNUSED_ ## x
+# endif
+#endif
+
 #include <vpi_user.h>
 
-static PLI_INT32 tb_build()
+static PLI_INT32 tb_build(char* UNUSED(iUserData))
 {
-  vpi_printf("tb_build: Entry.\n");
+#ifdef __cplusplus
+  vpi_printf("c++ tb_build: Entry.\n");
+#else
+  vpi_printf("c tb_build: Entry.\n");
+#endif
   return 0;
 }
 
