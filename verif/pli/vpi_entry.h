@@ -26,7 +26,6 @@ static void tb_build_register();
 
 void (*vlog_startup_routines[])() = {
   tb_build_register,
-  tb_build2_register,
   0
 };
 
