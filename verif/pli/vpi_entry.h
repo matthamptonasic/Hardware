@@ -18,7 +18,6 @@
 
 #include "common.h"
 #include <vpi_user.h>
-#include "user.h"
 
 static PLI_INT32 tb_build(char* UNUSED(iUserData));
 
