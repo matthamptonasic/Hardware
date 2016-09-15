@@ -11,5 +11,5 @@ OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 all : $(OBJS)
 
 $(ODIR)/%.o: $(SDIR)/%.cc  
-	$(CC) -c $(INC) -o $@ $< $(CFLAGS) 
+	$(CC) $(CCFLAGS) -c $(INC) -o $@ $< $(CFLAGS) 
 
