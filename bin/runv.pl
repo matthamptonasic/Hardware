@@ -46,19 +46,18 @@ my $dump_path;
 my $base_path;
 my $full_path;
 my $cmd_file_path = "";
-my $vpi_file_path = "";
 my @cmd_file_tests = ("verif", "rtl", "env");
 my $cmd_file_test;
 my $v_ofile_name = "a.vvp";
-my $c_obj_file_name = "vpi_entry.o";
-my $c_vpi_file_name = "vpi_entry.vpi";
+my $vpi_file_name = "vpi_entry.vpi";
 my $v_ofile_path;
 my $c_obj_file_path;
-my $c_vpi_file_path;
+my $vpi_file_path;
 my $v_build_dir = "/iVerilog";
 my $c_build_dir = "/cpp";
 my $v_build_path;
 my $c_build_path;
+my $verif_make_path = "$PROJECT_ROOT/verif/";
 
 ##=====================  Main Entry  ======================##
 if(&set_paths == 0) {
@@ -102,7 +101,6 @@ sub set_paths
   elsif(&set_cmd_file() == 0) {
     return 0;
   }
-  &set_vpi_file();
 
   &myprint("===============  AREA SETUP  ===============");
   &myprint("DUMP_DIR        : $DUMP_DIR");
@@ -189,8 +187,7 @@ sub set_dump_dir
   $v_build_path = $dump_path . $v_build_dir;
   $c_build_path = $dump_path . $c_build_dir;
   $v_ofile_path = $v_build_path . "/" . $v_ofile_name;
-  $c_obj_file_path = $c_build_path . "/" . $c_obj_file_name;
-  $c_vpi_file_path = $c_build_path . "/" . $c_vpi_file_name;
+  $vpi_file_path = $c_build_path . "/" . $vpi_file_name;
   return 1;
 }
 
@@ -243,44 +240,44 @@ sub cmd_file_wanted
   }
 }
 
-sub set_vpi_file
-{
-    find({wanted => \&vpi_file_wanted, no_chdir => 1}, $full_path);
-}
-
-sub vpi_file_wanted
-{
-  if($vpi_file_path eq "") {
-    if($File::Find::name =~ m|.*/vpi_entry\.cc|) {
-      $vpi_file_path = $File::Find::name;
-    }
-  }
-}
-
 # Steps to building the VPI, RTL, and simulating are:
-# 1. iverilog_vpi vpi_entry.cc
-#   => creates vpi_entry.o, then vpi_entry.vpi
-# 2. the vpi_entry.o/.vpi get moved to the output directory.
-#    (there is no built-in option to output these to a configurable location)
-# 3. the v_build happens normally, compiling the verilog only files.
-# 4. the v_sim step adds the -m option which specifies the .vpi file.
+# 1. Create the c++ object files.
+# 2. Pass the final linked object file to iverilog_vpi.
+#    "iverilog_vpi entry.o"
+# 3. The output of 2 (*.vpi) is moved to the output directory.
+#    (There is no built-in option to output these to a configurable location)
+#    "move($vpi_file_name, $vpi_file_path);"
+# 4. The v_build happens normally, compiling the verilog only files.
+# 5. The v_sim step adds the -m option which specifies the .vpi file.
 sub c_build
 {
-  if($vpi_file_path eq "")
-  {
-    return 0;
-  }
   if($no_build_c)
   {
     return 1;
   }
-  my $vpi_cmd = "iverilog-vpi " . $vpi_file_path;
+  &myprint("Building C++ object files.");
+  # Build the C++ object files in the build directory.
+  # Start with the top level verif library files.
+  my $make_cmd = "make -C $verif_make_path ODIR=$c_build_path";
+  $rslt = `$make_cmd`;
+  &myprint("rslt = $rslt");
+
+  # Build the local environment.
+  # TBD
+
+  # Now link all of those files using the iverilog-vpi command to get the .vpi file.
+  my @vpi_entry_file = glob "'$c_build_path/vpi_entry.o'";
+  my @object_files = (@vpi_entry_file, grep { ! /.*vpi_entry.o/} glob "'$c_build_path/*.o'");
+  &myprint("Object files to link:");
+  &myprint(@object_files);
+
+  my $vpi_cmd = "iverilog-vpi @object_files";
   &myprint("vpi command:");
   &myprint($vpi_cmd);
   &nl();
+
   my $ivl_vpi_rslt = `$vpi_cmd`;
-  move($c_obj_file_name, $c_obj_file_path);
-  move($c_vpi_file_name, $c_vpi_file_path);
+  move($vpi_file_name, $vpi_file_path);
   &myprint($ivl_vpi_rslt);
   return 1;
 }
@@ -324,7 +321,7 @@ sub v_sim
   if($ivl_debug) {
     $vvp_cmd .= "_dev";
   }
-  $vvp_cmd .= " -m$c_vpi_file_path";
+  $vvp_cmd .= " -m$vpi_file_path";
   $vvp_cmd .= " $v_ofile_path";
   
   # Add plus args.
