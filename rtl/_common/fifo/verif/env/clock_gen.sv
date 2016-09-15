@@ -29,7 +29,7 @@ class clock_gen;
     $display("Starting clocks.");
       fork begin
         top.dut0.clk_w = '0;
-        repeat(100) begin
+        forever begin
           #(wr_clk_period/2) top.dut0.clk_w = ~top.dut0.clk_w;
         end
       end
