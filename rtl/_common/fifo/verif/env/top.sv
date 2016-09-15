@@ -13,17 +13,15 @@
 #
 ###############################################################################
 */
+
 `timescale 1ns/10ps
-`define TEST_RESULT_PASS 0;
-`define TEST_RESULT_FAIL 1;
+
 module top();
 
   logic rst_r, rst_w;
   logic init_done = '0;
   env env0;
   clock_gen clks0;
-
-  main main_inst();
 
   initial begin
     env0 = new();
@@ -40,7 +38,6 @@ module top();
       $display("Finished gen clocks at %t", $time);
     end
     begin
-      main_inst.run();
       #10000ns;
       $display("Test finished at %t", $time);
       $finish;
