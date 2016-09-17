@@ -16,7 +16,7 @@
 #ifndef BITVECTOR_H
 #define BITVECTOR_H
 
-#include "common.h"
+#include "Common.h"
 
 typedef unsigned int UInt32;
 typedef   signed int  Int32;
