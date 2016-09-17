@@ -16,6 +16,7 @@
 #ifndef TESTCONTROLLER_H
 #define TESTCONTROLLER_H
 
+#include "Common.h"
 
 #endif /* TESTCONTROLLER_H */
 

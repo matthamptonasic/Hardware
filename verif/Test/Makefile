@@ -1,8 +1,8 @@
 CC = g++
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../common
-VPATH = ../common
+INC = -I../Common
+VPATH = ../Common
 
 _OBJS = TestController.o \
 				TestBase.o

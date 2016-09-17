@@ -16,6 +16,7 @@
 #ifndef TESTBASE_H
 #define TESTBASE_H
 
+#include "Common.h"
 
 #endif /* TESTBASE_H */
 
