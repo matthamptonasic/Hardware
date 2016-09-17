@@ -2,8 +2,8 @@ CC = g++
 CCFLAGS = -fPIC 
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../Common -I/usr/local/bin/iverilog_v10 
-VPATH = ../Common /usr/local/bin/iverilog_v10 
+INC = -I../Common -I$(VPI_USER)
+VPATH = ../Common $(VPI_USER)
 
 _OBJS = V_Signal.o \
 				V_Reg.o
