@@ -16,7 +16,7 @@
 #ifndef VPI_ENTRY_H
 #define VPI_ENTRY_H
 
-#include "common.h"
+#include "Common.h"
 #include <vpi_user.h>
 
 static PLI_INT32 tb_build(char* UNUSED(iUserData));
