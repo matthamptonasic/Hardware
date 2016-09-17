@@ -261,6 +261,11 @@ sub c_build
   my $make_cmd = "make -C $verif_make_path ODIR=$c_build_path";
   $rslt = `$make_cmd`;
   &myprint("rslt = $rslt");
+  if((${^CHILD_ERROR_NATIVE} >> 8) != 0) 
+  {
+    &myprint("Error compiling C++ environment.");
+    return 0;
+  }
 
   # Build the local environment.
   # TBD
