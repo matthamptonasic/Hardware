@@ -5,7 +5,7 @@
 #   In file LICENSING.md
 ###############################################################################
 #
-#   File          :   common.h 
+#   File          :   Common.h 
 #   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
 #   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   09/13/16
