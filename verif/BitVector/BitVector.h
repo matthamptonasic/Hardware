@@ -18,11 +18,6 @@
 
 #include "Common.h"
 
-typedef unsigned int UInt32;
-typedef   signed int  Int32;
-typedef unsigned long long UInt64;
-typedef   signed long long  Int64;
-
 class BitVector {
   private:
     UInt32 m_size;
