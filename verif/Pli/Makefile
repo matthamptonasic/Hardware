@@ -1,11 +1,13 @@
 CC = g++
-CCFLAGS = -fPIC 
+CCFLAGS = -fPIC -std=c++11
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../Common -I$(VPI_USER)
-VPATH = ../Common $(VPI_USER)
+INC = -I../Common -I$(VPI_USER) -I../Signals
+VPATH = ../Common $(VPI_USER) ../Signals
 
-_OBJS = vpi_entry.o
+_OBJS = vpi_entry.o \
+				vpi.o \
+				V_Signal.o
 
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
