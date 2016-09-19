@@ -26,7 +26,7 @@ module top();
   initial begin
     env0 = new();
     clks0 = new();
-    $tb_build;
+    $tb_build(top);
     fork begin
       $display("Starting env init at %t", $time);
       env0.env_init();
