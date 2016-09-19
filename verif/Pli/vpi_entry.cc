@@ -15,26 +15,83 @@
 */
 
 #include "vpi_entry.h"
+#include "V_Signal.h"
 
-static PLI_INT32 tb_build(char* UNUSED(iUserData))
+// ====================================
+// ===**  Private Static Members  **===
+// ====================================
+vpiHandle vpi_entry::m_topModule = NULL;
+
+// ============================
+// ===**  Public Methods  **===
+// ============================
+
+// TBD - create the compile check.
+Int32 vpi_entry::tb_build(char* UNUSED(iUserData))
 {
-#ifdef __cplusplus
   vpi_printf("c++ tb_build: Entry.\n");
-#else
-  vpi_printf("c tb_build: Entry.\n");
-#endif
+
+  // Get the Sys TF Call Handle
+  vpiHandle systf_handle = vpi_handle((int)Vpi::OBJECT::SYS_TF_CALL, NULL);
+  if(systf_handle == NULL)
+  {
+    vpi_printf("Failed to get SYS_TF_CALL handle to tb_build.\n");
+    return 0;
+  }
+
+  if(!setTopModule(systf_handle))
+  {
+    return 0;
+  }
+  vpi_printf("m_topModule name is '%s'.\n", vpi_get_str((int)Vpi::PROPERTY::NAME, m_topModule));
+  
+  vpi_printf("c++ tb_build: Exit.\n");
   return 0;
 }
 
-static void tb_build_register()
+void vpi_entry::tb_build_register()
 {
-  s_vpi_systf_data tf_data;
+  Vpi::t_vpi_systf_data tf_data;
 
-  tf_data.type      = vpiSysTask;
+  tf_data.type      = Vpi::SYS_TASK_FUNC::TASK;
   tf_data.tfname    = "$tb_build";
   tf_data.calltf    = tb_build;
   tf_data.compiletf = 0;
   tf_data.sizetf    = 0;
-  vpi_register_systf(&tf_data);
+
+  Vpi::vpi_register_systf(&tf_data);
+}
+
+// =============================
+// ===**  Private Methods  **===
+// =============================
+
+bool vpi_entry::setTopModule(vpiHandle iSysTfCall)
+{
+  if(iSysTfCall == NULL)
+  {
+    return false;
+  }
+
+  // Get iterator handle for the arguments.
+  vpiHandle arg_iterator = vpi_iterate(vpiArgument, iSysTfCall);
+  vpiHandle arg_handle = vpi_scan(arg_iterator);
+
+  Vpi::OBJECT obj = (Vpi::OBJECT)vpi_get((int)Vpi::PROPERTY::TYPE, arg_handle);
+  if(obj != Vpi::OBJECT::MODULE)
+  {
+    // TBD - Added report of systf name, param name.
+    vpi_printf("ERROR: Argument was not a module.\n");
+    return false;
+  }
+  bool isTopModule = (bool)vpi_get((int)Vpi::PROPERTY::TOP_MODULE, arg_handle);
+  if(!isTopModule)
+  {
+    // TBD - Added report of systf name, param name.
+    vpi_printf("ERROR: Argument was not the top-level module.\n");
+    return false;
+  }
+  m_topModule = arg_handle;
+  return true;
 }
 
