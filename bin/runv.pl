@@ -110,7 +110,6 @@ sub set_paths
   &myprint("full_path       : $full_path");
   &myprint("cmd_file_path   : $cmd_file_path");
   &myprint("vpi_file_path   : $vpi_file_path");
-  &myprint("c_vpi_file_path : $c_vpi_file_path");
   &myprint("============================================");
   return 1;
 }
