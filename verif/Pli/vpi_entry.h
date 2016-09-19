@@ -17,14 +17,32 @@
 #define VPI_ENTRY_H
 
 #include "Common.h"
-#include <vpi_user.h>
+#include "vpi.h"
 
-static PLI_INT32 tb_build(char* UNUSED(iUserData));
+// This (static) class will serve as a layer of test flow control
+// between the simulator and the pli application.
+//
+// Below the class definition is the export function array.
+//
+class vpi_entry
+{
+  // Private Members
+  public:
+  static vpiHandle m_topModule;
 
-static void tb_build_register();
+  // Public Methods
+  public:
+  static Int32  tb_build(char* UNUSED(iUserData));
+  static void   tb_build_register();
+
+  // Private Methods
+  public:
+  static bool   setTopModule(vpiHandle iSysTfCall);
+  
+};
 
 void (*vlog_startup_routines[])() = {
-  tb_build_register,
+  vpi_entry::tb_build_register,
   0
 };
 
