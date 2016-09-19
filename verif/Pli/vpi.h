@@ -29,7 +29,7 @@ class Vpi
 
   // Enums
   public:
-    enum class SYS_FUNC_TYPE : Int32
+    enum class SYS_TASK_FUNC : Int32
     {
       TASK = 1,
       FUNC = 2
@@ -69,7 +69,93 @@ class Vpi
       DEF_FILE    = vpiDefFile,
       DEF_LINE_NO = vpiDefLineNo,
       SCALAR      = vpiScalar,
-      VECTOR      = vpiVector
+      VECTOR      = vpiVector,
+      DIRECTION   = vpiDirection,
+      NET_TYPE    = vpiNetType,
+      ARRAY       = vpiArray,
+      PORT_INDEX  = vpiPortIndex,
+      EDGE        = vpiEdge,
+      CONST_TYPE  = vpiConstType,
+      FUNC_TYPE   = vpiFuncType,
+      SYS_FUNC_TYPE = vpiSysFuncType,
+      USER_DEFN   = vpiUserDefn,
+      AUTOMATIC   = vpiAutomatic,
+      CONST_SEL   = vpiConstantSelect,
+      SIGNED      = vpiSigned,
+      LOCAL_PARAM = vpiLocalParam
+    };
+
+    enum class DIRECTION : Int32
+    {
+      INPUT       = vpiInput,
+      OUTPUT      = vpiOutput,
+      INOUT       = vpiInout,
+      MIXED_IO    = vpiMixedIO,
+      NO_DIR      = vpiNoDirection
+    };
+
+    enum class NET_TYPE : Int32
+    {
+      WIRE      = vpiWire,
+      WAND      = vpiWand,
+      WOR       = vpiWor,
+      TRI       = vpiTri,
+      TRI_0     = vpiTri0,
+      TRI_1     = vpiTri1,
+      TRI_REG   = vpiTriReg,
+      TRI_AND   = vpiTriAnd,
+      TRI_OR    = vpiTriOr,
+      SUPPLY_1  = vpiSupply1,
+      SUPPLY_0  = vpiSupply0
+    };
+
+    enum class EDGE : Int32
+    {
+      NO_EDGE   = vpiNoEdge,
+      EDGE_01   = vpiEdge01,
+      EDGE_10   = vpiEdge10,
+      EDGE_0x   = vpiEdge0x,
+      EDGE_x1   = vpiEdgex1,
+      EDGE_1x   = vpiEdge1x,
+      EDGE_x0   = vpiEdgex0,
+      POSEDGE   = vpiPosedge,
+      NEGEDGE   = vpiNegedge,
+      ANY_EDGE  = vpiAnyEdge
+    };
+
+    enum class CONST_TYPE : Int32
+    {
+      DEC     = vpiDecConst,
+      REAL    = vpiRealConst,
+      BINARY  = vpiBinaryConst,
+      OCT     = vpiOctConst,
+      HEX     = vpiHexConst,
+      STRING  = vpiStringConst
+    };
+
+    enum class FUNC_TYPE : Int32
+    {
+      INT           = vpiIntFunc,
+      REAL          = vpiRealFunc,
+      TIME          = vpiTimeFunc,
+      SIZED         = vpiSizedFunc,
+      SIZED_SIGNED  = vpiSizedSignedFunc
+    };
+
+    enum class SYS_FUNC_TYPE : Int32
+    {
+      INT           = vpiSysFuncInt,
+      REAL          = vpiSysFuncReal,
+      TIME          = vpiSysFuncTime,
+      SIZED         = vpiSysFuncSized
+    };
+
+    enum class DELAY_MODE : Int32
+    {
+      NO_DELAY              = vpiNoDelay,
+      INERTIAL_DELAY        = vpiInertialDelay,
+      TRANSPORT_DELAY       = vpiTransportDelay,
+      PURE_TRANSPORT_DLEAY  = vpiPureTransportDelay,
     };
 
     enum class OBJECT : Int32
@@ -110,24 +196,198 @@ class Vpi
       MOD_PATH_IN     = vpiModPathIn,
       MOD_PATH_OUT    = vpiModPathOut,
       VARIABLES       = vpiVariables,
-      EXPR            = vpiExpr
+      EXPR            = vpiExpr,
+      CALLBACK        = vpiCallback,
+      REG_ARRAY       = vpiRegArray,
+      GEN_SCOPE       = vpiGenScope
     };
     
+    enum class TIME_TYPE : Int32
+    {
+      SCALED_REAL_TIME  = 1,
+      SIM_TIME          = 2,
+      SUPPRESS_TIME     = 3
+    };
+
+    enum class SCALAR_VAL : Int32
+    {
+      ZERO      = 0,
+      ONE       = 1,
+      Z         = 2,
+      X         = 3,
+      H         = 4,
+      L         = 5,
+      DONT_CARE = 6
+    };
+
+    enum class STRENGTH_VAL : Int32
+    {
+      SUPPLY_DRIVE  = 0x80,
+      STRONG_DRIVE  = 0x40,
+      PULL_DRIVE    = 0x20,
+      LARGE_CHARGE  = 0x10,
+      WEAK_DRIVE    = 0x08,
+      MEDIUM_CHARGE = 0x04,
+      SMALL_CHARGE  = 0x02,
+      HI_Z          = 0x01
+    };
+
+    enum class ERROR_STATE : Int32
+    {
+      COMPILE = vpiCompile,
+      PLI     = vpiPLI,
+      RUN     = vpiRun
+    };
+  
+    enum class ERROR_LEVEL : Int32
+    {
+      NOTICE      = vpiNotice,
+      WARNING     = vpiWarning,
+      ERROR       = vpiError,
+      SYSTEM      = vpiSystem,
+      INTERNAL    = vpiInternal
+    };
+  
+    enum class CB_REASON : Int32
+    {
+      VALUE_CHANGE              = cbValueChange,
+      STMT                      = cbStmt,
+      FORCE                     = cbForce,
+      RELEASE                   = cbRelease,
+      AT_START_OF_SIM_TIME      = cbAtStartOfSimTime,
+      READ_WRITE_SYNCH          = cbReadWriteSynch,
+      READ_ONLY_SYNCH           = cbReadOnlySynch,
+      NEXT_SIM_TIME             = cbNextSimTime,
+      AFTER_DELAY               = cbAfterDelay,
+      END_OF_COMPILE            = cbEndOfCompile,
+      START_OF_SIMULATION       = cbStartOfSimulation,
+      END_OF_SIMULATION         = cbEndOfSimulation,
+      ERROR                     = cbError,
+      TCHK_VIOLATION            = cbTchkViolation,
+      START_OF_SAVE             = cbStartOfSave,
+      END_OF_SAVE               = cbEndOfSave,
+      START_OF_RESTART          = cbStartOfRestart,
+      END_OF_RESTART            = cbEndOfRestart,
+      START_OF_RESET            = cbStartOfReset,
+      END_OF_RESET              = cbEndOfReset,
+      ENTER_INTERACTIVE         = cbEnterInteractive,
+      EXIT_INTERACTIVE          = cbExitInteractive,
+      INTERACTIVE_SCOPE_CHANGE  = cbInteractiveScopeChange,
+      UNRESOLVED_SYSTF          = cbUnresolvedSystf
+    };
+  
   // Structs
   public:
-    struct vpi_systf_data 
+    // For registering system task/functions with the simulator.
+    typedef struct t_vpi_systf_data 
     {
-      SYS_FUNC_TYPE type;
+      SYS_TASK_FUNC type;
       Int32         sysfunctype;
       const char *  tfname;
       Int32 (*calltf)   (ICARUS_VPI_CONST PLI_BYTE8*);
       Int32 (*compiletf)(ICARUS_VPI_CONST PLI_BYTE8*);
       Int32 (*sizetf)   (PLI_BYTE8*);
       ICARUS_VPI_CONST PLI_BYTE8 *user_data;
-    };
+    } s_vpi_systf_data, *p_vpi_systf_data;
+
+    // For retrieving information about the simulator command.
+    // Used for processing custom command options.
+    // e.g. vpi_get_vlog_info
+    typedef struct t_vpi_vlog_info
+    {
+      Int32 argc;
+      char  **argv;
+      char  *product;
+      char  *version;
+    } s_vpi_vlog_info, *p_vpi_vlog_info;
+
+    // Multi-purpose structure.
+    // Used to hold time values when getting/setting verilog values (t_vpi_value).
+    // Used to represent delay values (t_vpi_delay).
+    // Used to get the module/simulation time (vpi_get_time).
+    typedef struct t_vpi_time
+    {
+      TIME_TYPE type;
+      UInt32    high;
+      UInt32    low;
+      double    real;
+    } s_vpi_time, *p_vpi_time;
+
+    // Used to represent a 4-state value being read or written.
+    typedef struct t_vpi_vecval
+    {
+      // TBD - change to an enum (UInt64)?
+      // Reading up on struct data alignment and this should be okay.
+      // Since the pair of Int32's are the same size and a nominal alignment
+      // of 4-bytes, no padding will ever be inserted between them.
+      // And since a pair of Int32's and an Int64 have the same size,
+      // they should be able to be cast back and forth without any issues.
+      Int32 aval;
+      Int32 bval;
+    } s_vpi_vecval, *p_vpi_vecval;
+
+    // Used to represent a drive strength value being read or written.
+    typedef struct t_vpi_strengthval
+    {
+      Int32 logic;
+      Int32 s0;
+      Int32 s1;
+    } s_vpi_strengthval, *p_vpi_strengthval;
+
+    // Used to hold values that are passed back and forth between
+    // the simulator and the application.
+    typedef struct t_vpi_value
+    {
+      GET_VALUE_FORMAT  format;
+      union
+      {
+        char *              str;
+        Int32               scalar;
+        Int32               integer;
+        double              real;
+        t_vpi_time *        time;
+        t_vpi_vecval *      vector;
+        t_vpi_strengthval * strength;
+        char *              misc;
+      }                 value;
+    } s_vpi_value, *p_vpi_value;
+
+    // Used in various ways to represent delays.
+    // No difference between this and the vpi_user struct.
+    typedef struct t_vpi_delay
+    {
+      t_vpi_time *  da;
+      Int32         no_of_delays;
+      Int32         time_type;
+      Int32         mtm_flag;
+      Int32         append_flag;
+      Int32         plusere_flag;
+    } s_vpi_delay, *p_vpi_delay;
+
+    typedef struct t_vpi_error_info
+    {
+      ERROR_STATE   state;
+      ERROR_LEVEL   level;
+      char *        message;
+      char *        product;
+      char *        code;
+      char *        file;
+      Int32         line;
+    } s_vpi_error_info, *p_vpi_error_info;
+
+    typedef struct t_cb_data
+    {
+      CB_REASON   reason;
+      Int32       (*cb_rtn)(t_cb_data *cb);
+      vpiHandle   obj;
+      p_vpi_time  time;
+      p_vpi_value value;
+      Int32       index;
+      char *      user_data;
+    } s_cb_data, *p_cb_data;
 
   // Public Methods
-  static vpiHandle vpi_register_systf(const vpi_systf_data *ss);
+  static vpiHandle vpi_register_systf(const struct t_vpi_systf_data *ss);
 };
 
 #endif /* VPI_ENUMS_H */
