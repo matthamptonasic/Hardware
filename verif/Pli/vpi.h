@@ -13,8 +13,8 @@
 #
 ###############################################################################
 */
-#ifndef VPI_ENUMS_H
-#define VPI_ENUMS_H
+#ifndef VPI_H
+#define VPI_H
 
 #include <string>
 #include <stdarg.h>
@@ -277,6 +277,16 @@ class Vpi
       INTERACTIVE_SCOPE_CHANGE  = cbInteractiveScopeChange,
       UNRESOLVED_SYSTF          = cbUnresolvedSystf
     };
+
+    enum class CTL_OPERATION : Int32
+    {
+      STOP    = vpiStop,    // $stop
+      FINISH  = vpiFinish,  // $finish
+      RESET   = vpiReset,   // $reset
+      SET_INTERACTIVE_SCOPE = vpiSetInteractiveScope,
+      __IVL_LEGACY_STOP     = __ivl_legacy_vpiStop,
+      __IVL_LEGACY_FINISH   = __ivl_legacy_vpiFinish
+    };
   
   // Structs
   public:
@@ -393,6 +403,8 @@ class Vpi
   // System Task/Funcion Methods
   static vpiHandle  vpi_register_systf(const struct t_vpi_systf_data *ss);
   static void       vpi_get_systf_info(vpiHandle iSysTfHndl, p_vpi_systf_data oData);
+  
+  // I/O Methods
   static UInt32     vpi_mcd_open(char *iName);
   static UInt32     vpi_mcd_close(UInt32 iMcd);
   static char *     vpi_mcd_name(UInt32 iMcd);
@@ -406,7 +418,55 @@ class Vpi
   static Int32      vpi_mcd_flush(UInt32 iMcd);
   static Int32      vpi_fopen(const char *iName, const char *iMode);
   static FILE *     vpi_get_file(Int32 iFileDesc);
+
+  // Callback Methods
+  static vpiHandle  vpi_register_cb(p_cb_data iCbData);
+  static Int32      vpi_remove_cb(vpiHandle iCbHndl);
+
+  // Simulator Control Method
+  // Note * The vpi_control method cannot be wrapped with varargs (...) so
+  // this restrictive call will only support a single operator to be passed.
+  // If multiple operators are needed, the global function must be called directly.
+  static void       vpi_control(Int32 iOperation);
+  // The proper name is vpi_control. vpi_sim_control is added for legacy.
+  static void       vpi_sim_control(Int32 iOperation);
+
+  // VPI Handle Methods
+  static vpiHandle  vpi_handle(Vpi::OBJECT iType, vpiHandle iRef);
+  static vpiHandle  vpi_iterate(Vpi::OBJECT iType, vpiHandle iRef);
+  static vpiHandle  vpi_scan(vpiHandle iIterator);
+  static vpiHandle  vpi_handle_by_index(vpiHandle iRef, Int32 iIndex);
+  static vpiHandle  vpi_handle_by_name(const char *iName, vpiHandle iScope);
+
+  // Get Value Methods
+  static void       vpi_get_time(vpiHandle iObj, p_vpi_time oTime);
+  static Int32      vpi_get(Vpi::PROPERTY iProperty, vpiHandle iRef);
+  static char *     vpi_get_str(Vpi::PROPERTY iProperty, vpiHandle iRef);
+  static void       vpi_get_value(vpiHandle iHndl, p_vpi_value oValue);
+
+  // Set Value Methods
+  static vpiHandle  vpi_put_value(vpiHandle   iObj, 
+                                  p_vpi_value iValue,
+                                  p_vpi_time  iWhen, 
+                                  Int32       iFlags);
+
+  // Misc Methods
+  static Int32      vpi_free_object(vpiHandle iRef);
+  static Int32      vpi_get_vlog_info(p_vpi_vlog_info oVlogInfo);
+  static Int32      vpi_compare_objects(vpiHandle iObj1, vpiHandle iObj2);
+
+  // Delay Methods
+  static void       vpi_get_delays(vpiHandle iHndl, t_vpi_delay *oDelays);
+  static void       vpi_put_delays(vpiHandle iHndl, t_vpi_delay *iDelays);
+
+  // Custom User-Data Methods
+  static Int32      vpi_put_userdata(vpiHandle iObj, void *iData);
+  static void *     vpi_get_userdata(vpiHandle iObj);
+
+  // Error Handling
+  static Int32      vpi_chk_error(t_vpi_error_info *oInfo);
+  
 };
 
-#endif /* VPI_ENUMS_H */
+#endif /* VPI_H */
 
