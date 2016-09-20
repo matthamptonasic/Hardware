@@ -32,10 +32,10 @@ Int32 vpi_entry::tb_build(char* UNUSED(iUserData))
   vpi_printf("c++ tb_build: Entry.\n");
 
   // Get the Sys TF Call Handle
-  vpiHandle systf_handle = vpi_handle((int)Vpi::OBJECT::SYS_TF_CALL, NULL);
+  vpiHandle systf_handle = Vpi::vpi_handle(Vpi::OBJECT::SYS_TF_CALL, NULL);
   if(systf_handle == NULL)
   {
-    vpi_printf("Failed to get SYS_TF_CALL handle to tb_build.\n");
+    Vpi::vpi_printf("Failed to get SYS_TF_CALL handle to tb_build.\n");
     return 0;
   }
 
@@ -43,7 +43,7 @@ Int32 vpi_entry::tb_build(char* UNUSED(iUserData))
   {
     return 0;
   }
-  vpi_printf("m_topModule name is '%s'.\n", vpi_get_str((int)Vpi::PROPERTY::NAME, m_topModule));
+  Vpi::vpi_printf("m_topModule name is '%s'.\n", Vpi::vpi_get_str(Vpi::PROPERTY::NAME, m_topModule));
   
   vpi_printf("c++ tb_build: Exit.\n");
   return 0;
@@ -74,8 +74,8 @@ bool vpi_entry::setTopModule(vpiHandle iSysTfCall)
   }
 
   // Get iterator handle for the arguments.
-  vpiHandle arg_iterator = vpi_iterate(vpiArgument, iSysTfCall);
-  vpiHandle arg_handle = vpi_scan(arg_iterator);
+  vpiHandle arg_iterator = Vpi::vpi_iterate(Vpi::OBJECT::ARGUMENT, iSysTfCall);
+  vpiHandle arg_handle = Vpi::vpi_scan(arg_iterator);
 
   Vpi::OBJECT obj = (Vpi::OBJECT)vpi_get((int)Vpi::PROPERTY::TYPE, arg_handle);
   if(obj != Vpi::OBJECT::MODULE)
@@ -84,11 +84,11 @@ bool vpi_entry::setTopModule(vpiHandle iSysTfCall)
     vpi_printf("ERROR: Argument was not a module.\n");
     return false;
   }
-  bool isTopModule = (bool)vpi_get((int)Vpi::PROPERTY::TOP_MODULE, arg_handle);
+  bool isTopModule = (bool)Vpi::vpi_get(Vpi::PROPERTY::TOP_MODULE, arg_handle);
   if(!isTopModule)
   {
     // TBD - Added report of systf name, param name.
-    vpi_printf("ERROR: Argument was not the top-level module.\n");
+    Vpi::vpi_printf("ERROR: Argument was not the top-level module.\n");
     return false;
   }
   m_topModule = arg_handle;
