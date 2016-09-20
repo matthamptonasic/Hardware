@@ -79,4 +79,93 @@ FILE * Vpi::vpi_get_file(Int32 iFileDesc)
 {
   return ::vpi_get_file(iFileDesc);
 }
+vpiHandle Vpi::vpi_register_cb(p_cb_data iCbData)
+{
+  return ::vpi_register_cb((::p_cb_data)iCbData);
+}
+Int32 Vpi::vpi_remove_cb(vpiHandle iCbHndl)
+{
+  return ::vpi_remove_cb(iCbHndl);
+}
+void Vpi::vpi_control(Int32 iOperation)
+{
+  ::vpi_control(iOperation);
+}
+void Vpi::vpi_sim_control(Int32 iOperation)
+{
+  ::vpi_sim_control(iOperation);
+}
+vpiHandle Vpi::vpi_handle(Vpi::OBJECT iType, vpiHandle iRef)
+{
+  return ::vpi_handle((Int32)iType, iRef);
+}
+vpiHandle Vpi::vpi_iterate(Vpi::OBJECT iType, vpiHandle iRef)
+{
+  return ::vpi_iterate((Int32)iType, iRef);
+}
+vpiHandle Vpi::vpi_scan(vpiHandle iIterator)
+{
+  return ::vpi_scan(iIterator);
+}
+vpiHandle Vpi::vpi_handle_by_index(vpiHandle iRef, Int32 iIndex)
+{
+  return ::vpi_handle_by_index(iRef, iIndex);
+}
+vpiHandle Vpi::vpi_handle_by_name(const char *iName, vpiHandle iScope)
+{
+  return ::vpi_handle_by_name(iName, iScope);
+}
+void Vpi::vpi_get_time(vpiHandle iObj, p_vpi_time oTime)
+{
+  ::vpi_get_time(iObj, (::p_vpi_time)oTime);
+}
+Int32 Vpi::vpi_get(Vpi::PROPERTY iProperty, vpiHandle iRef)
+{
+  return ::vpi_get((Int32)iProperty, iRef);
+}
+char * Vpi::vpi_get_str(Vpi::PROPERTY iProperty, vpiHandle iRef)
+{
+  return ::vpi_get_str((Int32)iProperty, iRef);
+}
+void Vpi::vpi_get_value(vpiHandle iHndl, p_vpi_value oValue)
+{
+  ::vpi_get_value(iHndl, (::p_vpi_value)oValue);
+}
+vpiHandle Vpi::vpi_put_value(vpiHandle iObj, p_vpi_value iValue,
+                             p_vpi_time iWhen, Int32 iFlags)
+{
+  return ::vpi_put_value(iObj, (::p_vpi_value)iValue, (::p_vpi_time)iWhen, iFlags);
+}
+Int32 Vpi::vpi_free_object(vpiHandle iRef)
+{
+  return ::vpi_free_object(iRef);
+}
+Int32 Vpi::vpi_get_vlog_info(p_vpi_vlog_info oVlogInfo)
+{
+  return ::vpi_get_vlog_info((::p_vpi_vlog_info)oVlogInfo);
+}
+Int32 Vpi::vpi_compare_objects(vpiHandle iObj1, vpiHandle iObj2)
+{
+  return ::vpi_compare_objects(iObj1, iObj2);
+}
+void Vpi::vpi_get_delays(vpiHandle iHndl, t_vpi_delay *oDelays)
+{
+  ::vpi_get_delays(iHndl, (::t_vpi_delay *)oDelays);
+}
+void Vpi::vpi_put_delays(vpiHandle iHndl, t_vpi_delay *iDelays)
+{
+  ::vpi_put_delays(iHndl, (::t_vpi_delay *)iDelays);
+}
+Int32 Vpi::vpi_put_userdata(vpiHandle iObj, void *iData)
+{
+  return ::vpi_put_userdata(iObj, iData);
+}
+void * Vpi::vpi_get_userdata(vpiHandle iObj)
+{
+  return ::vpi_get_userdata(iObj);
+}
+Int32 Vpi::vpi_chk_error(t_vpi_error_info *oInfo)
+{
+  return ::vpi_chk_error((::t_vpi_error_info *)oInfo);
+}
 
