@@ -17,6 +17,8 @@
 #define VPI_ENUMS_H
 
 #include <string>
+#include <stdarg.h>
+#include <stdio.h>
 
 #include "vpi_user.h"
 
@@ -387,7 +389,23 @@ class Vpi
     } s_cb_data, *p_cb_data;
 
   // Public Methods
-  static vpiHandle vpi_register_systf(const struct t_vpi_systf_data *ss);
+  public:
+  // System Task/Funcion Methods
+  static vpiHandle  vpi_register_systf(const struct t_vpi_systf_data *ss);
+  static void       vpi_get_systf_info(vpiHandle iSysTfHndl, p_vpi_systf_data oData);
+  static UInt32     vpi_mcd_open(char *iName);
+  static UInt32     vpi_mcd_close(UInt32 iMcd);
+  static char *     vpi_mcd_name(UInt32 iMcd);
+  static Int32      vpi_mcd_printf(UInt32 iMcd, const char *iFmt, ...);
+        __attribute__((format (printf,2,3)));
+  static Int32      vpi_printf(const char *iFmt, ...);
+        __attribute__((format (printf,1,2)));
+  static Int32      vpi_vprintf(const char *iFmt, va_list iArgs);
+  static Int32      vpi_mcd_vprintf(UInt32 iMcd, const char *iFmt, va_list iArgs);
+  static Int32      vpi_flush();
+  static Int32      vpi_mcd_flush(UInt32 iMcd);
+  static Int32      vpi_fopen(const char *iName, const char *iMode);
+  static FILE *     vpi_get_file(Int32 iFileDesc);
 };
 
 #endif /* VPI_ENUMS_H */
