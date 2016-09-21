@@ -1,8 +1,9 @@
 ODIR = $(DUMP_DIR)
+CCFLAGS = -fPIC -std=c++11
 
 all:
-	cd BitVector && $(MAKE) -e CCFLAGS="-fPIC -std=c++11"
-	cd Pli && $(MAKE) -e CCFLAGS="-fPIC -std=c++11"
-	cd Signals && $(MAKE) -e CCFLAGS="-fPIC -std=c++11"
-	cd Test && $(MAKE) -e CCFLAGS="-fPIC -std=c++11"
+	cd BitVector && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
+	cd Pli && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
+	cd Signals && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
+	cd Test && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 
