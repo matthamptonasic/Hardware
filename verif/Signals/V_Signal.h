@@ -19,7 +19,7 @@
 #include <string>
 
 #include "Common.h"
-#include "vpi_user.h"
+#include "vpi.h"
 
 using namespace std;
 
@@ -51,6 +51,7 @@ class V_Signal
 
   // Public Methods
   public:
+    UInt32 GetValue();
 
   // Private Methods
   private:
