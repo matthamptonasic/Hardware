@@ -19,13 +19,24 @@
 #include "Common.h"
 
 class BitVector {
+  // Enums
+  public:
+  enum class NB_STATES : Byte
+  {
+    TWO_STATE = 0,
+    FOUR_STATE = 1
+  };
+
+  // Private Members
   private:
     UInt32 m_size;
     UInt32 m_lo;
     UInt32 m_hi;
-  public:
 
+  // Constructors
+  public:
     BitVector(UInt32 iSize);
+
 };
 
 #endif /* BITVECTOR_H */
