@@ -2,8 +2,8 @@ CC = g++
 CCFLAGS = -fPIC 
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../Common -I$(VPI_USER)
-VPATH = ../Common $(VPI_USER)
+INC = -I../Common -I$(VPI_USER) -I../Pli/
+VPATH = ../Common $(VPI_USER) ../Pli/
 
 _OBJS = V_Signal.o \
 				V_Reg.o
