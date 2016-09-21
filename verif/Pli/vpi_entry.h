@@ -22,13 +22,17 @@
 // This (static) class will serve as a layer of test flow control
 // between the simulator and the pli application.
 //
-// Below the class definition is the export function array.
+// The PLI export function array is at the top of the .cc file.
 //
 class vpi_entry
 {
   // Private Members
-  public:
+  private:
   static vpiHandle m_topModule;
+
+  // Public Properties (get/set)
+  public:
+  static vpiHandle TopModule_get();
 
   // Public Methods
   public:
@@ -36,14 +40,9 @@ class vpi_entry
   static void   tb_build_register();
 
   // Private Methods
-  public:
+  private:
   static bool   setTopModule(vpiHandle iSysTfCall);
   
-};
-
-void (*vlog_startup_routines[])() = {
-  vpi_entry::tb_build_register,
-  0
 };
 
 #endif /* VPI_ENTRY_H */
