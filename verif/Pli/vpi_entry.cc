@@ -17,10 +17,29 @@
 #include "vpi_entry.h"
 #include "V_Signal.h"
 
+// ===============================
+// ===**  Master Export List **===
+// ===============================
+// Not a part of vpi_entry class.
+// This is the list of routines that are imported by the simulator
+// and used as $name in the Verilog environment.
+void (*vlog_startup_routines[])() = {
+  vpi_entry::tb_build_register,
+  0
+};
+
 // ====================================
 // ===**  Private Static Members  **===
 // ====================================
 vpiHandle vpi_entry::m_topModule = NULL;
+
+// ===============================
+// ===**  Public Properties  **===
+// ===============================
+vpiHandle vpi_entry::TopModule_get()
+{
+  return m_topModule;
+}
 
 // ============================
 // ===**  Public Methods  **===
@@ -45,6 +64,8 @@ Int32 vpi_entry::tb_build(char* UNUSED(iUserData))
   }
   Vpi::vpi_printf("m_topModule name is '%s'.\n", Vpi::vpi_get_str(Vpi::PROPERTY::NAME, m_topModule));
   
+  vpi_printf("tb_build => creating V_Signal\n");
+  V_Signal * top_rst_r = new V_Signal("dut0.wr_data");
   vpi_printf("c++ tb_build: Exit.\n");
   return 0;
 }
@@ -80,14 +101,14 @@ bool vpi_entry::setTopModule(vpiHandle iSysTfCall)
   Vpi::OBJECT obj = (Vpi::OBJECT)vpi_get((int)Vpi::PROPERTY::TYPE, arg_handle);
   if(obj != Vpi::OBJECT::MODULE)
   {
-    // TBD - Added report of systf name, param name.
+    // TBD - Add report of systf name, param name.
     vpi_printf("ERROR: Argument was not a module.\n");
     return false;
   }
   bool isTopModule = (bool)Vpi::vpi_get(Vpi::PROPERTY::TOP_MODULE, arg_handle);
   if(!isTopModule)
   {
-    // TBD - Added report of systf name, param name.
+    // TBD - Add report of systf name, param name.
     Vpi::vpi_printf("ERROR: Argument was not the top-level module.\n");
     return false;
   }
