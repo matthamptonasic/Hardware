@@ -33,11 +33,11 @@ class Vpi
   public:
     enum class SYS_TASK_FUNC : Int32
     {
-      TASK = 1,
-      FUNC = 2
+      TASK = vpiSysTask,
+      FUNC = vpiSysFunc
     };
 
-    enum class GET_VALUE_FORMAT : Int32
+    enum class VALUE_FORMAT : Int32
     {
       BIN_STR   = vpiBinStrVal,
       OCT_STR   = vpiOctStrVal,
@@ -201,37 +201,38 @@ class Vpi
       EXPR            = vpiExpr,
       CALLBACK        = vpiCallback,
       REG_ARRAY       = vpiRegArray,
-      GEN_SCOPE       = vpiGenScope
+      GEN_SCOPE       = vpiGenScope,
+      UNKNOWN         = 0x7fffffff
     };
     
     enum class TIME_TYPE : Int32
     {
-      SCALED_REAL_TIME  = 1,
-      SIM_TIME          = 2,
-      SUPPRESS_TIME     = 3
+      SCALED_REAL_TIME  = vpiScaledRealTime,
+      SIM_TIME          = vpiSimTime,
+      SUPPRESS_TIME     = vpiSuppressTime
     };
 
     enum class SCALAR_VAL : Int32
     {
-      ZERO      = 0,
-      ONE       = 1,
-      Z         = 2,
-      X         = 3,
-      H         = 4,
-      L         = 5,
-      DONT_CARE = 6
+      ZERO      = vpi0,
+      ONE       = vpi1,
+      Z         = vpiZ,
+      X         = vpiX,
+      H         = vpiH,
+      L         = vpiL,
+      DONT_CARE = vpiDontCare
     };
 
     enum class STRENGTH_VAL : Int32
     {
-      SUPPLY_DRIVE  = 0x80,
-      STRONG_DRIVE  = 0x40,
-      PULL_DRIVE    = 0x20,
-      LARGE_CHARGE  = 0x10,
-      WEAK_DRIVE    = 0x08,
-      MEDIUM_CHARGE = 0x04,
-      SMALL_CHARGE  = 0x02,
-      HI_Z          = 0x01
+      SUPPLY_DRIVE  = vpiSupplyDrive,
+      STRONG_DRIVE  = vpiStrongDrive,
+      PULL_DRIVE    = vpiPullDrive,
+      LARGE_CHARGE  = vpiLargeCharge,
+      WEAK_DRIVE    = vpiWeakDrive,
+      MEDIUM_CHARGE = vpiMediumCharge,
+      SMALL_CHARGE  = vpiSmallCharge,
+      HI_Z          = vpiHiZ
     };
 
     enum class ERROR_STATE : Int32
@@ -350,11 +351,11 @@ class Vpi
     // the simulator and the application.
     typedef struct t_vpi_value
     {
-      GET_VALUE_FORMAT  format;
+      VALUE_FORMAT  format;
       union
       {
         char *              str;
-        Int32               scalar;
+        SCALAR_VAL          scalar;
         Int32               integer;
         double              real;
         t_vpi_time *        time;
