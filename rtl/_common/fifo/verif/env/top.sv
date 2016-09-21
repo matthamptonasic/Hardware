@@ -26,7 +26,6 @@ module top();
   initial begin
     env0 = new();
     clks0 = new();
-    $tb_build(top);
     fork begin
       $display("Starting env init at %t", $time);
       env0.env_init();
@@ -47,6 +46,9 @@ module top();
   end
 
   initial begin
+    #1ns;
+    wr_data = 'h11;
+    $tb_build(top);
     rst_r = '1;
     rst_w = '1;
     #10ns rst_w = '0;
@@ -59,13 +61,13 @@ module top();
   end
 
   // Interface members
-  wire                                empty;
-  wire                                full;
-  wire [`FIFO_FF_DUT_WIDTH-1:0]       rd_data;
-  wire [$clog2(`FIFO_FF_DUT_DEPTH):0] occup;
-  wire [`FIFO_FF_DUT_WIDTH-1:0]       wr_data;
-  wire                                wr_en;
-  wire                                rd_en;
+  wire                                  empty;
+  wire                                  full;
+  wire  [`FIFO_FF_DUT_WIDTH-1:0]        rd_data;
+  wire  [$clog2(`FIFO_FF_DUT_DEPTH):0]  occup;
+  logic [`FIFO_FF_DUT_WIDTH-1:0]        wr_data;
+  logic                                 wr_en;
+  wire                                  rd_en;
 
   // DUT Instantiation
   dut dut0(.*);
