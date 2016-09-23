@@ -89,6 +89,72 @@ class BitVector {
   public:
   BitVector & operator= (Int32 iRhs);
 
+  // ===== Part Select Class =====
+  // Why?
+  // Example #1:
+  // BitVector bvA = new BitVector("bvA", 32);
+  // bvA[15,0] = 0xabcd;
+  //
+  // When you pass 0xabcd to the = operator, it will return a reference to a BV.
+  // On the left side, we've passed 2 Int32's to the [] operator.
+  // This will return a reference to a BV as well.
+  // However, this reference is not to bvA because bvA is 32 bits wide and this
+  // BV object is 16 bits wide.
+  // The bit selected BV is related to bvA, but they are not the same.
+  // The PartSelect will be a nested class within BitVector that refers to 
+  // the outer class.
+  // When the above statement happens, the child class (PartSelect) that
+  // returns from the [] operator will be assigned a value of 0xabcd.
+  // The part select class overloads the = operator which assigns the value 
+  // 0xabcd to the outer BV class, bits 15,0.
+  //
+  // Example #2:
+  // BitVector bvA = new BitVector("bvA", 32);
+  // bvA[15,0] = 0xabcd;
+  // bvA[31,16] = bvA[15,0];
+  // 
+  // As above, the first step creates a temporary PartSelect object that is
+  // returned from bvA[15,0]. This temporary object resides on the stack
+  // since there is no 'new' statement anywhere. Once the function returns,
+  // the object will be gone. Additionally, it has no name or reference.
+  // It cannot be used again. The function of its existance ends when
+  // the overloaded assignment operator assigns the corresponding bits
+  // in the outer BitVector class.
+  // 
+  // The second step reduces to the following:
+  // PartSelect& (parent=bvA, hi=31, lo=16) = PartSelect& (parent=bvA, hi=15, lo=0)
+  // The assignment operator used is now:
+  // PartSelect::operator= (PartSelect &)
+  // Which will get the selected bits from the argument's outer BV and
+  // assign them to the operand's outer BV.
+  protected:
+  class PartSelect
+  {
+    // Private Members
+    private:
+    UInt32 m_upperIndex;
+    UInt32 m_lowerIndex;
+    BitVector * m_parent;
+
+    // Public Properties (get/set)
+    public:
+
+    // Constructors
+    public:
+
+    // Inits
+    private:
+
+    // Public Methods
+    public:
+
+    // Private Methods
+    private:
+
+    // Operators
+    public:
+
+  };
 
 };
 
