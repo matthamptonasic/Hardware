@@ -258,6 +258,7 @@ sub c_build
   # Build the C++ object files in the build directory.
   # Start with the top level verif library files.
   my $make_cmd = "make -C $verif_make_path ODIR=$c_build_path";
+  &myprint("make cmd = '$make_cmd'");
   $rslt = `$make_cmd`;
   &myprint("rslt = $rslt");
   if((${^CHILD_ERROR_NATIVE} >> 8) != 0) 
