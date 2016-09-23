@@ -11,3 +11,6 @@
 # Backup files
 *.bak
 
+# Visual Studio Code
+.vscode
+
