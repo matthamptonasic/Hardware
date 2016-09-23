@@ -73,6 +73,38 @@ Vpi::SCALAR_VAL Pli::GetScalar(vpiHandle iHndl)
   return retVal;
 }
 
+UInt32 Pli::GetVector(vpiHandle iHndl)
+{
+  UInt32 retVal = 0xffffffff;
+  if(iHndl == NULL)
+  {
+    // TBD - log error message.
+    return retVal;
+  }
+
+  Int32 vec_size = Vpi::vpi_get(Vpi::PROPERTY::SIZE, iHndl);
+  if(vec_size <= 0)
+  {
+    // TBD - log error message.
+    return retVal;
+  }
+  
+
+  Vpi::p_vpi_value data = new Vpi::t_vpi_value();
+  data->format = Vpi::VALUE_FORMAT::VECTOR;
+  Vpi::vpi_get_value(iHndl, data);
+
+  Int32 nbReads = (vec_size - 1) / 32 + 1;
+
+  for(Int32 ii=0; ii<nbReads; ii++)
+  {
+    Int32 aVal = data->value.vector[ii].aval;
+    Int32 bVal = data->value.vector[ii].bval;
+    retVal = aVal; 
+  }
+  return retVal;
+}
+
 Vpi::OBJECT Pli::GetType(vpiHandle iHndl)
 {
   if(iHndl == NULL)
