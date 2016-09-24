@@ -40,6 +40,7 @@ GetOptions( "quiet" => \$quiet,
             "no_build" => \$no_build,
             "no_build_c" => \$no_build_c,
             "no_build_v" => \$no_build_v,
+            "no_build_vpi" => \$no_build_vpi,
             "no_dump" => \$no_dump,
             "no_run" => \$no_run,
             "run_from=s" => \$run_from);
@@ -276,6 +277,10 @@ sub c_build
   # Build the local environment.
   # TBD
 
+  if($no_build_vpi)
+  {
+    return 1;
+  }
   # Now link all of those files using the iverilog-vpi command to get the .vpi file.
   my @vpi_entry_file = glob "'$c_build_path/vpi_entry.o'";
   my @object_files = (@vpi_entry_file, grep { ! /.*vpi_entry.o/} glob "'$c_build_path/*.o'");
