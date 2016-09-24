@@ -21,6 +21,7 @@ use File::stat;
 use POSIX;
 use Env;
 Env::import();
+use Cwd;
 
 my $dump_dir = $DUMP_DIR;
 my $gflag = "2012";
@@ -40,7 +41,8 @@ GetOptions( "quiet" => \$quiet,
             "no_build_c" => \$no_build_c,
             "no_build_v" => \$no_build_v,
             "no_dump" => \$no_dump,
-            "no_run" => \$no_run);
+            "no_run" => \$no_run,
+            "run_from=s" => \$run_from);
 
 my $dump_path;
 my $base_path;
@@ -60,6 +62,10 @@ my $c_build_path;
 my $verif_make_path = "$PROJECT_ROOT/verif/";
 
 ##=====================  Main Entry  ======================##
+if($run_from) {
+  chdir $run_from;
+  &myprint("cwd is " . getcwd());
+}
 if(&set_paths == 0) {
   &myprint("ERROR: Could not set up paths.");
   exit;
