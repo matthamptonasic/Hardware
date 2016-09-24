@@ -59,6 +59,13 @@ class BitVector {
   // Static Members
   private:
     static NB_STATES g_nbStates;
+    static const string g_default_name;
+    static const UInt32 g_default_size;
+
+  // Static Properties
+  public:
+    static NB_STATES g_NbStates_get() { return g_nbStates; }
+    static void      g_NbStates_set(const NB_STATES iStates) { g_nbStates = iStates; }
 
   // Private Members
   private:
@@ -69,9 +76,16 @@ class BitVector {
     vector<UInt32> * m_bval;
     NB_STATES m_nbStates;
 
+  // Public Properties
+  public:
+    NB_STATES NbStates_get() const { return m_nbStates; }
+    void      NbStates_set(const NB_STATES iStates) { m_nbStates = iStates; }
+
   // Constructors
   public:
-    BitVector(string iName, UInt32 iSize);
+    BitVector(string iName = g_default_name);
+    BitVector(string iName, UInt32 iSize, NB_STATES iStates = g_nbStates);
+    BitVector(UInt32 iSize = g_default_size);
 
   // Inits
   private:
@@ -79,11 +93,16 @@ class BitVector {
 
   // Public Methods
   public:
-    UInt32 GetUInt32();
-    UInt64 GetUInt64();
+    void    Resize(UInt32 iNewSize);
+    UInt32  GetUInt32() const;
+    UInt64  GetUInt64() const;
 
   // Private Methods
   private:
+    UInt32  getWordNb(UInt32 iBitPos);
+    Byte    getShift(UInt32 iBitPos);
+    UInt32  getMask(UInt32 iUpperIndex);
+    void    setMask();
 
   // Operators
   public:
@@ -141,15 +160,22 @@ class BitVector {
 
     // Constructors
     public:
+    PartSelect(BitVector * iBV, UInt32 iUpperIndex, UInt32 iLowerIndex);
 
     // Inits
     private:
+    void init(BitVector * iBV, UInt32 iUpperIndex, UInt32 iLowerIndex);
 
     // Public Methods
     public:
+    UInt32 getUInt32();
+    UInt64 getUInt64();
 
     // Private Methods
     private:
+    void checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex);
+    void setParentBits(const PartSelect & iBits);
+    void getParentBits(BitVector & oBV) const;
 
     // Operators
     public:
