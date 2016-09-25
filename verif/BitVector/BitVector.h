@@ -99,10 +99,13 @@ class BitVector {
 
   // Private Methods
   private:
+    void    checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex);
     UInt32  getWordNb(UInt32 iBitPos);
     Byte    getShift(UInt32 iBitPos);
     UInt32  getMask(UInt32 iUpperIndex);
     void    setMask();
+    //Must be 32-bits or less.
+    UInt32  getBits(UInt32 iUpperIndex, UInt32 iLowerIndex);
 
   // Operators
   public:
@@ -173,7 +176,6 @@ class BitVector {
 
     // Private Methods
     private:
-    void checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex);
     void setParentBits(const PartSelect & iBits);
     void getParentBits(BitVector & oBV) const;
 

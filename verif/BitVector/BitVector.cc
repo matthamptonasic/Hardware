@@ -19,7 +19,7 @@
 // ====================================
 // ===**  Private Static Members  **===
 // ====================================
-BitVector::NB_STATES BitVector::g_nbStates = BitVector::NB_STATES::FOUR_STATE;
+BitVector::NB_STATES BitVector::g_nbStates = BitVector::NB_STATES::TWO_STATE;
 const string BitVector::g_default_name = "Anonymous";
 const UInt32 BitVector::g_default_size = 32;
 
@@ -97,6 +97,15 @@ UInt64 BitVector::GetUInt64() const
 // =============================
 // ===**  Private Methods  **===
 // =============================
+void BitVector::checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex)
+{
+  if(iUpperIndex < iLowerIndex)
+  {
+    UInt32 tmp = iLowerIndex;
+    iLowerIndex = iUpperIndex;
+    iUpperIndex = tmp;
+  }
+}
 inline UInt32 BitVector::getWordNb(UInt32 iBitPos)
 {
   // Word Nb is Bit Position / 32.
@@ -124,6 +133,40 @@ void BitVector::setMask()
     return;
   }
   m_mask = getMask(m_size - 1);
+}
+UInt32 BitVector::getBits(UInt32 iUpperIndex, UInt32 iLowerIndex)
+{
+  checkIndices(iUpperIndex, iLowerIndex);
+  UInt32 l_selSize = iUpperIndex - iLowerIndex + 1;
+  if(l_selSize > 32)
+  {
+    // TBD - Log error.
+    return 0;
+  }
+  if(iUpperIndex > m_size)
+  {
+    // TBD - Log warning.
+    iUpperIndex = m_size;
+    l_selSize = iUpperIndex - iLowerIndex + 1;
+  }
+  
+  UInt32 l_loWdNb = getWordNb(iLowerIndex);
+  UInt32 l_hiWdNb = getWordNb(iUpperIndex);
+  Byte l_shift = getShift(iLowerIndex);
+
+  UInt32 l_retVal = (*m_aval)[l_loWdNb];
+  if(l_shift > 0)
+  {
+    l_retVal >>= l_shift;
+  }
+
+  if(l_loWdNb != l_hiWdNb)
+  {
+    UInt32 l_hiWd = (*m_aval)[l_loWdNb+1];
+    l_hiWd &= getMask(iUpperIndex);
+    l_retVal |= (l_hiWd << (32 - l_shift));
+  }
+  return l_retVal;
 }
 
 // =============================
@@ -159,10 +202,15 @@ BitVector::PartSelect::PartSelect(BitVector * iBV, UInt32 iUpperIndex, UInt32 iL
 // =============================
 void BitVector::PartSelect::init(BitVector * iBV, UInt32 iUpperIndex, UInt32 iLowerIndex)
 {
-  checkIndices(iUpperIndex, iLowerIndex);
+  if(iBV == NULL)
+  {
+    // TBD - log error.
+    return;
+  }
+  m_parent = iBV;
+  iBV->checkIndices(iUpperIndex, iLowerIndex);
   m_upperIndex = iUpperIndex;
   m_lowerIndex = iLowerIndex;
-  m_parent = iBV;
   if(m_upperIndex > m_parent->m_size)
   {
     m_upperIndex = m_parent->m_size;
@@ -240,17 +288,60 @@ UInt64 BitVector::PartSelect::getUInt64()
 // =============================
 // ===**  Private Methods  **===
 // =============================
-void BitVector::PartSelect::checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex)
-{
-  if(iUpperIndex < iLowerIndex)
-  {
-    UInt32 tmp = iLowerIndex;
-    iLowerIndex = iUpperIndex;
-    iUpperIndex = tmp;
-  }
-}
 void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
 {
+  if((this->m_parent == NULL) || (iBits.m_parent == NULL))
+  {
+    // TBD - log error.
+    return;
+  }
+  // Note: Assuming that the upper and lower values of each PartSelect
+  //       are already validated. This should be done in the [] function.
+  //       So here, we only need to make sure that the source selection
+  //       will fit into the destination selection.
+  //       If the PartSelects are differently sized, shrink the larger
+  //       to the size of the smaller.
+  // 1. Confirm the source and destination indicis to use (as above).
+  // 2. Determine which source and destination words will be used.
+  // 3. Determine the masking and shifting of each source word.
+  //  - If a source word is partially selected, it requires masking.
+  //  - If the source and destination lower indicis have different %32
+  //    values, shifting will be involved.
+  //  - If a destination word is partially selected, it requires OR'ing.
+  UInt32 l_srcLowerIdx = iBits.m_lowerIndex;
+  UInt32 l_srcUpperIdx = iBits.m_upperIndex;
+  UInt32 l_srcSize = l_srcUpperIdx - l_srcLowerIdx + 1;
+  UInt32 l_dstSize = this->m_upperIndex - this->m_lowerIndex + 1;
+  if(l_srcSize > l_dstSize)
+  {
+    // TBD - log warning.
+    // ex: bv_a[15:0] = bv_b[31:8]; => bv_a[15:0] = bv_b[23:8];
+    l_srcUpperIdx = l_srcLowerIdx + l_dstSize - 1;
+    l_srcSize = l_dstSize;
+  }
+  else if(l_srcSize < l_dstSize)
+  {
+    // TBD - log warning.
+    // ex: bv_a[23:0] = bv_b[23:8]; => bv_a[15:0] = bv_b[23:8];
+    this->m_upperIndex = this->m_lowerIndex + l_srcSize - 1;
+    l_dstSize = l_srcSize;
+  }
+
+  UInt32 l_srcLowerWord = iBits.m_parent->getWordNb(l_srcLowerIdx);
+  UInt32 l_srcUpperWord = iBits.m_parent->getWordNb(l_srcUpperIdx);
+  UInt32 l_dstLowerWord = iBits.m_parent->getWordNb(this->m_lowerIndex);
+  UInt32 l_dstUpperWord = iBits.m_parent->getWordNb(this->m_upperIndex);
+
+  UInt32 l_srcLowerShift = iBits.m_parent->getShift(l_srcLowerIdx);
+  UInt32 l_dstLowerShift = iBits.m_parent->getShift(this->m_lowerIndex);
+  
+  UInt32 l_nbSrcBitsCopied = 0;
+  UInt32 l_transferWord = 0;
+  UInt32 l_dstWordCnt = l_dstUpperWord - l_dstLowerWord + 1;
+  for(UInt32 ii=0; ii<l_dstWordCnt; ii++)
+  {
+    // WIP - Stopping point.
+  }
 
 }
 void BitVector::PartSelect::getParentBits(BitVector & oBV) const
