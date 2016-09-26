@@ -63,6 +63,7 @@ void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
   {
     m_bval = new vector<UInt32>(nbWds, 0);
   }
+  setMask();
   m_printFmt = g_printFmt;
   m_printBasePrefix = g_printBasePrefix;
   m_printPrependZeros = g_printPrependZeros;
@@ -74,7 +75,7 @@ void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
 // =============================
 void   BitVector::Resize(UInt32 iNewSize)
 {
-  UInt32 l_wds = getWordNb(iNewSize);
+  UInt32 l_wds = (iNewSize - 1) / 32 + 1;
   m_size = iNewSize;
   if(m_aval->size() != l_wds)
   {
@@ -85,6 +86,7 @@ void   BitVector::Resize(UInt32 iNewSize)
     }
   }
   setMask();
+  m_aval->back() = m_aval->back() & m_mask;
 }
 UInt32 BitVector::GetUInt32() const
 {
@@ -296,8 +298,57 @@ BitVector & BitVector::operator= (UInt32 iRhs)
     // TBD - log error.
     return *this;
   }
-  //UInt32 temp = (UInt32)iRhs;
-  (*m_aval)[0] = iRhs; //temp;
+  m_aval->at(0) = iRhs;
+  return *this;
+}
+BitVector & BitVector::operator= (UInt64 iRhs)
+{
+  if(m_size == 0)
+  {
+    // TBD - log error.
+    return *this;
+  }
+  m_aval->at(0) = (UInt32)iRhs;
+  if(m_aval->size() > 1)
+  {
+    m_aval->at(1) = iRhs >> 32;
+  }
+  return *this;
+}
+BitVector & BitVector::operator= (const BitVector & iRhs)
+{
+  if(&iRhs == NULL)
+  {
+    // TBD - log error;
+    return *this;
+  }
+  if(this->m_size == 0)
+  {
+    // TBD - log warning;
+    this->Resize(iRhs.m_size);
+  }
+  bool l_imBigger = false;
+  // He's 48 bits, im 64, use his #wds and mask.
+  // He's 48 bits, im 16, use my #wds and mask.
+  // Hes  8 bits, im 96, use his #wds and mask, but clear my upper words.
+  UInt32 l_upperWord = this->m_aval->size() < iRhs.m_aval->size() ? this->m_aval->size() - 1 : iRhs.m_aval->size() - 1;
+
+  for(UInt32 ii=0; ii<this->m_aval->size(); ii++)
+  {
+    if(ii <= l_upperWord)
+    {
+      this->m_aval->at(ii) = iRhs.m_aval->at(ii);
+      if(ii == l_upperWord)
+      {
+        this->m_aval->at(ii) &= this->m_mask;
+      }
+    }
+    else
+    {
+      this->m_aval->at(ii) = 0;
+    }
+  }
+
   return *this;
 }
 BitVector::PartSelect BitVector::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex)
