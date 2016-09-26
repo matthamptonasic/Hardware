@@ -461,7 +461,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
   UInt32 l_nbSrcBitsCopied = 0;
   UInt32 l_transferWord = 0;
   UInt32 l_dstWordCnt = l_dstUpperWord - l_dstLowerWord + 1;
-  
+/*
   Vpi::vpi_printf("setParentBits: l_dstWordCnt %d\n", l_dstWordCnt);
   Vpi::vpi_printf("setParentBits: l_srcLowerWord %d\n", l_srcLowerWord);
   Vpi::vpi_printf("setParentBits: l_srcUpperWord %d\n", l_srcUpperWord);
@@ -470,7 +470,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
   Vpi::vpi_printf("setParentBits: l_srcLowerShift %d\n", l_srcLowerShift);
   Vpi::vpi_printf("setParentBits: l_dstLowerShift %d\n", l_dstLowerShift);
   Vpi::vpi_printf("setParentBits: l_dstUpperShift %d\n", l_dstUpperShift);
-  
+*/
   for(UInt32 ii=0; ii<l_dstWordCnt; ii++)
   {
     UInt32 l_transferWord = 0;
@@ -490,28 +490,28 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
     UInt32 l_srcLo = l_srcLowerIdx + l_nbSrcBitsCopied;
     UInt32 l_srcHi = l_srcLowerIdx + l_nbSrcBitsCopied + l_nbSrcBits - 1;
     l_transferWord = iBits.m_parent->getBits(l_srcHi, l_srcLo);
-
+/*
     Vpi::vpi_printf("setParentBits: l_nbSrcBits %d\n", l_nbSrcBits);
     Vpi::vpi_printf("setParentBits: l_srcHi %d\n", l_srcHi);
     Vpi::vpi_printf("setParentBits: l_srcLo %d\n", l_srcLo);
     Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
-
+*/
     if(ii == 0)
     {
       l_transferWord <<= l_dstLowerShift;
       // Get the original word and wipe out the upper part that we're overwriting.
       // Then OR it with our current result which will fit in the part we just wiped out.
       UInt32 msk = this->m_parent->getMask(l_dstLowerShift, true);
-      Vpi::vpi_printf("setParentBits: msk %x\n", msk);
       l_transferWord |= this->m_parent->m_aval->at(l_dstLowerWord) & msk;
-      Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
+      //Vpi::vpi_printf("setParentBits: msk %x\n", msk);
+      //Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
     }
     if(ii == (l_dstWordCnt - 1))
     {
       UInt32 msk = this->m_parent->getMask(l_dstUpperShift);
       l_transferWord |= this->m_parent->m_aval->at(l_dstUpperWord) & msk;
-      Vpi::vpi_printf("setParentBits: msk %x\n", msk);
-      Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
+      //Vpi::vpi_printf("setParentBits: msk %x\n", msk);
+      //Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
     }
     this->m_parent->m_aval->at(l_dstLowerWord + ii) = l_transferWord;
     l_nbSrcBitsCopied += l_nbSrcBits;
