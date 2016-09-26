@@ -1,8 +1,8 @@
 CC = g++
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../Common
-VPATH = ../Common
+INC = -I../Common -I../Pli -I$(VPI_USER)
+VPATH = ../Common ../Pli $(VPI_USER)
 
 _OBJS = BitVector.o
 
