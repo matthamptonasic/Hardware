@@ -55,17 +55,38 @@ class BitVector {
     TWO_STATE = 0,
     FOUR_STATE = 1
   };
+  enum class PRINT_FMT : Byte
+  {
+    DEC = 0,
+    HEX = 1
+  };
 
   // Static Members
   private:
-    static NB_STATES g_nbStates;
-    static const string g_default_name;
-    static const UInt32 g_default_size;
+    static NB_STATES      g_nbStates;
+    static bool           g_useGlobalStates;
+    static const string   g_default_name;
+    static const UInt32   g_default_size;
+    static bool           g_useGlobalPrintSettings;
+    static PRINT_FMT      g_printFmt;
+    static bool           g_printBasePrefix;    // For hex only.
+    static bool           g_printPrependZeros;  // For hex only.
+    static bool           g_printHexWordDivider;// Underscore between words.
 
   // Static Properties
   public:
     static NB_STATES g_NbStates_get() { return g_nbStates; }
-    static void      g_NbStates_set(const NB_STATES iStates) { g_nbStates = iStates; }
+    static void      g_NbStates_set(NB_STATES iStates) { g_nbStates = iStates; }
+    static bool      g_UseGlobalStates_get() { return g_useGlobalStates; }
+    static void      g_UseGlobalStates_set(bool iUseGlobal ) { g_useGlobalStates = iUseGlobal; }
+    static bool      g_UseGlobalPrintSettings_get() { return g_useGlobalPrintSettings; }
+    static void      g_UseGlobalPrintSettings_set(bool iUseGlobal ) { g_useGlobalPrintSettings = iUseGlobal; }
+    static PRINT_FMT g_PrintFmt_get() { return g_printFmt; }
+    static void      g_PrintFmt_set(PRINT_FMT iFmt) { g_printFmt = iFmt; }
+    static bool      g_PrintBasePrefix_get() { return g_printBasePrefix; }
+    static void      g_PrintBasePrefix_set(bool iUsePrefix) { g_printBasePrefix = iUsePrefix; } 
+    static bool      g_PrintPrependZeros_get() { return g_printPrependZeros; }
+    static void      g_PrintPrependZeros_set(bool iPrependZeros) { g_printPrependZeros = iPrependZeros; }
 
   // Private Members
   private:
@@ -75,11 +96,23 @@ class BitVector {
     vector<UInt32> * m_aval;
     vector<UInt32> * m_bval;
     NB_STATES m_nbStates;
+    PRINT_FMT m_printFmt;
+    bool m_printBasePrefix;
+    bool m_printPrependZeros;
+    bool m_printHexWordDivider;
 
   // Public Properties
   public:
     NB_STATES NbStates_get() const { return m_nbStates; }
     void      NbStates_set(const NB_STATES iStates) { m_nbStates = iStates; }
+    PRINT_FMT PrintFmt_get() const { return m_printFmt; }
+    void      PrintFmt_set(const PRINT_FMT iFmt) { m_printFmt = iFmt; }
+    bool      PrintBasePrefix_get() { return m_printBasePrefix; }
+    void      PrintBasePrefix_set(bool iUseBase) { m_printBasePrefix = iUseBase; }
+    bool      PrintPrependZeros_get() { return m_printPrependZeros; }
+    void      PrintPrependZeros_set(bool iPrepend) { m_printPrependZeros = iPrepend; }
+    bool      PrintHexWordDivider_get() { return m_printHexWordDivider; }
+    void      PrintHexWordDivider_set(bool iUseDivider) { m_printHexWordDivider = iUseDivider; }
 
   // Constructors
   public:
@@ -96,20 +129,21 @@ class BitVector {
     void    Resize(UInt32 iNewSize);
     UInt32  GetUInt32() const;
     UInt64  GetUInt64() const;
+    string  ToString() const;
+    void    Print() const;
 
   // Private Methods
   private:
     void    checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex);
     UInt32  getWordNb(UInt32 iBitPos);
     Byte    getShift(UInt32 iBitPos);
-    UInt32  getMask(UInt32 iUpperIndex);
+    UInt32  getMask(UInt32 iUpperIndex, bool iReverse = false);
     void    setMask();
     //Must be 32-bits or less.
     UInt32  getBits(UInt32 iUpperIndex, UInt32 iLowerIndex);
+    void    setUInt32(UInt32 iVal);
+    void    setUInt64(UInt64 iVal);
 
-  // Operators
-  public:
-  BitVector & operator= (Int32 iRhs);
 
   // ===== Part Select Class =====
   // Why?
@@ -181,8 +215,13 @@ class BitVector {
 
     // Operators
     public:
-
+    PartSelect & operator= (UInt32 iRhs);
   };
+
+  // BitVector Operators
+  public:
+  BitVector & operator= (UInt32 iRhs);
+  PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
 
 };
 
