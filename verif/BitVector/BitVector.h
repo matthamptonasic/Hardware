@@ -221,6 +221,8 @@ class BitVector {
   // BitVector Operators
   public:
   BitVector & operator= (UInt32 iRhs);
+  BitVector & operator= (UInt64 iRhs);
+  BitVector & operator= (const BitVector & iRhs);
   PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
 
 };
