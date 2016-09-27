@@ -23,22 +23,22 @@
 // ====================================
 // ===**  Private Static Members  **===
 // ====================================
-BitVector::NB_STATES BitVector::g_nbStates = BitVector::NB_STATES::TWO_STATE;
-bool BitVector::g_useGlobalStates = true;
-const string BitVector::g_default_name = "Anonymous";
-const UInt32 BitVector::g_default_size = 32;
-bool BitVector::g_useGlobalPrintSettings = false;
-BitVector::PRINT_FMT BitVector::g_printFmt = BitVector::PRINT_FMT::HEX;
-bool BitVector::g_printBasePrefix = true;
-bool BitVector::g_printPrependZeros = true;
-bool BitVector::g_printHexWordDivider = true;
+BitVector::NB_STATES BitVector::s_nbStates = BitVector::NB_STATES::TWO_STATE;
+bool BitVector::s_useGlobalStates = true;
+const string BitVector::s_default_name = "Anonymous";
+const UInt32 BitVector::s_default_size = 32;
+bool BitVector::s_useGlobalPrintSettings = false;
+BitVector::PRINT_FMT BitVector::s_printFmt = BitVector::PRINT_FMT::HEX;
+bool BitVector::s_printBasePrefix = true;
+bool BitVector::s_printPrependZeros = true;
+bool BitVector::s_printHexWordDivider = true;
 
 // =============================
 // ===**   Constructors    **===
 // =============================
 BitVector::BitVector(string iName)
 {
-  init(iName, 0, g_nbStates);
+  init(iName, 0, s_nbStates);
 }
 BitVector::BitVector(string iName, UInt32 iSize, BitVector::NB_STATES iStates)
 {
@@ -46,7 +46,7 @@ BitVector::BitVector(string iName, UInt32 iSize, BitVector::NB_STATES iStates)
 }
 BitVector::BitVector(UInt32 iSize)
 {
-  init(g_default_name, iSize, g_nbStates);
+  init(s_default_name, iSize, s_nbStates);
 }
 
 // =============================
@@ -64,10 +64,10 @@ void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
     m_bval = new vector<UInt32>(nbWds, 0);
   }
   setMask();
-  m_printFmt = g_printFmt;
-  m_printBasePrefix = g_printBasePrefix;
-  m_printPrependZeros = g_printPrependZeros;
-  m_printHexWordDivider = g_printHexWordDivider;
+  m_printFmt = s_printFmt;
+  m_printBasePrefix = s_printBasePrefix;
+  m_printPrependZeros = s_printPrependZeros;
+  m_printHexWordDivider = s_printHexWordDivider;
 }
 
 // =============================
@@ -103,11 +103,11 @@ UInt64 BitVector::GetUInt64() const
 }
 string BitVector::ToString() const
 {
-  bool      l_glbl = g_useGlobalPrintSettings;
-  PRINT_FMT l_printFmt = l_glbl ? g_printFmt : m_printFmt;
-  bool      l_printBasePrefix = l_glbl ? g_printBasePrefix : m_printBasePrefix;
-  bool      l_printPrependZeros = l_glbl ? g_printPrependZeros : m_printPrependZeros;
-  bool      l_printHexWordDivider = l_glbl ? g_printHexWordDivider : m_printHexWordDivider;
+  bool      l_glbl = s_useGlobalPrintSettings;
+  PRINT_FMT l_printFmt = l_glbl ? s_printFmt : m_printFmt;
+  bool      l_printBasePrefix = l_glbl ? s_printBasePrefix : m_printBasePrefix;
+  bool      l_printPrependZeros = l_glbl ? s_printPrependZeros : m_printPrependZeros;
+  bool      l_printHexWordDivider = l_glbl ? s_printHexWordDivider : m_printHexWordDivider;
 
   // TBD - Handle decimal for > 32-bits.
   // TBD - Trim off bits that don't exist (ex. 65-bit BV will print 3 full words).

@@ -63,30 +63,30 @@ class BitVector {
 
   // Static Members
   private:
-    static NB_STATES      g_nbStates;
-    static bool           g_useGlobalStates;
-    static const string   g_default_name;
-    static const UInt32   g_default_size;
-    static bool           g_useGlobalPrintSettings;
-    static PRINT_FMT      g_printFmt;
-    static bool           g_printBasePrefix;    // For hex only.
-    static bool           g_printPrependZeros;  // For hex only.
-    static bool           g_printHexWordDivider;// Underscore between words.
+    static NB_STATES      s_nbStates;
+    static bool           s_useGlobalStates;
+    static const string   s_default_name;
+    static const UInt32   s_default_size;
+    static bool           s_useGlobalPrintSettings;
+    static PRINT_FMT      s_printFmt;
+    static bool           s_printBasePrefix;    // For hex only.
+    static bool           s_printPrependZeros;  // For hex only.
+    static bool           s_printHexWordDivider;// Underscore between words.
 
   // Static Properties
   public:
-    static NB_STATES g_NbStates_get() { return g_nbStates; }
-    static void      g_NbStates_set(NB_STATES iStates) { g_nbStates = iStates; }
-    static bool      g_UseGlobalStates_get() { return g_useGlobalStates; }
-    static void      g_UseGlobalStates_set(bool iUseGlobal ) { g_useGlobalStates = iUseGlobal; }
-    static bool      g_UseGlobalPrintSettings_get() { return g_useGlobalPrintSettings; }
-    static void      g_UseGlobalPrintSettings_set(bool iUseGlobal ) { g_useGlobalPrintSettings = iUseGlobal; }
-    static PRINT_FMT g_PrintFmt_get() { return g_printFmt; }
-    static void      g_PrintFmt_set(PRINT_FMT iFmt) { g_printFmt = iFmt; }
-    static bool      g_PrintBasePrefix_get() { return g_printBasePrefix; }
-    static void      g_PrintBasePrefix_set(bool iUsePrefix) { g_printBasePrefix = iUsePrefix; } 
-    static bool      g_PrintPrependZeros_get() { return g_printPrependZeros; }
-    static void      g_PrintPrependZeros_set(bool iPrependZeros) { g_printPrependZeros = iPrependZeros; }
+    static NB_STATES s_NbStates_get() { return s_nbStates; }
+    static void      s_NbStates_set(NB_STATES iStates) { s_nbStates = iStates; }
+    static bool      s_UseGlobalStates_get() { return s_useGlobalStates; }
+    static void      s_UseGlobalStates_set(bool iUseGlobal ) { s_useGlobalStates = iUseGlobal; }
+    static bool      s_UseGlobalPrintSettings_get() { return s_useGlobalPrintSettings; }
+    static void      s_UseGlobalPrintSettings_set(bool iUseGlobal ) { s_useGlobalPrintSettings = iUseGlobal; }
+    static PRINT_FMT s_PrintFmt_get() { return s_printFmt; }
+    static void      s_PrintFmt_set(PRINT_FMT iFmt) { s_printFmt = iFmt; }
+    static bool      s_PrintBasePrefix_get() { return s_printBasePrefix; }
+    static void      s_PrintBasePrefix_set(bool iUsePrefix) { s_printBasePrefix = iUsePrefix; } 
+    static bool      s_PrintPrependZeros_get() { return s_printPrependZeros; }
+    static void      s_PrintPrependZeros_set(bool iPrependZeros) { s_printPrependZeros = iPrependZeros; }
 
   // Private Members
   private:
@@ -116,9 +116,9 @@ class BitVector {
 
   // Constructors
   public:
-    BitVector(string iName = g_default_name);
-    BitVector(string iName, UInt32 iSize, NB_STATES iStates = g_nbStates);
-    BitVector(UInt32 iSize = g_default_size);
+    BitVector(string iName = s_default_name);
+    BitVector(string iName, UInt32 iSize, NB_STATES iStates = s_nbStates);
+    BitVector(UInt32 iSize = s_default_size);
 
   // Inits
   private:
