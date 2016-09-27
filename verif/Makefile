@@ -6,6 +6,7 @@ all:
 	cd Pli && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 	cd Signals && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 	cd Test && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
+	cd Logging && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 
 cleanall:
 	rm -f $(ODIR)/*.o
