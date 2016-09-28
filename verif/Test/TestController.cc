@@ -30,17 +30,16 @@
 // =============================
 vector<string> & TestController::CommandLineArgs_get()
 {
-  Init();
   return *m_commandLineArgs;
 }
 
 // =============================
 // ===**    Constructor    **===
 // =============================
-/*TestController::TestController()
+TestController::TestController()
 {
   Init();
-}*/
+}
 // =============================
 // ===**      Inits        **===
 // =============================
@@ -60,7 +59,6 @@ void TestController::Init()
 // =============================
 void TestController::PrintCommandLineArgs()
 {
-  Init();
   for(UInt32 ii=0; ii<m_commandLineArgs->size(); ii++)
   {
     // TBD - change to logger.

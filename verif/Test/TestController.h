@@ -49,7 +49,7 @@ class TestController
       return ls_inst;                // Instantiated on 1st use.
     }
   private:
-    TestController() { }
+    TestController();
   public:
     TestController(TestController const &) = delete; // These are public for clarity of debug.
     void operator=(TestController const &) = delete; // Can be made private if intellisense is used.
