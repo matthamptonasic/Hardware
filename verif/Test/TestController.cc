@@ -45,13 +45,7 @@ TestController::TestController()
 // =============================
 void TestController::Init()
 {
-  if(m_initDone)
-  {
-    return;
-  }
   commandLineArgs_set();
-
-  m_initDone = true;
 }
 
 // =============================

@@ -34,7 +34,6 @@ class TestController
 
   // Private Members
   private:
-    bool             m_initDone;
     vector<string> * m_commandLineArgs;
 
   // Public Properties
