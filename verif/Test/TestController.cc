@@ -24,8 +24,6 @@
 // ====================================
 // ===**  Private Static Members  **===
 // ====================================
-bool             TestController::s_initDone = false;
-vector<string> * TestController::s_commandLineArgs = nullptr;
 
 // =============================
 // ===** Public Properties **===
@@ -33,25 +31,28 @@ vector<string> * TestController::s_commandLineArgs = nullptr;
 vector<string> & TestController::CommandLineArgs_get()
 {
   Init();
-  return *s_commandLineArgs;
+  return *m_commandLineArgs;
 }
 
 // =============================
 // ===**    Constructor    **===
 // =============================
-
+/*TestController::TestController()
+{
+  Init();
+}*/
 // =============================
 // ===**      Inits        **===
 // =============================
 void TestController::Init()
 {
-  if(s_initDone)
+  if(m_initDone)
   {
     return;
   }
   commandLineArgs_set();
 
-  s_initDone = true;
+  m_initDone = true;
 }
 
 // =============================
@@ -60,10 +61,10 @@ void TestController::Init()
 void TestController::PrintCommandLineArgs()
 {
   Init();
-  for(UInt32 ii=0; ii<s_commandLineArgs->size(); ii++)
+  for(UInt32 ii=0; ii<m_commandLineArgs->size(); ii++)
   {
     // TBD - change to logger.
-    Vpi::vpi_printf("Argument[%d] '%s'\n", ii, s_commandLineArgs->at(ii).c_str());
+    Vpi::vpi_printf("Argument[%d] '%s'\n", ii, m_commandLineArgs->at(ii).c_str());
   }
 }
 
@@ -72,11 +73,7 @@ void TestController::PrintCommandLineArgs()
 // =============================
 void TestController::commandLineArgs_set()
 {
-  if(!s_initDone)
-  {
-    s_commandLineArgs = Pli::GetCommandLineArgs();
-  }
-  return;
+  m_commandLineArgs = Pli::GetCommandLineArgs();
 }
 
 // =============================

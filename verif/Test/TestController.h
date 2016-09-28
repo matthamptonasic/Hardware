@@ -34,24 +34,37 @@ class TestController
 
   // Private Members
   private:
-    static bool             s_initDone;
-    static vector<string> * s_commandLineArgs;
+    bool             m_initDone;
+    vector<string> * m_commandLineArgs;
 
   // Public Properties
   public:
-    static vector<string> & CommandLineArgs_get();
+    vector<string> & CommandLineArgs_get();
+
+  // Singleton Pattern
+  public:
+    static TestController & Access()
+    {
+      static TestController ls_inst; // Guaranteed to be destroyed.
+      return ls_inst;                // Instantiated on 1st use.
+    }
+  private:
+    TestController() { }
+  public:
+    TestController(TestController const &) = delete; // These are public for clarity of debug.
+    void operator=(TestController const &) = delete; // Can be made private if intellisense is used.
 
   // Inits
-  public:
-    static void Init();
+  private:
+    void Init();
 
   // Public Methods
   public:
-    static void PrintCommandLineArgs();
+    void PrintCommandLineArgs();
 
   // Private Methods
   private:
-    static void commandLineArgs_set();
+    void commandLineArgs_set();
 
 };
 
