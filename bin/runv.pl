@@ -43,7 +43,8 @@ GetOptions( "quiet" => \$quiet,
             "no_build_vpi" => \$no_build_vpi,
             "no_dump" => \$no_dump,
             "no_run" => \$no_run,
-            "run_from=s" => \$run_from);
+            "run_from=s" => \$run_from,
+            "c_args=s" => \$c_args);
 
 my $dump_path;
 my $base_path;
@@ -344,6 +345,9 @@ sub v_sim
   $sim_plus_args .= " +vcd_file=" . $dump_path . "/" . $wave_file_name;
   if(!$no_dump) {
     $sim_plus_args .= " +dump_on";
+  }
+  if($c_args) {
+    $sim_plus_args .= ' +c_args=\"' . $c_args . '\"';
   }
   $vvp_cmd .= " $sim_plus_args";
 
