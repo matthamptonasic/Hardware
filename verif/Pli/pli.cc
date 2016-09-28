@@ -114,6 +114,19 @@ Vpi::OBJECT Pli::GetType(vpiHandle iHndl)
   return (Vpi::OBJECT)Vpi::vpi_get(Vpi::PROPERTY::TYPE, iHndl);
 }
 
+vector<string> * Pli::GetCommandLineArgs()
+{
+  Vpi::p_vpi_vlog_info l_info = new Vpi::t_vpi_vlog_info();
+  Vpi::vpi_get_vlog_info(l_info);
+  UInt32 l_size = l_info->argc;
+  vector<string> * retVal = new vector<string>(l_size, "");
+  for(UInt32 ii=0; ii<l_size; ii++)
+  {
+    retVal->at(ii) = string(l_info->argv[ii]);
+  }
+  return retVal;
+}
+
 //
 // =============================
 // ===**  Private Methods  **===

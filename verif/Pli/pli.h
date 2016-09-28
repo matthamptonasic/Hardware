@@ -16,6 +16,9 @@
 #ifndef PLI_H
 #define PLI_H
 
+#include <string>
+#include <vector>
+
 #include "Common.h"
 #include "vpi.h"
 
@@ -33,6 +36,7 @@ class Pli
   static Vpi::SCALAR_VAL  GetScalar(vpiHandle iHndl);
   static Vpi::OBJECT      GetType(vpiHandle iHndl);
   static UInt32           GetVector(vpiHandle iHndl);
+  static vector<string> * GetCommandLineArgs();
 
   // Private Methods
   private:
