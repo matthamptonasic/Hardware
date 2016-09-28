@@ -17,6 +17,7 @@
 #ifndef TESTCONTROLLER_H
 #define TESTCONTROLLER_H
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -29,12 +30,20 @@ class TestController
   // Enums
   public:
 
+  // Constants
+  private:
+    const string c_cArgsPrefix = "+c_args=";
+
   // Nested Classes
   public:
 
   // Private Members
   private:
-    vector<string> * m_commandLineArgs;
+    vector<string> *      m_commandLineArgs;
+    string                m_cArgs;
+    map<string, Int32> *  m_nameToInt32Map;
+    map<string, Int64> *  m_nameToInt64Map;
+    map<string, string> * m_nameToStringMap;
 
   // Public Properties
   public:
@@ -55,7 +64,7 @@ class TestController
 
   // Inits
   private:
-    void Init();
+    void init();
 
   // Public Methods
   public:
@@ -64,6 +73,8 @@ class TestController
   // Private Methods
   private:
     void commandLineArgs_set();
+    void findCArgs();
+    void parseCArgs();
 
 };
 

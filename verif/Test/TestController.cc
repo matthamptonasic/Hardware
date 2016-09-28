@@ -38,14 +38,15 @@ vector<string> & TestController::CommandLineArgs_get()
 // =============================
 TestController::TestController()
 {
-  Init();
+  init();
 }
 // =============================
 // ===**      Inits        **===
 // =============================
-void TestController::Init()
+void TestController::init()
 {
   commandLineArgs_set();
+  findCArgs();
 }
 
 // =============================
@@ -58,6 +59,7 @@ void TestController::PrintCommandLineArgs()
     // TBD - change to logger.
     Vpi::vpi_printf("Argument[%d] '%s'\n", ii, m_commandLineArgs->at(ii).c_str());
   }
+    Vpi::vpi_printf("cArgs = '%s'\n", m_cArgs.c_str());
 }
 
 // =============================
@@ -66,6 +68,30 @@ void TestController::PrintCommandLineArgs()
 void TestController::commandLineArgs_set()
 {
   m_commandLineArgs = Pli::GetCommandLineArgs();
+}
+void TestController::findCArgs()
+{
+  // Loop through the vector of arguments and find one that starts with "+c_args=".
+  m_cArgs = "";
+  for(UInt32 ii=0; ii<m_commandLineArgs->size(); ii++)
+  {
+    if(m_commandLineArgs->at(ii).find(c_cArgsPrefix) != string::npos)
+    {
+      if(m_cArgs != "")
+      {
+        m_cArgs += " ";
+      }
+      m_cArgs += m_commandLineArgs->at(ii).substr(c_cArgsPrefix.size());
+    }
+  }
+}
+void TestController::parseCArgs()
+{
+  // Trim spaces.
+  // Split by spaces.
+  // Each string is now its own argument.
+  // Trim off any quotes.
+  // Parse token and value.
 }
 
 // =============================
