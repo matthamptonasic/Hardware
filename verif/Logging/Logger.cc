@@ -32,6 +32,8 @@ UInt32 Logger::Scope::s_vrb_HIGH    = 300;
 UInt32 Logger::Scope::s_vrb_FULL    = 400;
 UInt32 Logger::Scope::s_vrb_DEBUG   = 500;
 
+UInt32 Logger::Scope::s_count = 0;
+
 // =============================
 // ===**    Constructor    **===
 // =============================
@@ -71,6 +73,11 @@ Logger::Scope::Scope(string iName, UInt32 iLevel)
 // ====================================
 bool Logger::s_initDone = false;
 bool Logger::s_alwaysLogScopes = true;
+list<Logger::Scope> Logger::s_scopes;
+map<string, UInt32> Logger::s_scopeNameToIdMap;
+
+string Logger::s_fileName = "";
+fstream Logger::s_oFile;
 
 // =============================
 // ===**      Inits        **===
