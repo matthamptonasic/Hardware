@@ -4,7 +4,8 @@ SDIR = .
 INC = -I../Common -I../Pli -I$(VPI_USER)
 VPATH = ../Common ../Pli $(VPI_USER)
 
-_OBJS = Parsing.o
+_OBJS = Manip.o \
+			  Parsing.o
 
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
