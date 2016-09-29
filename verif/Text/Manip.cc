@@ -52,4 +52,36 @@ vector<string> Split(const string & iText, const char iDelim) {
     return l_retVal;
 }
 
+string TrimLeft(const string & iText, string iTrimChars)
+{
+  Int32 l_firstKeepChar = iText.find_first_not_of(iTrimChars);
+  if(l_firstKeepChar == string::npos)
+  {
+    return ""; // No keep characters, only trim character or empty string.
+  }
+  else
+  {
+    return iText.substr(l_firstKeepChar);
+  }
+}
+
+string TrimRight(const string & iText, string iTrimChars)
+{
+  Int32 l_lastKeepChar = iText.find_last_not_of(iTrimChars);
+  if(l_lastKeepChar == string::npos)
+  {
+    return ""; // No keep characters, only trim character or empty string.
+  }
+  else
+  {
+    return iText.substr(0, l_lastKeepChar + 1);
+  }
+}
+
+string Trim(const string & iText, string iTrimChars)
+{
+  // TBD - Would be better to have at least 1 modify-in-place methods here.
+  return TrimLeft(TrimRight(iText, iTrimChars), iTrimChars);
+}
+
 }}
