@@ -29,7 +29,7 @@ string Replace(const string & iText, const string & iPattern, const string & iRe
   {
     return l_retVal;
   }
-  UInt32 l_pos = l_retVal.find(iPattern);
+  Int32 l_pos = l_retVal.find(iPattern);
   if(l_pos != string::npos)
   {
     l_retVal = l_retVal.replace(l_pos, iPattern.size(), iReplacement);
