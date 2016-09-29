@@ -24,8 +24,13 @@ using namespace std;
 
 namespace Text { namespace Manip {
 
+const string    g_DefaultTrimChars = " \t\n\r\"\'";
+
 string          Replace(const string & iText, const string & iPattern, const string & iReplacement);
 void            Split(const string & iText, const char iDelim, vector<string> & oStrings);
 vector<string>  Split(const string & iText, const char iDelim);
+string          TrimLeft(const string & iText, string iTrimChars = g_DefaultTrimChars);
+string          TrimRight(const string & iText, string iTrimChars = g_DefaultTrimChars);
+string          Trim(const string & iText, string iTrimChars = g_DefaultTrimChars);
 
 }}
