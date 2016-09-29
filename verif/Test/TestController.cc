@@ -14,8 +14,15 @@
 ###############################################################################
 */
 
+#include "Manip.h"
 #include "pli.h"
+#include "Parsing.h"
 #include "TestController.h"
+
+using namespace std;
+using namespace Text;
+using namespace Text::Manip;
+using namespace Text::Parsing;
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**   TestController Class    **===
@@ -75,13 +82,13 @@ void TestController::findCArgs()
   m_cArgs = "";
   for(UInt32 ii=0; ii<m_commandLineArgs->size(); ii++)
   {
-    if(m_commandLineArgs->at(ii).find(c_cArgsPrefix) != string::npos)
+    if(Parsing::StartsWith(m_commandLineArgs->at(ii), c_cArgsPrefix))
     {
       if(m_cArgs != "")
       {
         m_cArgs += " ";
       }
-      m_cArgs += m_commandLineArgs->at(ii).substr(c_cArgsPrefix.size());
+      m_cArgs += Manip::Replace(m_commandLineArgs->at(ii), c_cArgsPrefix, "");
     }
   }
 }
