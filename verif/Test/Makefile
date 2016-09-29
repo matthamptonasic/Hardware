@@ -1,8 +1,14 @@
 CC = g++
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../Common -I../Pli -I$(VPI_USER)
-VPATH = ../Common ../Pli $(VPI_USER)
+INC = -I../Common \
+		  -I../Pli \
+			-I$(VPI_USER) \
+			-I../Text
+VPATH = ../Common \
+			  ../Pli \
+				$(VPI_USER) \
+				../Text
 
 _OBJS = TestController.o \
 				TestBase.o
