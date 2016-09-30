@@ -14,6 +14,8 @@
 ###############################################################################
 */
 
+#include <algorithm>
+
 #include "pli.h"
 
 // ====================================
@@ -124,6 +126,7 @@ vector<string> * Pli::GetCommandLineArgs()
   {
     retVal->at(ii) = string(l_info->argv[ii]);
   }
+  mergeStringCLArgs(*retVal);
   return retVal;
 }
 
@@ -131,4 +134,72 @@ vector<string> * Pli::GetCommandLineArgs()
 // =============================
 // ===**  Private Methods  **===
 // =============================
+// When the arguments are parsed, the simulator may (e.g. in iVerilog)
+// break up the CLI arguments based on spaces and ignore surrounding quotation
+// marks. For example:
+// +c_args="nbPkts=50 dbgMode=2" will be broken up into 2 different strings.
+// #1: +c_args="nbPkts=50
+// #2: dbgMode=2"
+// This method tapes them back together. It will also shrink the vector accordingly. 
+void Pli::mergeStringCLArgs(vector<string> & ioArgs)
+{
+  UInt32 l_appendIndex = 0;
+  bool l_even = true;
+  UInt32 l_finalSize = ioArgs.size();
 
+  for(UInt32 ii=0; ii<ioArgs.size(); ii++)
+  {
+    Int32 l_nbQuotes = std::count(ioArgs[ii].begin(), ioArgs[ii].end(), '\"');
+    //vpi_printf("nbQuotes %d => %s\n", l_nbQuotes, ioArgs[ii].c_str());
+    if(l_even && ((l_nbQuotes % 2) == 0))
+    {
+      // No action, we're still even.
+    }
+    else if(l_even && ((l_nbQuotes % 2) == 1))
+    {
+      // We're not even. This is where we'll append to.
+      l_appendIndex = ii;
+      l_even = false;
+    }
+    else
+    {
+      // We were not even before, append to previous index.
+      ioArgs[l_appendIndex] += " " + ioArgs[ii];
+      ioArgs[ii] = "";
+      l_even = (l_nbQuotes % 2) == 1;
+      l_finalSize--;
+    }
+  }
+
+  // Now collapse the vector down.
+  for(UInt32 kk=0; kk<ioArgs.size(); kk++)
+  {
+    if(ioArgs[kk] == "")
+    {
+      bool l_allEmpty = true;
+      // Scan forward to next non-empty string.
+      for(UInt32 mm=kk+1; mm<ioArgs.size(); mm++)
+      {
+        if(ioArgs[mm] != "")
+        {
+          ioArgs[kk] = ioArgs[mm];
+          ioArgs[mm] = "";
+          l_allEmpty = false;
+          break;
+        }
+      }
+      if(l_allEmpty)
+      {
+        break;
+      }
+    }
+  }
+
+  ioArgs.resize(l_finalSize);
+
+  // Count number of quotes. If odd, merge with the following
+  // string until the total count is even.
+  // If we get to the end with an odd number, report an error.
+
+
+}
