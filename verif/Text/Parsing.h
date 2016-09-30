@@ -14,7 +14,9 @@
 ###############################################################################
 */
 
+#include <sstream>
 #include <string>
+#include <vector>
 
 #include "Common.h"
 
@@ -22,7 +24,6 @@ using namespace std;
 
 namespace Text { namespace Parsing {
 
-string Replace(const string & iText, const string & iPattern, const string & iReplacement);
-bool StartsWith(const string & iText, const string & iPattern);
+bool            StartsWith(const string & iText, const string & iPattern);
 
 }}
