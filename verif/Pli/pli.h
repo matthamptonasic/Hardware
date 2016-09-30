@@ -40,7 +40,7 @@ class Pli
 
   // Private Methods
   private:
-
+  static void             mergeStringCLArgs(vector<string> & ioArgs);
 };
 
 #endif /* PLI_H */
