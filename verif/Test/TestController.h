@@ -41,9 +41,10 @@ class TestController
   private:
     vector<string> *      m_commandLineArgs;
     string                m_cArgs;
-    map<string, Int32> *  m_nameToInt32Map;
     map<string, Int64> *  m_nameToInt64Map;
+    map<string, UInt64> * m_nameToUInt64Map;
     map<string, string> * m_nameToStringMap;
+    map<string, bool> *   m_nameToPrintHexMap;
 
   // Public Properties
   public:
@@ -65,6 +66,7 @@ class TestController
   // Inits
   private:
     void init();
+    void initMaps();
 
   // Public Methods
   public:
@@ -75,6 +77,11 @@ class TestController
     void commandLineArgs_set();
     void findCArgs();
     void parseCArgs();
+    void parseTokenValue(string & iToken, string & iValue);
+    bool checkNumberBase10(const char & iChar);
+    bool checkNumberBase16(const char & iChar);
+    bool checkUInt64Range(const string & iNumber);
+    bool checkInt64Range(const string & iNumber, bool iIsNegative);
 
 };
 
