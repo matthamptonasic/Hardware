@@ -78,6 +78,32 @@ void TestController::PrintCommandLineArgs()
   }
   Vpi::vpi_printf("cArgs = '%s'\n", m_cArgs.c_str());
 }
+UInt32 TestController::GetCmdArg_UInt32(string iName)
+{
+  // Check in UInt64 map.
+  // If no key, check string and return error.
+  // If larger than UInt32, log warning and return max UInt32.
+}
+UInt64 TestController::GetCmdArg_UInt64(string iName)
+{
+  // Check in UInt64 map.
+  // If no key, check string and return error.
+}
+Int32  TestController::GetCmdArg_Int32(string iName)
+{
+  // Check in Int64 map.
+  // If no key, check string and return error.
+  // If larger than Int32, log warning and return max or min Int32.
+}
+Int64  TestController::GetCmdArg_Int64(string iName)
+{
+  // Check in Int64 map.
+  // If no key, check string and return error.
+}
+string TestController::GetCmdArg_string(string iName, bool iLogError)
+{
+  // Check string and return error if it doesn't exist.
+}
 
 // =============================
 // ===**  Private Methods  **===
