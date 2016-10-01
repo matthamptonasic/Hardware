@@ -71,6 +71,11 @@ class TestController
   // Public Methods
   public:
     void PrintCommandLineArgs();
+    UInt32 GetCmdArg_UInt32(string iName);
+    UInt64 GetCmdArg_UInt64(string iName);
+    Int32  GetCmdArg_Int32(string iName);
+    Int64  GetCmdArg_Int64(string iName);
+    string GetCmdArg_string(string iName, bool iLogError = false);
 
   // Private Methods
   private:
