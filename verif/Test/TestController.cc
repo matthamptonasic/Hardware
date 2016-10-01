@@ -152,7 +152,7 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
   string l_number = "";
   for(; ii<iValue.size(); ii++)
   {
-    if(checkNumberBase10(iValue[ii]) || (l_hex && checkNumberBase16(iValue[ii])))
+    if(Parsing::CheckNumberBase10(iValue[ii]) || (l_hex && Parsing::CheckNumberBase16(iValue[ii])))
     {
       l_number += iValue[ii];
     }
@@ -176,7 +176,7 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
     }
     else if(!l_hex && l_signed && (l_number.size() == 19))
     {
-      if(!checkInt64Range(l_number, l_signed))
+      if(!Parsing::CheckInt64Range(l_number, l_signed))
       {
         l_str = true;
         break;
@@ -184,7 +184,7 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
     }
     else if(!l_hex && !l_signed && (l_number.size() == 20))
     {
-      if(!checkUInt64Range(l_number))
+      if(!Parsing::CheckUInt64Range(l_number))
       {
         l_str = true;
         break;
@@ -212,72 +212,6 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
     (*m_nameToUInt64Map)[iToken] = stoull(iValue, nullptr, l_hex ? 16 : 10);
     (*m_nameToPrintHexMap)[iToken] = l_hex;
     Vpi::vpi_printf(string("T/V pair (UInt64) = '%s', '" + l_fmt + "'\n").c_str(), iToken.c_str(), (*m_nameToUInt64Map)[iToken]);
-  }
-}
-
-bool TestController::checkNumberBase10(const char & iChar)
-{
-  if((iChar >= '0') && (iChar <= '9'))
-  {
-    return true;
-  }
-  return false;
-}
-bool TestController::checkNumberBase16(const char & iChar)
-{
-  if(((iChar >= '0') && (iChar <= '9')) || ((iChar >= 'A') && (iChar <= 'F')) || ((iChar >= 'a') && (iChar <= 'f')))
-  {
-    return true;
-  }
-  return false;
-}
-bool TestController::checkUInt64Range(const string & iNumber)
-{
-  if(iNumber.size() <= 20)
-  {
-    return true;
-  }
-  // Unsigned is 0 to 18,446,744,073,709,551,615
-  if((iNumber[0] != '0') && (iNumber[0] != '1'))
-  {
-    return false;
-  }
-  try
-  {
-    string l_lower19 = iNumber.substr(1, 19);
-    UInt64 l_val = stoull(l_lower19);
-    if(l_val <= 8446744073709551615ULL)
-    {
-      return true;
-    }
-    return false;
-  }
-  catch(...)
-  {
-    // TBD - log warning.
-    return false;
-  }
-}
-bool TestController::checkInt64Range(const string & iNumber, bool iIsNegative)
-{
-  if(iNumber.size() <= 19)
-  {
-    return true;
-  }
-  // Signed range is -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
-  try
-  {
-    UInt64 l_val = stoull(iNumber);
-    if((iIsNegative && (l_val <= 9223372036854775808ULL)) || (!iIsNegative && (l_val <= 9223372036854775807ULL)))
-    {
-      return true;
-    }
-    return false;
-  }
-  catch(...)
-  {
-    // TBD - log warning.
-    return false;
   }
 }
 
