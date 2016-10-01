@@ -78,10 +78,6 @@ class TestController
     void findCArgs();
     void parseCArgs();
     void parseTokenValue(string & iToken, string & iValue);
-    bool checkNumberBase10(const char & iChar);
-    bool checkNumberBase16(const char & iChar);
-    bool checkUInt64Range(const string & iNumber);
-    bool checkInt64Range(const string & iNumber, bool iIsNegative);
 
 };
 
