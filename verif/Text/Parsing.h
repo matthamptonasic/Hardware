@@ -25,5 +25,9 @@ using namespace std;
 namespace Text { namespace Parsing {
 
 bool            StartsWith(const string & iText, const string & iPattern);
+bool            CheckNumberBase10(const char & iChar);
+bool            CheckNumberBase16(const char & iChar);
+bool            CheckUInt64Range(const string & iNumber);
+bool            CheckInt64Range(const string & iNumber, bool iIsNegative);
 
 }}
