@@ -38,4 +38,70 @@ bool StartsWith(const string & iText, const string & iPattern)
   return true;
 }
 
+bool CheckNumberBase10(const char & iChar)
+{
+  if((iChar >= '0') && (iChar <= '9'))
+  {
+    return true;
+  }
+  return false;
+}
+bool CheckNumberBase16(const char & iChar)
+{
+  if(((iChar >= '0') && (iChar <= '9')) || ((iChar >= 'A') && (iChar <= 'F')) || ((iChar >= 'a') && (iChar <= 'f')))
+  {
+    return true;
+  }
+  return false;
+}
+bool CheckUInt64Range(const string & iNumber)
+{
+  if(iNumber.size() <= 20)
+  {
+    return true;
+  }
+  // Unsigned is 0 to 18,446,744,073,709,551,615
+  if((iNumber[0] != '0') && (iNumber[0] != '1'))
+  {
+    return false;
+  }
+  try
+  {
+    string l_lower19 = iNumber.substr(1, 19);
+    UInt64 l_val = stoull(l_lower19);
+    if(l_val <= 8446744073709551615ULL)
+    {
+      return true;
+    }
+    return false;
+  }
+  catch(...)
+  {
+    // TBD - log warning.
+    return false;
+  }
+}
+bool CheckInt64Range(const string & iNumber, bool iIsNegative)
+{
+  if(iNumber.size() <= 19)
+  {
+    return true;
+  }
+  // Signed range is -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+  try
+  {
+    UInt64 l_val = stoull(iNumber);
+    if((iIsNegative && (l_val <= 9223372036854775808ULL)) || (!iIsNegative && (l_val <= 9223372036854775807ULL)))
+    {
+      return true;
+    }
+    return false;
+  }
+  catch(...)
+  {
+    // TBD - log warning.
+    return false;
+  }
+}
+
 }}
