@@ -84,6 +84,8 @@ class TestController
     void parseCArgs();
     void parseTokenValue(string & iToken, string & iValue);
 
+    UInt64 getCmdArg_UInt64(string iName, bool & oFound);
+
 };
 
 #endif /* TESTCONTROLLER_H */

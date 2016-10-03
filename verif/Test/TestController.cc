@@ -81,14 +81,22 @@ void TestController::PrintCommandLineArgs()
 UInt32 TestController::GetCmdArg_UInt32(string iName)
 {
   // Check in UInt64 map.
+  // If key found and value is larger than UInt32, log warning and return max UInt32.
   // If no key, check string and return error.
-  // If larger than UInt32, log warning and return max UInt32.
+  bool oFound;
+  UInt64 retVal = getCmdArg_UInt64(iName, oFound);
+  if(oFound && (retVal > 0xffffffffULL))
+  {
+    // TBD - log warning that value will be truncated.
+  }
+  return (UInt32)retVal;
 }
 UInt64 TestController::GetCmdArg_UInt64(string iName)
 {
-  // Check in UInt64 map.
-  // If no key, check string and return error.
+  bool oFound;
+  return getCmdArg_UInt64(iName, oFound);
 }
+
 Int32  TestController::GetCmdArg_Int32(string iName)
 {
   // Check in Int64 map.
@@ -239,6 +247,31 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
     (*m_nameToPrintHexMap)[iToken] = l_hex;
     Vpi::vpi_printf(string("T/V pair (UInt64) = '%s', '" + l_fmt + "'\n").c_str(), iToken.c_str(), (*m_nameToUInt64Map)[iToken]);
   }
+}
+
+UInt64 TestController::getCmdArg_UInt64(string iName, bool & oFound)
+{
+  // Check in UInt64 map.
+  // If no key, check string and return error.
+  map<string, UInt64>::iterator l_itr;
+  l_itr = m_nameToUInt64Map->find(iName);
+  if(l_itr != m_nameToUInt64Map->end())
+  {
+    oFound = true;
+    return (*m_nameToUInt64Map)[iName];
+  }
+  oFound = false;
+  // Check string map.
+  map<string, string>::iterator l_itr2;
+  l_itr2 = m_nameToStringMap->find(iName);
+  if(l_itr2 != m_nameToStringMap->end())
+  {
+    // TBD - log error and show value.
+    string strVal = (*m_nameToStringMap)[iName];
+    return 0;
+  }
+  // TBD - log error.
+  return 0;
 }
 
 // =============================
