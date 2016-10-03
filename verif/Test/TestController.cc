@@ -93,24 +93,38 @@ UInt32 TestController::GetCmdArg_UInt32(string iName)
 }
 UInt64 TestController::GetCmdArg_UInt64(string iName)
 {
-  bool oFound;
-  return getCmdArg_UInt64(iName, oFound);
+  bool l_found;
+  return getCmdArg_UInt64(iName, l_found);
 }
 
 Int32  TestController::GetCmdArg_Int32(string iName)
 {
   // Check in Int64 map.
+  // If key found and value is larger than Int32, log warning and return max Int32.
   // If no key, check string and return error.
-  // If larger than Int32, log warning and return max or min Int32.
+  bool oFound;
+  UInt64 retVal = getCmdArg_Int64(iName, oFound);
+  if((oFound && (retVal > 2147483647LL)) || (oFound && (retVal < -2147483648LL)))
+  {
+    // TBD - log warning that value will be truncated.
+  }
+  return (Int32)retVal;
 }
 Int64  TestController::GetCmdArg_Int64(string iName)
 {
-  // Check in Int64 map.
-  // If no key, check string and return error.
+  bool l_found = false;
+  return getCmdArg_Int64(iName, l_found);
 }
-string TestController::GetCmdArg_string(string iName, bool iLogError)
+string TestController::GetCmdArg_string(string iName)
 {
   // Check string and return error if it doesn't exist.
+  bool l_found = false;
+  string l_retVal = getCmdArg_string(iName, l_found);
+  if(!l_found)
+  {
+    // TBD - log error.
+  }
+  return l_retVal;
 }
 
 // =============================
@@ -261,17 +275,52 @@ UInt64 TestController::getCmdArg_UInt64(string iName, bool & oFound)
     return (*m_nameToUInt64Map)[iName];
   }
   oFound = false;
+  bool l_strFound = false;
+  string l_retVal = getCmdArg_string(iName, l_strFound);
+  if(l_strFound)
+  {
+    // TBD - log error and show string name/value.
+    return 0;
+  }
+  // TBD - log error.
+  return 0;
+}
+
+Int64 TestController::getCmdArg_Int64(string iName, bool & oFound)
+{
+  // Check in Int64 map.
+  // If no key, check string and return error.
+  map<string, Int64>::iterator l_itr;
+  l_itr = m_nameToInt64Map->find(iName);
+  if(l_itr != m_nameToInt64Map->end())
+  {
+    oFound = true;
+    return (*m_nameToInt64Map)[iName];
+  }
+  oFound = false;
+  bool l_strFound = false;
+  string l_retVal = getCmdArg_string(iName, l_strFound);
+  if(l_strFound)
+  {
+    // TBD - log error and show string name/value.
+    return 0;
+  }
+  // TBD - log error.
+  return 0;
+}
+
+string TestController::getCmdArg_string(string iName, bool & oFound)
+{
+  oFound = false;
   // Check string map.
   map<string, string>::iterator l_itr2;
   l_itr2 = m_nameToStringMap->find(iName);
   if(l_itr2 != m_nameToStringMap->end())
   {
-    // TBD - log error and show value.
-    string strVal = (*m_nameToStringMap)[iName];
-    return 0;
+    oFound = true;
+    return (*m_nameToStringMap)[iName];
   }
-  // TBD - log error.
-  return 0;
+  return "";
 }
 
 // =============================
