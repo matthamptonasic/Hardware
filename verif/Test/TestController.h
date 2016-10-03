@@ -75,7 +75,7 @@ class TestController
     UInt64 GetCmdArg_UInt64(string iName);
     Int32  GetCmdArg_Int32(string iName);
     Int64  GetCmdArg_Int64(string iName);
-    string GetCmdArg_string(string iName, bool iLogError = false);
+    string GetCmdArg_string(string iName);
 
   // Private Methods
   private:
@@ -85,6 +85,8 @@ class TestController
     void parseTokenValue(string & iToken, string & iValue);
 
     UInt64 getCmdArg_UInt64(string iName, bool & oFound);
+    Int64  getCmdArg_Int64(string iName, bool & oFound);
+    string getCmdArg_string(string iName, bool & oFound);
 
 };
 
