@@ -16,7 +16,47 @@
 #ifndef TESTBASE_H
 #define TESTBASE_H
 
+#include <string>
+
 #include "Common.h"
+#include "TestController.h"
+
+using namespace std;
+
+class TestBase
+{
+  // Enums
+  public:
+
+  // Constants
+  private:
+
+  // Nested Classes
+  public:
+
+  // Private Members
+  private:
+    string m_name;
+
+  // Public Properties
+  public:
+    string getName() const { return m_name; }
+
+  // Constructors
+  public:
+    TestBase(string iTestName);
+
+  // Inits
+  private:
+
+  // Public Methods
+  public:
+    virtual void Run() = 0;
+
+  // Private Methods
+  private:
+
+};
 
 #endif /* TESTBASE_H */
 
