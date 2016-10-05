@@ -15,6 +15,7 @@
 */
 
 #include "TestBase.h"
+#include "TestController.h"
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**      TestBase Class       **===
@@ -35,6 +36,7 @@
 TestBase::TestBase(string iTestName)
 {
   m_name = iTestName;
+  TestController::Access().RegisterTest(this);
 }
 
 // =============================
