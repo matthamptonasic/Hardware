@@ -7,6 +7,16 @@ Mainly a checklist for the initial environment setup.
 
 - Simulation flow.
   - Phases like UVM.
+  - Threading.
+    - How to keep the test function going while the simulation is running.
+      - The driver/monitor/models are called every clock from the simulator.
+      - The test is on a different thread and is only synchronized to the 
+        simulation when it calls certain methods like tbWait.
+      - The wait functions somehow pause the test thread (keeps from returning)
+        while the simulator runs on it's thread.
+        Some type of semiphore is required to hold the wait/test thread
+        until a specific event happens in the simulator (i.e. a callback
+        scheduled for some future time, or a clock counter hits a value).
 - Messaging (LOG, DEBUG, WARNING, ERROR, logging level, etc).
 - Test
   The appropriate test class/method is called based on the user parameters.
