@@ -4,14 +4,16 @@ SDIR = .
 INC = -I../Common \
 		  -I../Pli \
 			-I$(VPI_USER) \
-			-I../Text
+			-I../Text 
+			
 VPATH = ../Common \
 			  ../Pli \
 				$(VPI_USER) \
-				../Text
+				../Text 
 
 _OBJS = TestController.o \
-				TestBase.o
+				TestBase.o \
+				TestDB.o
 
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
