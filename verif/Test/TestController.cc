@@ -56,6 +56,8 @@ void TestController::init()
   commandLineArgs_set();
   findCArgs();
   parseCArgs();
+
+  m_testDb = TestDB();
 }
 
 void TestController::initMaps()
@@ -125,6 +127,11 @@ string TestController::GetCmdArg_string(string iName)
     // TBD - log error.
   }
   return l_retVal;
+}
+
+void TestController::RegisterTest(TestBase * iTest)
+{
+  m_testDb.AddTest(iTest);
 }
 
 // =============================

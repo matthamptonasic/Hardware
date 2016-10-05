@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "Common.h"
+#include "TestDB.h"
 
 using namespace std;
 
@@ -39,12 +40,16 @@ class TestController
 
   // Private Members
   private:
+    // Command Line Arguments
     vector<string> *      m_commandLineArgs;
     string                m_cArgs;
     map<string, Int64> *  m_nameToInt64Map;
     map<string, UInt64> * m_nameToUInt64Map;
     map<string, string> * m_nameToStringMap;
     map<string, bool> *   m_nameToPrintHexMap;
+
+    // Test DataBase
+    TestDB                m_testDb;
 
   // Public Properties
   public:
@@ -76,6 +81,8 @@ class TestController
     Int32  GetCmdArg_Int32(string iName);
     Int64  GetCmdArg_Int64(string iName);
     string GetCmdArg_string(string iName);
+    
+    void   RegisterTest(TestBase * iTest);
 
   // Private Methods
   private:
