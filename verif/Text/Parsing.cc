@@ -20,9 +20,9 @@
 
 using namespace std;
 
-namespace Text { namespace Parsing {
+namespace Text {
 
-bool StartsWith(const string & iText, const string & iPattern)
+bool Parsing::StartsWith(const string & iText, const string & iPattern)
 {
   if(iPattern.size() > iText.size())
   {
@@ -38,7 +38,7 @@ bool StartsWith(const string & iText, const string & iPattern)
   return true;
 }
 
-bool CheckNumberBase10(const char & iChar)
+bool Parsing::CheckNumberBase10(const char & iChar)
 {
   if((iChar >= '0') && (iChar <= '9'))
   {
@@ -46,7 +46,7 @@ bool CheckNumberBase10(const char & iChar)
   }
   return false;
 }
-bool CheckNumberBase16(const char & iChar)
+bool Parsing::CheckNumberBase16(const char & iChar)
 {
   if(((iChar >= '0') && (iChar <= '9')) || ((iChar >= 'A') && (iChar <= 'F')) || ((iChar >= 'a') && (iChar <= 'f')))
   {
@@ -54,7 +54,7 @@ bool CheckNumberBase16(const char & iChar)
   }
   return false;
 }
-bool CheckUInt64Range(const string & iNumber)
+bool Parsing::CheckUInt64Range(const string & iNumber)
 {
   if(iNumber.size() <= 20)
   {
@@ -81,7 +81,7 @@ bool CheckUInt64Range(const string & iNumber)
     return false;
   }
 }
-bool CheckInt64Range(const string & iNumber, bool iIsNegative)
+bool Parsing::CheckInt64Range(const string & iNumber, bool iIsNegative)
 {
   if(iNumber.size() <= 19)
   {
@@ -104,4 +104,4 @@ bool CheckInt64Range(const string & iNumber, bool iIsNegative)
   }
 }
 
-}}
+} // namespace Parsing
