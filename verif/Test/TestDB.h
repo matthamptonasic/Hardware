@@ -42,6 +42,7 @@ class TestDB
 
   // Public Properties
   public:
+    UInt32 Count() const { return m_testMap->size(); };
 
   public:
     TestDB();
