@@ -21,8 +21,6 @@
 
 using namespace std;
 using namespace Text;
-using namespace Text::Manip;
-using namespace Text::Parsing;
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**   TestController Class    **===
@@ -56,8 +54,6 @@ void TestController::init()
   commandLineArgs_set();
   findCArgs();
   parseCArgs();
-
-  m_testDb = TestDB();
 }
 
 void TestController::initMaps()
