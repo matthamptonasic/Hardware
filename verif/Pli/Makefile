@@ -5,12 +5,9 @@ SDIR = .
 INC = -I../Common -I$(VPI_USER) -I../Signals -I. -I../BitVector -I../Logging -I../Test
 VPATH = ../Common $(VPI_USER) ../Signals . ../BitVector ../Logging ../Test
 
-_OBJS = vpi_entry.o \
-				vpi.o \
-				pli.o \
-				V_Signal.o
+SRCS = $(wildcard *.cc)
 
-OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
+OBJS = $(patsubst %.cc,$(ODIR)/%.o,$(SRCS))
 
 all : $(OBJS)
 

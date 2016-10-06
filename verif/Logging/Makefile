@@ -4,9 +4,9 @@ SDIR = .
 INC = -I../Common -I../Pli -I$(VPI_USER)
 VPATH = ../Common ../Pli $(VPI_USER)
 
-_OBJS = Logger.o
+SRCS = $(wildcard *.cc)
 
-OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
+OBJS = $(patsubst %.cc,$(ODIR)/%.o,$(SRCS))
 
 all : $(OBJS)
 

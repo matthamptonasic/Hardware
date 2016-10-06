@@ -11,11 +11,9 @@ VPATH = ../Common \
 				$(VPI_USER) \
 				../Text 
 
-_OBJS = TestController.o \
-				TestBase.o \
-				TestDB.o
+SRCS = $(wildcard *.cc)
 
-OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
+OBJS = $(patsubst %.cc,$(ODIR)/%.o,$(SRCS))
 
 all : $(OBJS)
 

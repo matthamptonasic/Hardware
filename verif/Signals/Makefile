@@ -5,10 +5,9 @@ SDIR = .
 INC = -I../Common -I$(VPI_USER) -I../Pli/
 VPATH = ../Common $(VPI_USER) ../Pli/
 
-_OBJS = V_Signal.o \
-				V_Reg.o
+SRCS = $(wildcard *.cc)
 
-OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
+OBJS = $(patsubst %.cc,$(ODIR)/%.o,$(SRCS))
 
 all : $(OBJS)
 
