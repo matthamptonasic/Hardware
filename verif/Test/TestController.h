@@ -54,6 +54,7 @@ class TestController
   // Public Properties
   public:
     vector<string> & CommandLineArgs_get();
+    UInt32 TestCount() const { return m_testDb.Count(); };
 
   // Singleton Pattern
   public:
