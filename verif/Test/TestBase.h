@@ -43,7 +43,7 @@ class TestBase
 
   // Constructors
   public:
-    TestBase(string iTestName);
+    TestBase(string iTestName = "Unnamed Test");
 
   // Inits
   private:
