@@ -14,15 +14,18 @@
 ###############################################################################
 */
 
+#include "Manip.h"
 #include "Parsing.h"
 
 #include "vpi.h"
 
 using namespace std;
 
-namespace Text { namespace Manip {
+namespace Text {
 
-string Replace(const string & iText, const string & iPattern, const string & iReplacement)
+const string Manip::g_DefaultTrimChars = " \t\n\r\"\'";
+
+string Manip::Replace(const string & iText, const string & iPattern, const string & iReplacement)
 {
   string l_retVal = string(iText);
   if(iPattern.size() > iText.size())
@@ -37,7 +40,7 @@ string Replace(const string & iText, const string & iPattern, const string & iRe
   return l_retVal;
 }
 
-void Split(const string & iText, const char iDelim, vector<string> & oStrings) {
+void Manip::Split(const string & iText, const char iDelim, vector<string> & oStrings) {
     stringstream l_ss;
     l_ss.str(iText);
     string l_str;
@@ -46,13 +49,13 @@ void Split(const string & iText, const char iDelim, vector<string> & oStrings) {
     }
 }
 
-vector<string> Split(const string & iText, const char iDelim) {
+vector<string> Manip::Split(const string & iText, const char iDelim) {
     vector<string> l_retVal;
     Split(iText, iDelim, l_retVal);
     return l_retVal;
 }
 
-string TrimLeft(const string & iText, string iTrimChars)
+string Manip::TrimLeft(const string & iText, string iTrimChars)
 {
   Int32 l_firstKeepChar = iText.find_first_not_of(iTrimChars);
   if(l_firstKeepChar == string::npos)
@@ -65,7 +68,7 @@ string TrimLeft(const string & iText, string iTrimChars)
   }
 }
 
-string TrimRight(const string & iText, string iTrimChars)
+string Manip::TrimRight(const string & iText, string iTrimChars)
 {
   Int32 l_lastKeepChar = iText.find_last_not_of(iTrimChars);
   if(l_lastKeepChar == string::npos)
@@ -78,10 +81,10 @@ string TrimRight(const string & iText, string iTrimChars)
   }
 }
 
-string Trim(const string & iText, string iTrimChars)
+string Manip::Trim(const string & iText, string iTrimChars)
 {
   // TBD - Would be better to have at least 1 modify-in-place methods here.
   return TrimLeft(TrimRight(iText, iTrimChars), iTrimChars);
 }
 
-}}
+}

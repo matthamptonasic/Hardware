@@ -22,15 +22,20 @@
 
 using namespace std;
 
-namespace Text { namespace Manip {
+namespace Text { 
 
-const string    g_DefaultTrimChars = " \t\n\r\"\'";
+class Manip
+{
 
-string          Replace(const string & iText, const string & iPattern, const string & iReplacement);
-void            Split(const string & iText, const char iDelim, vector<string> & oStrings);
-vector<string>  Split(const string & iText, const char iDelim);
-string          TrimLeft(const string & iText, string iTrimChars = g_DefaultTrimChars);
-string          TrimRight(const string & iText, string iTrimChars = g_DefaultTrimChars);
-string          Trim(const string & iText, string iTrimChars = g_DefaultTrimChars);
+public:
+  static const string    g_DefaultTrimChars;
 
-}}
+  static string          Replace(const string & iText, const string & iPattern, const string & iReplacement);
+  static void            Split(const string & iText, const char iDelim, vector<string> & oStrings);
+  static vector<string>  Split(const string & iText, const char iDelim);
+  static string          TrimLeft(const string & iText, string iTrimChars = g_DefaultTrimChars);
+  static string          TrimRight(const string & iText, string iTrimChars = g_DefaultTrimChars);
+  static string          Trim(const string & iText, string iTrimChars = g_DefaultTrimChars);
+
+};
+}
