@@ -52,6 +52,7 @@ my $full_path;
 my $cmd_file_path = "";
 my @cmd_file_tests = ("verif", "rtl", "env");
 my $cmd_file_test;
+my $makefile_path = "";
 my $v_ofile_name = "a.vvp";
 my $vpi_file_name = "vpi_entry.vpi";
 my $v_ofile_path;
@@ -180,6 +181,7 @@ sub set_base_dir
   $base_path = $branch;
   $full_path = ${PROJECT_ROOT}. "/rtl" . ${base_path};
   chomp($full_path);
+  $makefile_path = $full_path . "/verif";
   return 1;
 }
 
@@ -276,7 +278,15 @@ sub c_build
   }
 
   # Build the local environment.
-  # TBD
+  $make_cmd = "make -C $makefile_path ODIR=$c_build_path";
+  &myprint("local make cmd = '$make_cmd'");
+  $rslt = `$make_cmd`;
+  &myprint("rslt = $rslt");
+  if((${^CHILD_ERROR_NATIVE} >> 8) != 0) 
+  {
+    &myprint("Error compiling local C++ environment.");
+    return 0;
+  }
 
   if($no_build_vpi)
   {
