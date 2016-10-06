@@ -11,9 +11,9 @@ VPATH = $(PROJECT_ROOT)/verif/Common \
         $(PROJECT_ROOT)/verif/Pli \
 				$(VPI_USER) 
 
-_OBJS = sample_test.o
+SRCS = $(wildcard *.cc)
 
-OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
+OBJS = $(patsubst %.cc,$(ODIR)/%.o,$(SRCS))
 
 all : $(OBJS)
 
