@@ -4,11 +4,13 @@ SDIR = .
 INC = -I../Common \
 		  -I../Pli \
 			-I$(VPI_USER) \
+			-I../Test \
 			-I../Text 
 			
 VPATH = ../Common \
 			  ../Pli \
 				$(VPI_USER) \
+				../Test \
 				../Text 
 
 SRCS = $(wildcard *.cc)
