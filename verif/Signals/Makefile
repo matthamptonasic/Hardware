@@ -2,8 +2,12 @@ CC = g++
 CCFLAGS = -fPIC 
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../Common -I$(VPI_USER) -I../Pli/
-VPATH = ../Common $(VPI_USER) ../Pli/
+INC = -I../Common \
+			-I$(VPI_USER) \
+			-I../Pli/
+VPATH = ../Common \
+				$(VPI_USER) \
+				../Pli/
 
 SRCS = $(wildcard *.cc)
 
