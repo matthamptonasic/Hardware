@@ -8,6 +8,7 @@ all:
 	cd Test && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 	cd Text && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 	cd Logging && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
+	cd Environment && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 
 cleanall:
 	rm -f $(ODIR)/*.o
