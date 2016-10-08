@@ -356,6 +356,10 @@ sub v_sim
   if(!$no_dump) {
     $sim_plus_args .= " +dump_on";
   }
+  # TBD - Add ability to take file-related arguments without the full path.
+  #       For instance, user should not have to add the path to the output
+  #       directory when passing the logFile name. This script should resolve
+  #       the entire file path.
   if($c_args) {
     $sim_plus_args .= ' +c_args=\"' . $c_args . '\"';
   }
