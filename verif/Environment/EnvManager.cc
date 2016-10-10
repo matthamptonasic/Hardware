@@ -14,6 +14,11 @@
 ###############################################################################
 */
 
+#include <iostream>
+
+#include "TestController.h"
+#include "Logger.h"
+
 #include "EnvManager.h"
 
 using namespace std;
@@ -21,11 +26,6 @@ using namespace std;
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     EnvManager Class      **===
 // *==*==*==*==*==*==*==*==*==*==*==*==*
-
-
-// ====================================
-// ===**  Private Static Members  **===
-// ====================================
 
 
 // =============================
@@ -36,14 +36,41 @@ using namespace std;
 // =============================
 // ===**    Constructor    **===
 // =============================
-
+EnvManager::EnvManager()
+{
+  init();
+}
 
 // =============================
 // ===**      Inits        **===
 // =============================
 void EnvManager::init()
 {
-  
+  // Set up test controller.
+  init_CmdArgs();
+}
+
+bool EnvManager::init_CmdArgs()
+{
+  if(!init_Logger())
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool EnvManager::init_Logger()
+{
+  string l_logFile = TestController::Access().GetCmdArg_string(c_logFile);
+  if(l_logFile == "")
+  {
+    cout << "[ERROR] " << __PRETTY_FUNCTION__ << ": TestController returned empty log file name." << endl;
+    return false;
+  }
+  Logger * split_out = new Logger(l_logFile, &cout);
+  cout << "logFile is set to '" << l_logFile << "'" << endl;
+  return true;
 }
 
 // =============================
