@@ -13,6 +13,8 @@
 #
 ###############################################################################
 */
+#ifndef LOGGER_H
+#define LOGGER_H
 
 #include <fstream>
 #include <iomanip>
@@ -65,30 +67,42 @@ class Logger
   // Private Members
   private:
     // Logging Control
-    static bool s_initDone;
-    static bool s_alwaysLogScopes;
-    static list<Scope> s_scopes;
-    static map<string, UInt32> s_scopeNameToIdMap;
+    bool m_initDone;
+    bool m_alwaysLogScopes;
+    list<Scope> m_scopes;
+    map<string, UInt32> m_scopeNameToIdMap;
 
     // Logger Data
-    static string s_fileName;
-    static fstream s_oFile;
+    string m_fileName;
+    ofstream * m_fileOut;
+    ostream * m_consoleOut;
 
   // Public Properties
   public:
-    static bool s_AlwaysLogScopes_get() { return s_alwaysLogScopes; }
-    static void s_AlwaysLogScopes_set(bool iValue) { s_alwaysLogScopes = iValue; }
+    bool AlwaysLogScopes_get() { return m_alwaysLogScopes; }
+    void AlwaysLogScopes_set(bool iValue) { m_alwaysLogScopes = iValue; }
+
+  // Constructors
+  public:
+    Logger();
+    Logger(string iFileName, ostream * iStream = &cout);
 
   // Inits
-  public:
-    static void Init(string iFileName);
+  private:
+    void init(string iFileName, ostream * iStream = &cout);
+    void init_streams(string iFileName, ostream * iStream);
 
   // Public Methods
   public:
-    static void AddDebugScope(const Scope & iScope);
-    static bool RemoveDebugScope(string iName);
+    void SetConsoleOut(ostream * iStream = &cout);
+    bool SetFileOut(ofstream * iStream);
+    void SetFileOut(string iFileName);
+    void AddDebugScope(const Scope & iScope);
+    bool RemoveDebugScope(string iName);
 
   // Private Methods
   private:
 
 };
+
+#endif /* LOGGER_H */
