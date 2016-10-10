@@ -68,8 +68,9 @@ bool EnvManager::init_Logger()
     cout << "[ERROR] " << __PRETTY_FUNCTION__ << ": TestController returned empty log file name." << endl;
     return false;
   }
-  Logger * split_out = new Logger(l_logFile, &cout);
-  cout << "logFile is set to '" << l_logFile << "'" << endl;
+  Logger * tmp = new Logger(l_logFile, &cout);
+  tmp->SetDout(tmp);
+  
   return true;
 }
 
