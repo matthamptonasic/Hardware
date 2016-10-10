@@ -73,12 +73,15 @@ class Logger
     map<string, UInt32> m_scopeNameToIdMap;
 
     // Logger Data
+    static Logger * s_dout;
     string m_fileName;
     ofstream * m_fileOut;
     ostream * m_consoleOut;
 
   // Public Properties
   public:
+    void SetDout(Logger * iLogger) { s_dout = iLogger; }
+    static Logger & GetDout() { return *s_dout; }
     bool AlwaysLogScopes_get() { return m_alwaysLogScopes; }
     void AlwaysLogScopes_set(bool iValue) { m_alwaysLogScopes = iValue; }
 
@@ -86,6 +89,7 @@ class Logger
   public:
     Logger();
     Logger(string iFileName, ostream * iStream = &cout);
+    ~Logger();
 
   // Inits
   private:
@@ -99,10 +103,17 @@ class Logger
     void SetFileOut(string iFileName);
     void AddDebugScope(const Scope & iScope);
     bool RemoveDebugScope(string iName);
+    void Flush();
 
   // Private Methods
   private:
 
+  // Operators
+  public:
+  Logger & operator<< (UInt32 iVal);
+  Logger & operator<< (ostream & (*manip)(ostream &));
+	
 };
+
 
 #endif /* LOGGER_H */
