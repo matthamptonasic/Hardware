@@ -112,6 +112,10 @@ class Logger
   public:
   Logger & operator<< (UInt32 iVal);
   Logger & operator<< (ostream & (*manip)(ostream &));
+  Logger & operator<< (ios & (*manip)(ios &));
+  Logger & operator<< (ios_base & (*manip)(ios_base &));
+  Logger & operator<< (_Setw iSetW);
+  Logger & operator<< (_Setfill<char> iSetfill);
 	
 };
 
