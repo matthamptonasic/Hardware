@@ -131,7 +131,6 @@ void Logger::init_streams(string iFileName, ostream * iStream)
 void Logger::SetConsoleOut(ostream * iStream)
 {
   m_consoleOut = iStream; // Default is cout.
-  (*m_consoleOut) << __PRETTY_FUNCTION__ << " set." << endl;
 }
 bool Logger::SetFileOut(ofstream * iStream)
 {
@@ -155,7 +154,8 @@ void Logger::SetFileOut(string iFileName)
     delete m_fileOut;
   }
   m_fileOut = new ofstream(m_fileName, ios::out | ios::trunc);
-  (*m_fileOut) << __PRETTY_FUNCTION__ << " set." << endl;
+  (*m_fileOut) << "Logfile set to " << m_fileName << endl;
+  (*m_consoleOut) << "Logfile set to " << m_fileName << endl;
 }
 void Logger::AddDebugScope(const Scope & iScope)
 {
