@@ -20,7 +20,8 @@
 // ==================================
 // ===**    Logger Instance     **===
 // ==================================
-Logger * dout;
+//Logger * dout;
+Logger * Logger::s_dout = nullptr;
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**    Logger::Scope Class    **===
@@ -88,6 +89,19 @@ Logger::Logger()
 Logger::Logger(string iFileName, ostream * iStream)
 {
   init(iFileName, iStream);
+}
+
+Logger::~Logger()
+{
+  if(m_fileOut != nullptr)
+  {
+    if(m_fileOut->is_open())
+    {
+      m_fileOut->flush();
+      m_fileOut->close();
+    }
+    delete m_fileOut;
+  }
 }
 
 // =============================
@@ -183,6 +197,13 @@ bool Logger::RemoveDebugScope(string iName)
   }
   return l_found;
 }
+void Logger::Flush()
+{
+  if((m_fileOut != nullptr) && (m_fileOut->is_open()))
+  {
+    m_fileOut->flush();
+  }
+}
 
 // =============================
 // ===**  Private Methods  **===
@@ -191,3 +212,15 @@ bool Logger::RemoveDebugScope(string iName)
 // =============================
 // ===**     Operators     **===
 // =============================
+Logger & Logger::operator<< (UInt32 iVal)
+{
+  *m_consoleOut << iVal;
+  *m_fileOut << iVal;
+
+  return *this;
+}
+Logger & Logger::operator<< (ostream & (*manip)(ostream &)) {
+	manip(*m_consoleOut);
+	manip(*m_fileOut);
+	return *this;
+}
