@@ -219,8 +219,33 @@ Logger & Logger::operator<< (UInt32 iVal)
 
   return *this;
 }
-Logger & Logger::operator<< (ostream & (*manip)(ostream &)) {
+Logger & Logger::operator<< (ostream & (*manip)(ostream &))
+{
 	manip(*m_consoleOut);
 	manip(*m_fileOut);
 	return *this;
+}
+Logger & Logger::operator<< (ios & (*manip)(ios &))
+{
+	manip(*m_consoleOut);
+	manip(*m_fileOut);
+	return *this;
+}
+Logger & Logger::operator<< (ios_base & (*manip)(ios_base &))
+{
+	manip(*m_consoleOut);
+	manip(*m_fileOut);
+	return *this;
+}
+Logger & Logger::operator<< (_Setw iSetw)
+{
+  *m_consoleOut << iSetw;
+  *m_fileOut << iSetw;
+  return *this;
+}
+Logger & Logger::operator<< (_Setfill<char> iSetfill)
+{
+  *m_consoleOut << iSetfill;
+  *m_fileOut << iSetfill;
+  return *this;
 }
