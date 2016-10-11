@@ -104,9 +104,9 @@ Logger::Logger()
 {
   init(string(""), nullptr);
 }
-Logger::Logger(string iFileName, ostream * iStream)
+Logger::Logger(string iFileName, ostream * iStream, UInt32 iVerbosityLevel)
 {
-  init(iFileName, iStream);
+  init(iFileName, iStream, iVerbosityLevel);
 }
 
 Logger::~Logger()
@@ -125,7 +125,7 @@ Logger::~Logger()
 // =============================
 // ===**      Inits        **===
 // =============================
-void Logger::init(string iFileName, ostream * iStream)
+void Logger::init(string iFileName, ostream * iStream, UInt32 iVerbosityLevel)
 {
   m_initDone = false;
   m_fileOut = nullptr;
@@ -136,6 +136,8 @@ void Logger::init(string iFileName, ostream * iStream)
   }
   m_fileName = "";
   m_alwaysLogScopes = true;
+  m_logMsgLevel = Scope::Vrb_LOW();
+  m_scopeLevel = iVerbosityLevel;
 }
 void Logger::init_streams(string iFileName, ostream * iStream)
 {
@@ -252,158 +254,444 @@ void Logger::setFileEnable()
     m_fileEnabled = false;
   }
 }
+bool Logger::checkScope()
+{
+  return checkScope(m_currentScope);
+}
+bool Logger::checkScope(const Scope * iScope)
+{
+  // Null scope means no scope means a level of m_logMsgLevel.
+  // ex. Our logging verbosity level is set to Vrb_MEDIUM.
+  //     Meaning we only want to print things with verbosity 
+  //     Vrb_MEDIUM and below (down to Vrb_NONE).
+  //     So if our current scope being tested (iScope)
+  //     is LESS THAN (or equal to) our setting, return true to print it.
+
+  if((iScope == nullptr) && (m_scopeLevel >= m_logMsgLevel))
+  {
+    return true;
+  }
+  // Check the scope level.
+  if(iScope->GetLevel() <= m_scopeLevel)
+  {
+    return true;
+  }
+  // Check if we're always printing scopes in our list.
+  if(m_alwaysLogScopes)
+  {
+    // Check that iScope is in our list.
+    for(list<Scope>::iterator ii=m_scopes.begin(); ii != m_scopes.end(); ++ii)
+    {
+      if(ii->GetId() == iScope->GetId())
+      {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 // =============================
 // ===**     Operators     **===
 // =============================
 Logger & operator<< (Logger & iLog, char iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, signed char iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, unsigned char iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, const char * iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, const signed char * iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, const unsigned char * iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, const string iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, bool iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, Int16 iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, UInt16 iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, Int32 iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, UInt32 iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, Int64 iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, UInt64 iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, long long int iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, long long unsigned int iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, float iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, double iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, long double iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, void * iVal)
 {
-  (*(iLog.m_consoleOut)) << iVal;
-  (*(iLog.m_fileOut)) << iVal;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iVal;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iVal;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, ostream & (*manip)(ostream &))
 {
-	manip(*(iLog.m_consoleOut));
-	manip(*(iLog.m_fileOut));
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+	  manip(*(iLog.m_consoleOut));
+  }
+  if(iLog.m_fileEnabled)
+  {
+	  manip(*(iLog.m_fileOut));
+  }
 	return iLog;
 }
 Logger & operator<< (Logger & iLog, ios & (*manip)(ios &))
 {
-	manip(*(iLog.m_consoleOut));
-	manip(*(iLog.m_fileOut));
+	if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+	  manip(*(iLog.m_consoleOut));
+  }
+  if(iLog.m_fileEnabled)
+  {
+	  manip(*(iLog.m_fileOut));
+  }
 	return iLog;
 }
 Logger & operator<< (Logger & iLog, ios_base & (*manip)(ios_base &))
 {
-	manip(*(iLog.m_consoleOut));
-	manip(*(iLog.m_fileOut));
+	if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+	  manip(*(iLog.m_consoleOut));
+  }
+  if(iLog.m_fileEnabled)
+  {
+	  manip(*(iLog.m_fileOut));
+  }
 	return iLog;
 }
 Logger & operator<< (Logger & iLog, _Setw iSetw)
 {
-  (*(iLog.m_consoleOut)) << iSetw;
-  (*(iLog.m_fileOut)) << iSetw;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iSetw;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iSetw;
+  }
   return iLog;
 }
 Logger & operator<< (Logger & iLog, _Setfill<char> iSetfill)
 {
-  (*(iLog.m_consoleOut)) << iSetfill;
-  (*(iLog.m_fileOut)) << iSetfill;
+  if(!iLog.checkScope())
+  {
+    return iLog;
+  }
+  if(iLog.m_consoleEnabled)
+  {
+    (*(iLog.m_consoleOut)) << iSetfill;
+  }
+  if(iLog.m_fileEnabled)
+  {
+    (*(iLog.m_fileOut)) << iSetfill;
+  }
   return iLog;
 }
 
