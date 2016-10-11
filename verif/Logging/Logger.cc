@@ -212,40 +212,111 @@ void Logger::Flush()
 // =============================
 // ===**     Operators     **===
 // =============================
-Logger & Logger::operator<< (UInt32 iVal)
+Logger & operator<< (Logger & iLog, bool iVal)
 {
-  *m_consoleOut << iVal;
-  *m_fileOut << iVal;
-
-  return *this;
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
 }
-Logger & Logger::operator<< (ostream & (*manip)(ostream &))
+Logger & operator<< (Logger & iLog, Int16 iVal)
 {
-	manip(*m_consoleOut);
-	manip(*m_fileOut);
-	return *this;
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
 }
-Logger & Logger::operator<< (ios & (*manip)(ios &))
+Logger & operator<< (Logger & iLog, UInt16 iVal)
 {
-	manip(*m_consoleOut);
-	manip(*m_fileOut);
-	return *this;
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
 }
-Logger & Logger::operator<< (ios_base & (*manip)(ios_base &))
+Logger & operator<< (Logger & iLog, Int32 iVal)
 {
-	manip(*m_consoleOut);
-	manip(*m_fileOut);
-	return *this;
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
 }
-Logger & Logger::operator<< (_Setw iSetw)
+Logger & operator<< (Logger & iLog, UInt32 iVal)
 {
-  *m_consoleOut << iSetw;
-  *m_fileOut << iSetw;
-  return *this;
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
 }
-Logger & Logger::operator<< (_Setfill<char> iSetfill)
+Logger & operator<< (Logger & iLog, Int64 iVal)
 {
-  *m_consoleOut << iSetfill;
-  *m_fileOut << iSetfill;
-  return *this;
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, UInt64 iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, long long int iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, long long unsigned int iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, float iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, double iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, long double iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, void * iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, ostream & (*manip)(ostream &))
+{
+	manip(*(iLog.m_consoleOut));
+	manip(*(iLog.m_fileOut));
+	return iLog;
+}
+Logger & operator<< (Logger & iLog, ios & (*manip)(ios &))
+{
+	manip(*(iLog.m_consoleOut));
+	manip(*(iLog.m_fileOut));
+	return iLog;
+}
+Logger & operator<< (Logger & iLog, ios_base & (*manip)(ios_base &))
+{
+	manip(*(iLog.m_consoleOut));
+	manip(*(iLog.m_fileOut));
+	return iLog;
+}
+Logger & operator<< (Logger & iLog, _Setw iSetw)
+{
+  (*(iLog.m_consoleOut)) << iSetw;
+  (*(iLog.m_fileOut)) << iSetw;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, _Setfill<char> iSetfill)
+{
+  (*(iLog.m_consoleOut)) << iSetfill;
+  (*(iLog.m_fileOut)) << iSetfill;
+  return iLog;
 }
