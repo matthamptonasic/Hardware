@@ -71,9 +71,11 @@ class Logger
   // Private Members
   private:
     // Logging Control
-    bool m_initDone;
-    bool m_alwaysLogScopes;
-    list<Scope> m_scopes;
+    bool                m_initDone;
+    bool                m_alwaysLogScopes;
+    UInt32              m_scopeLevel;         // Logging verbosity level for all calls. Lower number means less printed.
+    UInt32              m_logMsgLevel;
+    list<Scope>         m_scopes;
     map<string, UInt32> m_scopeNameToIdMap;
 
     // Logger Data
@@ -82,7 +84,7 @@ class Logger
     ofstream *        m_fileOut;
     ostream *         m_consoleOut;
     
-    Scope *           m_currentScope;
+    Scope *           m_currentScope;         // Current scope between calls to GetDout().
     bool              m_consoleEnabled;
     bool              m_fileEnabled;
     bool              m_consoleUserDisabled;
@@ -98,16 +100,20 @@ class Logger
     void ConsoleDisable_set(bool iValue);
     bool FileDisable_get() const { return m_fileUserDisabled; }
     void FileDisable_set(bool iValue);
+    UInt32 VerbosityLevel_get() const { return m_scopeLevel; }
+    void VerbosityLevel_set(UInt32 iValue) { m_scopeLevel = iValue; }
+    UInt32 LogMsgLevel_get() const { return m_logMsgLevel; }
+    void LogMsgLevel_set(UInt32 iValue) { m_logMsgLevel = iValue; }
 
   // Constructors
   public:
     Logger();
-    Logger(string iFileName, ostream * iStream = &cout);
+    Logger(string iFileName, ostream * iStream = &cout, UInt32 iVerbosityLevel = Scope::Vrb_MEDIUM());
     ~Logger();
 
   // Inits
   private:
-    void init(string iFileName, ostream * iStream = &cout);
+    void init(string iFileName, ostream * iStream = &cout, UInt32 iVerbosityLevel = Scope::Vrb_MEDIUM());
     void init_streams(string iFileName, ostream * iStream);
 
   // Public Methods
@@ -123,6 +129,8 @@ class Logger
   private:
     void setConsoleEnable();
     void setFileEnable();
+    bool checkScope();
+    bool checkScope(const Scope * iScope);
 
   // Operators
   public:
