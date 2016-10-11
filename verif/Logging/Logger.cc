@@ -77,7 +77,25 @@ Logger::Scope::Scope(string iName, UInt32 iLevel)
 // ====================================
 // ===**  Private Static Members  **===
 // ====================================
+Logger & Logger::GetDout()
+{
+  s_dout->m_currentScope = nullptr; 
+  return *s_dout;
+}
 
+// =============================
+// ===** Public Properties **===
+// =============================
+void Logger::ConsoleDisable_set(bool iValue)
+{
+  m_consoleUserDisabled = iValue;
+  setConsoleEnable();
+}
+void Logger::FileDisable_set(bool iValue)
+{
+  m_fileUserDisabled = iValue;
+  setFileEnable();
+}
 
 // =============================
 // ===**   Constructors    **===
@@ -131,14 +149,17 @@ void Logger::init_streams(string iFileName, ostream * iStream)
 void Logger::SetConsoleOut(ostream * iStream)
 {
   m_consoleOut = iStream; // Default is cout.
+  setConsoleEnable();
 }
 bool Logger::SetFileOut(ofstream * iStream)
 {
-  if(iStream->is_open())
+  if((iStream != nullptr) && iStream->is_open())
   {
     m_fileOut = iStream;
+    setFileEnable();
     return true;
   }
+  setFileEnable();
   return false;
 }
 void Logger::SetFileOut(string iFileName)
@@ -156,6 +177,7 @@ void Logger::SetFileOut(string iFileName)
   m_fileOut = new ofstream(m_fileName, ios::out | ios::trunc);
   (*m_fileOut) << "Logfile set to " << m_fileName << endl;
   (*m_consoleOut) << "Logfile set to " << m_fileName << endl;
+  setFileEnable();
 }
 void Logger::AddDebugScope(const Scope & iScope)
 {
@@ -208,10 +230,74 @@ void Logger::Flush()
 // =============================
 // ===**  Private Methods  **===
 // =============================
+void Logger::setConsoleEnable()
+{
+  if((m_consoleUserDisabled == false) && (m_consoleOut != nullptr))
+  {
+    m_consoleEnabled = true;
+  }
+  else
+  {
+    m_consoleEnabled = false;
+  }
+}
+void Logger::setFileEnable()
+{
+  if((m_fileUserDisabled == false) && (m_fileOut != nullptr))
+  {
+    m_fileEnabled = true;
+  }
+  else
+  {
+    m_fileEnabled = false;
+  }
+}
 
 // =============================
 // ===**     Operators     **===
 // =============================
+Logger & operator<< (Logger & iLog, char iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, signed char iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, unsigned char iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, const char * iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, const signed char * iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, const unsigned char * iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
+Logger & operator<< (Logger & iLog, const string iVal)
+{
+  (*(iLog.m_consoleOut)) << iVal;
+  (*(iLog.m_fileOut)) << iVal;
+  return iLog;
+}
 Logger & operator<< (Logger & iLog, bool iVal)
 {
   (*(iLog.m_consoleOut)) << iVal;
@@ -318,5 +404,11 @@ Logger & operator<< (Logger & iLog, _Setfill<char> iSetfill)
 {
   (*(iLog.m_consoleOut)) << iSetfill;
   (*(iLog.m_fileOut)) << iSetfill;
+  return iLog;
+}
+
+Logger & operator<< (Logger & iLog, Logger::Scope * iScope)
+{
+  iLog.m_currentScope = iScope;
   return iLog;
 }

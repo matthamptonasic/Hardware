@@ -27,6 +27,8 @@
 
 using namespace std;
 
+#define DOUT Logger::GetDout()
+
 class Logger
 {
   // Enums
@@ -62,6 +64,8 @@ class Logger
 
     public:
       Scope(string iName, UInt32 iLevel = s_vrb_DEBUG);
+
+    friend Logger & operator<< (Logger & iLog, Logger::Scope * iScope);
   };
 
   // Private Members
@@ -73,17 +77,27 @@ class Logger
     map<string, UInt32> m_scopeNameToIdMap;
 
     // Logger Data
-    static Logger * s_dout;
-    string m_fileName;
-    ofstream * m_fileOut;
-    ostream * m_consoleOut;
+    static Logger *   s_dout;
+    string            m_fileName;
+    ofstream *        m_fileOut;
+    ostream *         m_consoleOut;
+    
+    Scope *           m_currentScope;
+    bool              m_consoleEnabled;
+    bool              m_fileEnabled;
+    bool              m_consoleUserDisabled;
+    bool              m_fileUserDisabled;
 
   // Public Properties
   public:
-    void SetDout(Logger * iLogger) { s_dout = iLogger; }
-    static Logger & GetDout() { return *s_dout; }
+    void SetAsDout() { s_dout = this; }
+    static Logger & GetDout();
     bool AlwaysLogScopes_get() { return m_alwaysLogScopes; }
     void AlwaysLogScopes_set(bool iValue) { m_alwaysLogScopes = iValue; }
+    bool ConsoleDisable_get() const { return m_consoleUserDisabled; }
+    void ConsoleDisable_set(bool iValue);
+    bool FileDisable_get() const { return m_fileUserDisabled; }
+    void FileDisable_set(bool iValue);
 
   // Constructors
   public:
@@ -107,9 +121,18 @@ class Logger
 
   // Private Methods
   private:
+    void setConsoleEnable();
+    void setFileEnable();
 
   // Operators
   public:
+  friend Logger & operator<< (Logger & iLog, char iVal);
+  friend Logger & operator<< (Logger & iLog, signed char iVal);
+  friend Logger & operator<< (Logger & iLog, unsigned char iVal);
+  friend Logger & operator<< (Logger & iLog, const char * iVal);
+  friend Logger & operator<< (Logger & iLog, const signed char * iVal);
+  friend Logger & operator<< (Logger & iLog, const unsigned char * iVal);
+  friend Logger & operator<< (Logger & iLog, const string iVal);
   friend Logger & operator<< (Logger & iLog, bool iVal);
   friend Logger & operator<< (Logger & iLog, Int16 iVal);
   friend Logger & operator<< (Logger & iLog, UInt16 iVal);
@@ -128,6 +151,8 @@ class Logger
   friend Logger & operator<< (Logger & iLog, ios_base & (*manip)(ios_base &));
   friend Logger & operator<< (Logger & iLog, _Setw iSetW);
   friend Logger & operator<< (Logger & iLog, _Setfill<char> iSetfill);
+
+  friend Logger & operator<< (Logger & iLog, Logger::Scope * iScope);
 	
 };
 
