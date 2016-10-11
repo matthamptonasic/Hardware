@@ -110,12 +110,24 @@ class Logger
 
   // Operators
   public:
-  Logger & operator<< (UInt32 iVal);
-  Logger & operator<< (ostream & (*manip)(ostream &));
-  Logger & operator<< (ios & (*manip)(ios &));
-  Logger & operator<< (ios_base & (*manip)(ios_base &));
-  Logger & operator<< (_Setw iSetW);
-  Logger & operator<< (_Setfill<char> iSetfill);
+  friend Logger & operator<< (Logger & iLog, bool iVal);
+  friend Logger & operator<< (Logger & iLog, Int16 iVal);
+  friend Logger & operator<< (Logger & iLog, UInt16 iVal);
+  friend Logger & operator<< (Logger & iLog, Int32 iVal);
+  friend Logger & operator<< (Logger & iLog, UInt32 iVal);
+  friend Logger & operator<< (Logger & iLog, Int64 iVal);
+  friend Logger & operator<< (Logger & iLog, UInt64 iVal);
+  friend Logger & operator<< (Logger & iLog, long long int iVal);
+  friend Logger & operator<< (Logger & iLog, long long unsigned int iVal);
+  friend Logger & operator<< (Logger & iLog, float iVal);
+  friend Logger & operator<< (Logger & iLog, double iVal);
+  friend Logger & operator<< (Logger & iLog, long double iVal);
+  friend Logger & operator<< (Logger & iLog, void * iVal);
+  friend Logger & operator<< (Logger & iLog, ostream & (*manip)(ostream &));
+  friend Logger & operator<< (Logger & iLog, ios & (*manip)(ios &));
+  friend Logger & operator<< (Logger & iLog, ios_base & (*manip)(ios_base &));
+  friend Logger & operator<< (Logger & iLog, _Setw iSetW);
+  friend Logger & operator<< (Logger & iLog, _Setfill<char> iSetfill);
 	
 };
 
