@@ -27,7 +27,17 @@
 
 using namespace std;
 
-#define DOUT Logger::GetDout()
+#define DOUT        Logger::GetDout()
+#define LOG_NONE    DOUT << &Logger::s_Scope_NONE 
+#define LOG_LOW     DOUT << &Logger::s_Scope_LOW
+#define LOG_MEDIUM  DOUT << &Logger::s_Scope_MEDIUM
+#define LOG_HIGH    DOUT << &Logger::s_Scope_HIGH
+#define LOG_FULL    DOUT << &Logger::s_Scope_FULL
+#define LOG_DEBUG   DOUT << &Logger::s_Scope_DEBUG
+#define LOG_LVL(_uint_) DOUT << new Logger::Scope(string("LOG_LVL") + string(#_uint_), _uint_ )
+#ifndef LOG_MSG     // User can redefine this in their test/env.
+#define LOG_MSG     DOUT << &Logger::s_Scope_MSG
+#endif
 
 class Logger
 {
@@ -67,6 +77,15 @@ class Logger
 
     friend Logger & operator<< (Logger & iLog, Logger::Scope * iScope);
   };
+
+  // Public Static Members
+    static Scope        s_Scope_NONE;
+    static Scope        s_Scope_LOW;
+    static Scope        s_Scope_MEDIUM;
+    static Scope        s_Scope_HIGH;
+    static Scope        s_Scope_FULL;
+    static Scope        s_Scope_DEBUG;
+    static Scope        s_Scope_MSG;
 
   // Private Members
   private:
