@@ -27,23 +27,28 @@
 
 using namespace std;
 
+#define LINE_HDR    "c++ "
 #define DOUT        Logger::GetDout()
-#define LOG_NONE    DOUT << &Logger::s_Scope_NONE 
-#define LOG_LOW     DOUT << &Logger::s_Scope_LOW
-#define LOG_MEDIUM  DOUT << &Logger::s_Scope_MEDIUM
-#define LOG_HIGH    DOUT << &Logger::s_Scope_HIGH
-#define LOG_FULL    DOUT << &Logger::s_Scope_FULL
-#define LOG_DEBUG   DOUT << &Logger::s_Scope_DEBUG
-#define LOG_LVL(_uint_) DOUT << new Logger::Scope(string("LOG_LVL") + string(#_uint_), _uint_ )
+#define LOG_NONE    DOUT << &Logger::s_Scope_NONE << LINE_HDR 
+#define LOG_LOW     DOUT << &Logger::s_Scope_LOW << LINE_HDR 
+#define LOG_MEDIUM  DOUT << &Logger::s_Scope_MEDIUM << LINE_HDR 
+#define LOG_HIGH    DOUT << &Logger::s_Scope_HIGH << LINE_HDR 
+#define LOG_FULL    DOUT << &Logger::s_Scope_FULL << LINE_HDR 
+#define LOG_DEBUG   DOUT << &Logger::s_Scope_DEBUG << LINE_HDR 
+#define LOG_LVL(_uint_) DOUT << new Logger::Scope(string("LOG_LVL") + string(#_uint_), _uint_ ) << LINE_HDR 
 
 // These are the primary/preferred logging macros.
 #ifndef LOG_MSG     // User can redefine this in their test/env.
-#define LOG_MSG     DOUT << &Logger::s_Scope_MSG
+#define LOG_MSG     DOUT << &Logger::s_Scope_MSG << LINE_HDR 
 #endif
-#define LOG_WRN     DOUT.Warnings_inc();    DOUT << &Logger::s_Scope_WRN
-#define LOG_ERR     DOUT.Errors_inc();      DOUT << &Logger::s_Scope_ERR
-#define LOG_WRN_ENV DOUT.EnvWarnings_inc(); DOUT << &Logger::s_Scope_WRN_ENV
-#define LOG_ERR_ENV DOUT.EnvErrors_inc();   DOUT << &Logger::s_Scope_ERR_ENV
+#define LOG_WRN     DOUT.Warnings_inc();    DOUT << &Logger::s_Scope_WRN << LINE_HDR  << "[LOG_WRN] " \
+  << (DOUT.FormatWarningsPrettyFunction_get() ? string(__PRETTY_FUNCTION__) + ": " : "")
+#define LOG_ERR     DOUT.Errors_inc();      DOUT << &Logger::s_Scope_ERR << LINE_HDR  << "[LOG_ERR] " \
+  << (DOUT.FormatErrorsPrettyFunction_get() ? string(__PRETTY_FUNCTION__) + ": " : "") 
+#define LOG_WRN_ENV DOUT.EnvWarnings_inc(); DOUT << &Logger::s_Scope_WRN_ENV << LINE_HDR  << "[LOG_WRN_ENV] " \
+  << (DOUT.FormatWarningsPrettyFunction_get() ? string(__PRETTY_FUNCTION__) + ": " : "")
+#define LOG_ERR_ENV DOUT.EnvErrors_inc();   DOUT << &Logger::s_Scope_ERR_ENV << LINE_HDR  << "[LOG_ERR_ENV] " \
+  << (DOUT.FormatErrorsPrettyFunction_get() ? string(__PRETTY_FUNCTION__) + ": " : "") 
 
 class Logger
 {
@@ -124,6 +129,10 @@ class Logger
     UInt32            m_envWarnings;
     UInt32            m_envErrors;
 
+    // Logging format
+    bool              m_prettyFunctionErrors;
+    bool              m_prettyFunctionWarnings;
+
   // Public Properties
   public:
     void SetAsDout() { s_dout = this; }
@@ -151,6 +160,12 @@ class Logger
     void Errors_clear() { m_testErrors = 0; }
     void EnvWarnings_clear() { m_envWarnings = 0; }
     void EnvErrors_clear() { m_envErrors = 0; }
+
+    // Formatting
+    void FormatErrorsPrettyFunction_set(bool iVal) { m_prettyFunctionErrors = iVal; }
+    void FormatWarningsPrettyFunction_set(bool iVal) { m_prettyFunctionWarnings = iVal; }
+    bool FormatErrorsPrettyFunction_get() const { return m_prettyFunctionErrors; }
+    bool FormatWarningsPrettyFunction_get() const { return m_prettyFunctionWarnings; }
 
   // Constructors
   public:
