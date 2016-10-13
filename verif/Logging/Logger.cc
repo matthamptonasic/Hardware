@@ -152,6 +152,14 @@ void Logger::init(string iFileName, ostream * iStream, UInt32 iVerbosityLevel)
   m_alwaysLogScopes = true;
   m_logMsgLevel = Scope::Vrb_LOW();
   m_scopeLevel = iVerbosityLevel;
+
+  m_testWarnings = 0;
+  m_testErrors = 0;
+  m_envWarnings = 0;
+  m_envErrors = 0;
+
+  m_prettyFunctionErrors = true;
+  m_prettyFunctionWarnings = true;
 }
 void Logger::init_streams(string iFileName, ostream * iStream)
 {
@@ -199,7 +207,7 @@ void Logger::AddDebugScope(const Scope & iScope)
 {
   if(&iScope == NULL)
   {
-    //TBD - log error.
+    LOG_ERR << "Scope argument was null." << endl;
   }
   // Check if scope is already in the list.
   for(list<Scope>::iterator ii=m_scopes.begin(); ii != m_scopes.end(); ++ii)
