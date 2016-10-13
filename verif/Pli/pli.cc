@@ -150,7 +150,6 @@ void Pli::mergeStringCLArgs(vector<string> & ioArgs)
   for(UInt32 ii=0; ii<ioArgs.size(); ii++)
   {
     Int32 l_nbQuotes = std::count(ioArgs[ii].begin(), ioArgs[ii].end(), '\"');
-    //vpi_printf("nbQuotes %d => %s\n", l_nbQuotes, ioArgs[ii].c_str());
     if(l_even && ((l_nbQuotes % 2) == 0))
     {
       // No action, we're still even.
