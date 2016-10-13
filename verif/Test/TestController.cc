@@ -14,6 +14,7 @@
 ###############################################################################
 */
 
+#include "Logger.h"
 #include "Manip.h"
 #include "pli.h"
 #include "Parsing.h"
@@ -69,12 +70,13 @@ void TestController::initMaps()
 // =============================
 void TestController::PrintCommandLineArgs()
 {
+  LOG_MEDIUM << "=============== Test Arguments Passed from the Command Line ===============" << endl;
   for(UInt32 ii=0; ii<m_commandLineArgs->size(); ii++)
   {
-    // TBD - change to logger.
-    Vpi::vpi_printf("Argument[%d] '%s'\n", ii, m_commandLineArgs->at(ii).c_str());
+    LOG_MEDIUM << "Argument[" << ii << "] = '" << m_commandLineArgs->at(ii) << "'" << endl;
   }
-  Vpi::vpi_printf("cArgs = '%s'\n", m_cArgs.c_str());
+  LOG_MEDIUM << "cArgs (parsed) = '" << m_cArgs << "'" << endl;
+  LOG_MEDIUM << "===========================================================================" << endl;
 }
 UInt32 TestController::GetCmdArg_UInt32(string iName)
 {
@@ -85,7 +87,7 @@ UInt32 TestController::GetCmdArg_UInt32(string iName)
   UInt64 retVal = getCmdArg_UInt64(iName, oFound);
   if(oFound && (retVal > 0xffffffffULL))
   {
-    // TBD - log warning that value will be truncated.
+    LOG_WRN_ENV << "Argument with name '" << iName << "' is larger than a UInt32 and will be truncated." << endl;
   }
   return (UInt32)retVal;
 }
@@ -104,7 +106,7 @@ Int32  TestController::GetCmdArg_Int32(string iName)
   UInt64 retVal = getCmdArg_Int64(iName, oFound);
   if((oFound && (retVal > 2147483647LL)) || (oFound && (retVal < -2147483648LL)))
   {
-    // TBD - log warning that value will be truncated.
+    LOG_WRN_ENV << "Argument with name '" << iName << "' is larger than an Int32 and will be truncated." << endl;
   }
   return (Int32)retVal;
 }
@@ -120,7 +122,7 @@ string TestController::GetCmdArg_string(string iName)
   string l_retVal = getCmdArg_string(iName, l_found);
   if(!l_found)
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "Argument with name '" << iName << "' was not found." << endl;
   }
   return l_retVal;
 }
@@ -168,7 +170,7 @@ void TestController::parseCArgs()
     vector<string> l_tokenValue = Manip::Split(l_cArgsIndiv[ii], '=');
     if(l_tokenValue.size() != 2)
     {
-      // TBD - log error.
+      LOG_ERR_ENV << "Found uneven C-arg token/value pairings." << endl;
       continue;
     }
     // Parse token and value.
@@ -215,7 +217,7 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
     // Check if too large for 64-bit.
     if(l_hex && (l_number.size() > 16))
     {
-      // TBD - log warning.
+      LOG_WRN_ENV << "Argument with name '" << iToken << "' is larger than what a 64-bit value can accept. Will set as a string value." << endl;
       l_str = true;
       break;
     }
@@ -282,10 +284,10 @@ UInt64 TestController::getCmdArg_UInt64(string iName, bool & oFound)
   string l_retVal = getCmdArg_string(iName, l_strFound);
   if(l_strFound)
   {
-    // TBD - log error and show string name/value.
+    LOG_ERR_ENV << "Found C-arg value with name '" << iName << "' in the string list with value '" << l_retVal << "'." << endl;
     return 0;
   }
-  // TBD - log error.
+  LOG_ERR_ENV << "Did not find C-arg value with name '" << iName << "' in any list." << endl;
   return 0;
 }
 
@@ -305,10 +307,10 @@ Int64 TestController::getCmdArg_Int64(string iName, bool & oFound)
   string l_retVal = getCmdArg_string(iName, l_strFound);
   if(l_strFound)
   {
-    // TBD - log error and show string name/value.
+    LOG_ERR_ENV << "Found C-arg value with name '" << iName << "' in the string list with value '" << l_retVal << "'." << endl;
     return 0;
   }
-  // TBD - log error.
+  LOG_ERR_ENV << "Did not find C-arg value with name '" << iName << "' in any list." << endl;
   return 0;
 }
 
