@@ -365,13 +365,12 @@ sub v_sim
   }
   $vvp_cmd .= " $sim_plus_args";
 
+  $vvp_cmd .= " &";
   &myprint("vvp command:");
   &myprint($vvp_cmd);
   &nl();
-  my $vvp_rslt = `$vvp_cmd`;
   &myprint("=== Simulation Output ===");
-  &myprint($vvp_rslt);
-  &myprint("====== End  Output ======");
+  run_system_cmd($vvp_cmd, 0);
   return 1;
 }
 
@@ -394,6 +393,30 @@ sub get_dir_list
     }
   }
   return @dirs;
+}
+
+sub run_system_cmd
+{
+  my ($cmd, $echo_cmd)   = @_;
+  my $reasonCode = 0;
+
+  if($echo_cmd)
+  {
+    &myprint($cmd);
+  }
+
+  $reasonCode = system("$cmd");
+
+  if($reasonCode == 2)
+  {
+    return 0;
+  }
+  elsif ($reasonCode != 0)
+  {
+    &myprint("Command failed with reason code " .. $reasonCode);
+    return 1;
+  }
+  return 0;
 }
 
 sub myprint
