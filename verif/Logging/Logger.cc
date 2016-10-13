@@ -207,7 +207,7 @@ void Logger::AddDebugScope(const Scope & iScope)
 {
   if(&iScope == NULL)
   {
-    LOG_ERR << "Scope argument was null." << endl;
+    LOG_ERR_ENV << "Scope argument was null." << endl;
   }
   // Check if scope is already in the list.
   for(list<Scope>::iterator ii=m_scopes.begin(); ii != m_scopes.end(); ++ii)
