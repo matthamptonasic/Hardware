@@ -199,8 +199,8 @@ void Logger::SetFileOut(string iFileName)
     delete m_fileOut;
   }
   m_fileOut = new ofstream(m_fileName, ios::out | ios::trunc);
-  (*m_fileOut) << "Logfile set to " << m_fileName << endl;
-  (*m_consoleOut) << "Logfile set to " << m_fileName << endl;
+  (*m_fileOut) << LINE_HDR << "Logfile set to " << m_fileName << endl;
+  (*m_consoleOut) << LINE_HDR << "Logfile set to " << m_fileName << endl;
   setFileEnable();
 }
 void Logger::AddDebugScope(const Scope & iScope)
