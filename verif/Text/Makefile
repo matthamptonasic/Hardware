@@ -1,8 +1,14 @@
 CC = g++
 ODIR = $(DUMP_DIR)
 SDIR = .
-INC = -I../Common -I../Pli -I$(VPI_USER)
-VPATH = ../Common ../Pli $(VPI_USER)
+INC = -I../Common \
+			-I../Logging \
+			-I../Pli \
+			-I$(VPI_USER)
+VPATH = ../Common \
+				../Logging \
+				../Pli \
+				$(VPI_USER)
 
 SRCS = $(wildcard *.cc)
 
