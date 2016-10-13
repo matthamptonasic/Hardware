@@ -14,6 +14,7 @@
 ###############################################################################
 */
 
+#include "Logger.h"
 #include "TestDB.h"
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
@@ -51,13 +52,12 @@ void TestDB::AddTest(TestBase * iTest)
 {
   if(iTest == nullptr)
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "Test pointer was null." << endl;
     return;
   }
   if(m_testMap->find(iTest->getName()) != m_testMap->end())
   {
-    // This test is already in the map.
-    // TBD - log warning.
+    LOG_WRN_ENV << "Test '" << iTest->getName() << " was registered more than once." << endl;
     return;
   }
   (*m_testMap)[iTest->getName()] = iTest;
@@ -66,8 +66,7 @@ TestBase * TestDB::GetTest(string iTestName)
 {
   if(m_testMap->find(iTestName) == m_testMap->end())
   {
-    // Test not found in map.
-    // TBD - log error.
+    LOG_ERR_ENV << "Test '" << iTestName << "' was not found in the test list." << endl;
     return nullptr;
   }
   return (*m_testMap)[iTestName];
@@ -76,8 +75,7 @@ void TestDB::SetTestToRun(string iTestName)
 {
   if(m_testMap->find(iTestName) == m_testMap->end())
   {
-    // Test not found in map.
-    // TBD - log error.
+    LOG_ERR_ENV << "Test '" << iTestName << "' was not found in the test list." << endl;
     return;
   }
   m_testToRun = (*m_testMap)[iTestName];
@@ -86,7 +84,7 @@ TestBase * TestDB::GetTestToRun()
 {
   if(m_testToRun == nullptr)
   {
-    // TBD - Log error.
+    LOG_ERR_ENV << "There is no test set to run." << endl;
   }
   return m_testToRun;
 }
