@@ -4,9 +4,11 @@ ODIR = $(DUMP_DIR)
 SDIR = .
 INC = -I../Common \
 			-I$(VPI_USER) \
+			-I../Logging/ \
 			-I../Pli/
 VPATH = ../Common \
 				$(VPI_USER) \
+				../Logging/ \
 				../Pli/
 
 SRCS = $(wildcard *.cc)
