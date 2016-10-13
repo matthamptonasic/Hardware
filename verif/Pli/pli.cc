@@ -16,6 +16,8 @@
 
 #include <algorithm>
 
+#include "Logger.h"
+
 #include "pli.h"
 
 // ====================================
@@ -37,7 +39,7 @@ Vpi::SCALAR_VAL Pli::GetScalar(vpiHandle iHndl)
   
   if(iHndl == NULL)
   {
-    // TBD - log error message.
+    LOG_ERR_ENV << "vpiHandle was NULL." << endl;
     return retVal;
   }
   Vpi::OBJECT type = GetType(iHndl);
@@ -55,11 +57,9 @@ Vpi::SCALAR_VAL Pli::GetScalar(vpiHandle iHndl)
     case Vpi::OBJECT::SYS_FUNC_CALL:
     case Vpi::OBJECT::MEMORY_WORD:
     case Vpi::OBJECT::VARIABLES:
-      vpi_printf("Scalar type is %d.\n", type);
       break;
     default:
-    // TBD - log error message.
-    // Object type was not a value type.
+    LOG_ERR_ENV << "Object type (" << (Int32)type << ") of vpiHandle was not a value type." << endl;
       return retVal;
   }
 
@@ -80,14 +80,14 @@ UInt32 Pli::GetVector(vpiHandle iHndl)
   UInt32 retVal = 0xffffffff;
   if(iHndl == NULL)
   {
-    // TBD - log error message.
+    LOG_ERR_ENV << "vpiHandle was NULL." << endl;
     return retVal;
   }
 
   Int32 vec_size = Vpi::vpi_get(Vpi::PROPERTY::SIZE, iHndl);
   if(vec_size <= 0)
   {
-    // TBD - log error message.
+    LOG_ERR_ENV << "Vector size was invalid (" << vec_size << ")." << endl;
     return retVal;
   }
   
