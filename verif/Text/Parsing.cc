@@ -16,7 +16,7 @@
 
 #include "Parsing.h"
 
-#include "vpi.h"
+#include "Logger.h"
 
 using namespace std;
 
@@ -77,7 +77,7 @@ bool Parsing::CheckUInt64Range(const string & iNumber)
   }
   catch(...)
   {
-    // TBD - log warning.
+    LOG_WRN_ENV << "Caught exception with argument '" << iNumber << "'" << endl;
     return false;
   }
 }
@@ -99,7 +99,7 @@ bool Parsing::CheckInt64Range(const string & iNumber, bool iIsNegative)
   }
   catch(...)
   {
-    // TBD - log warning.
+    LOG_WRN_ENV << "Caught exception with argument '" << iNumber << "'" << endl;
     return false;
   }
 }
