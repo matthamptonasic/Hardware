@@ -16,6 +16,7 @@
 
 #include <iostream>
 
+#include "Logger.h"
 #include "V_Signal.h"
 #include "vpi_entry.h"
 #include "pli.h"
@@ -25,7 +26,9 @@ V_Signal::V_Signal(string iFullName)
 {
   init(iFullName, V_Signal::NB_STATES::FOUR_STATE);
   UInt32 curVal = (UInt32)Pli::GetScalar(m_sigHandle);
-  vpi_printf("Scalar value is 0x%x.\n", curVal);
+  LOG_DEBUG << "Scalar value is 0x" << hex << curVal << dec << "." << endl;
+  curVal = (UInt32)Pli::GetVector(m_sigHandle);
+  LOG_DEBUG << "Vector value is 0x" << hex << curVal << dec << "." << endl;
 }
 
 // Inits
@@ -49,19 +52,15 @@ UInt32 V_Signal::GetValue()
 bool V_Signal::setHandle()
 {
 
-  vpi_printf("Looking for signal '%s'.\n", m_name_full.c_str());
+  LOG_DEBUG << "Looking for signal '" << m_name_full << "'" << endl;
   m_sigHandle = Vpi::vpi_handle_by_name(m_name_full.c_str(), vpi_entry::TopModule_get());
   if(m_sigHandle == NULL) 
   {
-    //cout << "Could not find signal '" << m_name_full << "'" << endl;
-    vpi_printf("Could not find signal '%s'.\n", m_name_full.c_str());
+    LOG_WRN_ENV << "Could not find signal '" << m_name_full << "'" << endl;
   }
   else
   {
-    //cout << "Found signal '" << m_name_full << "'" << endl;
-    vpi_printf("Found signal '%s'.\n", m_name_full.c_str());
-    vpi_printf("top hd is '0x%x'.\n", (UInt32)(UInt64)vpi_entry::TopModule_get());
-    vpi_printf("Handle is '0x%x'.\n", (UInt32)(UInt64)m_sigHandle);
+    LOG_DEBUG << "Found signal '" << m_name_full << "'" << endl;
   }
   return true;
 }
