@@ -35,9 +35,15 @@ using namespace std;
 #define LOG_FULL    DOUT << &Logger::s_Scope_FULL
 #define LOG_DEBUG   DOUT << &Logger::s_Scope_DEBUG
 #define LOG_LVL(_uint_) DOUT << new Logger::Scope(string("LOG_LVL") + string(#_uint_), _uint_ )
+
+// These are the primary/preferred logging macros.
 #ifndef LOG_MSG     // User can redefine this in their test/env.
 #define LOG_MSG     DOUT << &Logger::s_Scope_MSG
 #endif
+#define LOG_WRN     DOUT.Warnings_inc();    DOUT << &Logger::s_Scope_WRN
+#define LOG_ERR     DOUT.Errors_inc();      DOUT << &Logger::s_Scope_ERR
+#define LOG_WRN_ENV DOUT.EnvWarnings_inc(); DOUT << &Logger::s_Scope_WRN_ENV
+#define LOG_ERR_ENV DOUT.EnvErrors_inc();   DOUT << &Logger::s_Scope_ERR_ENV
 
 class Logger
 {
@@ -86,6 +92,10 @@ class Logger
     static Scope        s_Scope_FULL;
     static Scope        s_Scope_DEBUG;
     static Scope        s_Scope_MSG;
+    static Scope        s_Scope_WRN;
+    static Scope        s_Scope_ERR;
+    static Scope        s_Scope_WRN_ENV;
+    static Scope        s_Scope_ERR_ENV;
 
   // Private Members
   private:
@@ -109,6 +119,11 @@ class Logger
     bool              m_consoleUserDisabled;
     bool              m_fileUserDisabled;
 
+    UInt32            m_testWarnings;
+    UInt32            m_testErrors;
+    UInt32            m_envWarnings;
+    UInt32            m_envErrors;
+
   // Public Properties
   public:
     void SetAsDout() { s_dout = this; }
@@ -123,6 +138,19 @@ class Logger
     void VerbosityLevel_set(UInt32 iValue) { m_scopeLevel = iValue; }
     UInt32 LogMsgLevel_get() const { return m_logMsgLevel; }
     void LogMsgLevel_set(UInt32 iValue) { m_logMsgLevel = iValue; }
+
+    UInt32 Warnings_get() const { return m_testWarnings; };
+    UInt32 Errors_get() const { return m_testErrors; };
+    UInt32 EnvWarnings_get() const { return m_envWarnings; };
+    UInt32 EnvErrors_get() const { return m_envErrors; };
+    void Warnings_inc() { m_testWarnings++; }
+    void Errors_inc() { m_testErrors++; }
+    void EnvWarnings_inc() { m_envWarnings++; }
+    void EnvErrors_inc() { m_envErrors++; }
+    void Warnings_clear() { m_testWarnings = 0; }
+    void Errors_clear() { m_testErrors = 0; }
+    void EnvWarnings_clear() { m_envWarnings = 0; }
+    void EnvErrors_clear() { m_envErrors = 0; }
 
   // Constructors
   public:
