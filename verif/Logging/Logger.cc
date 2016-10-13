@@ -20,8 +20,18 @@
 // ==================================
 // ===**    Logger Instance     **===
 // ==================================
-//Logger * dout;
 Logger * Logger::s_dout = nullptr;
+
+// ==================================
+// ===**     Static Scopes      **===
+// ==================================
+Logger::Scope Logger::s_Scope_NONE  ("Vrb_NONE",    Logger::Scope::Vrb_NONE());
+Logger::Scope Logger::s_Scope_LOW   ("Vrb_LOW",     Logger::Scope::Vrb_LOW());
+Logger::Scope Logger::s_Scope_MEDIUM("Vrb_MEDIUM",  Logger::Scope::Vrb_MEDIUM());
+Logger::Scope Logger::s_Scope_HIGH  ("Vrb_HIGH",    Logger::Scope::Vrb_HIGH());
+Logger::Scope Logger::s_Scope_FULL  ("Vrb_FULL",    Logger::Scope::Vrb_FULL());
+Logger::Scope Logger::s_Scope_DEBUG ("Vrb_DEBUG",   Logger::Scope::Vrb_DEBUG());
+Logger::Scope Logger::s_Scope_MSG   ("Vrb_MSG",     Logger::Scope::Vrb_MEDIUM());
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**    Logger::Scope Class    **===
