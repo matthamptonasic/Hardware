@@ -180,7 +180,6 @@ void TestController::parseCArgs()
 
 void TestController::parseTokenValue(string & iToken, string & iValue)
 {
-  Vpi::vpi_printf("parseTokenValue\n");
   iToken = Manip::Trim(iToken, "\"");
   iValue = Manip::Trim(iValue, "\"");
   // Token should now be set, no more changes.
@@ -249,7 +248,7 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
   if(l_str)
   {
     (*m_nameToStringMap)[iToken] = iValue;
-    Vpi::vpi_printf("T/V pair (String) = '%s', '%s'\n", iToken.c_str(), (*m_nameToStringMap)[iToken].c_str());
+    //Vpi::vpi_printf("T/V pair (String) = '%s', '%s'\n", iToken.c_str(), (*m_nameToStringMap)[iToken].c_str());
     return;
   }
   if(l_signed)
@@ -257,14 +256,14 @@ void TestController::parseTokenValue(string & iToken, string & iValue)
     // Put into Int64
     (*m_nameToInt64Map)[iToken] = stoll(iValue);
     (*m_nameToPrintHexMap)[iToken] = l_hex;
-    Vpi::vpi_printf(string("T/V pair (Int64) = '%s', '" + l_fmt + "'\n").c_str(), iToken.c_str(), (*m_nameToInt64Map)[iToken]);
+    //Vpi::vpi_printf(string("T/V pair (Int64) = '%s', '" + l_fmt + "'\n").c_str(), iToken.c_str(), (*m_nameToInt64Map)[iToken]);
   }
   else
   {
     // Put into UInt64
     (*m_nameToUInt64Map)[iToken] = stoull(iValue, nullptr, l_hex ? 16 : 10);
     (*m_nameToPrintHexMap)[iToken] = l_hex;
-    Vpi::vpi_printf(string("T/V pair (UInt64) = '%s', '" + l_fmt + "'\n").c_str(), iToken.c_str(), (*m_nameToUInt64Map)[iToken]);
+    //Vpi::vpi_printf(string("T/V pair (UInt64) = '%s', '" + l_fmt + "'\n").c_str(), iToken.c_str(), (*m_nameToUInt64Map)[iToken]);
   }
 }
 
