@@ -369,7 +369,6 @@ sub v_sim
   &myprint("vvp command:");
   &myprint($vvp_cmd);
   &nl();
-  &myprint("=== Simulation Output ===");
   run_system_cmd($vvp_cmd, 0);
   return 1;
 }
