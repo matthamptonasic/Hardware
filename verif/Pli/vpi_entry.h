@@ -36,8 +36,14 @@ class vpi_entry
 
   // Public Methods
   public:
-  static Int32  tb_build(char* UNUSED(iUserData));
+  static Int32  tb_build(char * UNUSED(iUserData));
   static void   tb_build_register();
+  static Int32  EndOfCompilationCB(Vpi::t_cb_data * UNUSED(iUserData));
+  static void   EndOfCompilationCB_register();
+  static Int32  StartOfSimulationCB(Vpi::t_cb_data * UNUSED(iUserData));
+  static void   StartOfSimulationCB_register();
+  static Int32  EndOfSimulationCB(Vpi::t_cb_data * UNUSED(iUserData));
+  static void   EndOfSimulationCB_register();
 
   // Private Methods
   private:
