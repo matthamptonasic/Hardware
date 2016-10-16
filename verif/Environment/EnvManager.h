@@ -37,6 +37,7 @@ class EnvManager
     // ====================================
     // ex: +c_args="logFile=/home/matt/dump/Hardware/_common/fifo/run.log"
     const string c_logFile = "logFile"; // path + filename of logfile (all ostream output).
+    const string c_logLvl = "logLvl";   // logLvl=250 or logLvl=HIGH (match the major verbosity levels).
 
   // Nested Classes
   public:
