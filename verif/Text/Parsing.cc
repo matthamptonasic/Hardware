@@ -16,11 +16,26 @@
 
 #include "Parsing.h"
 
+#include <regex>
+
 #include "Logger.h"
 
 using namespace std;
 
 namespace Text {
+
+bool Parsing::Contains(const string & iText, const string & iPattern)
+{
+  if((iText == "") || (iPattern == ""))
+  {
+    return false;
+  }
+  if(regex_match(iText, regex(".*" + iPattern + ".*")))
+  {
+    return true;
+  }
+  return false;
+}
 
 bool Parsing::StartsWith(const string & iText, const string & iPattern)
 {
