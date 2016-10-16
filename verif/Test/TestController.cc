@@ -283,10 +283,10 @@ UInt64 TestController::getCmdArg_UInt64(string iName, bool & oFound)
   string l_retVal = getCmdArg_string(iName, l_strFound);
   if(l_strFound)
   {
-    LOG_ERR_ENV << "Found C-arg value with name '" << iName << "' in the string list with value '" << l_retVal << "'." << endl;
+    LOG_WRN_ENV << "Found C-arg value with name '" << iName << "' in the string list with value '" << l_retVal << "'." << endl;
     return 0;
   }
-  LOG_ERR_ENV << "Did not find C-arg value with name '" << iName << "' in any list." << endl;
+  LOG_DEBUG << "Did not find C-arg value with name '" << iName << "' in any list." << endl;
   return 0;
 }
 
@@ -306,10 +306,10 @@ Int64 TestController::getCmdArg_Int64(string iName, bool & oFound)
   string l_retVal = getCmdArg_string(iName, l_strFound);
   if(l_strFound)
   {
-    LOG_ERR_ENV << "Found C-arg value with name '" << iName << "' in the string list with value '" << l_retVal << "'." << endl;
+    LOG_WRN_ENV << "Found C-arg value with name '" << iName << "' in the string list with value '" << l_retVal << "'." << endl;
     return 0;
   }
-  LOG_ERR_ENV << "Did not find C-arg value with name '" << iName << "' in any list." << endl;
+  LOG_DEBUG << "Did not find C-arg value with name '" << iName << "' in any list." << endl;
   return 0;
 }
 
