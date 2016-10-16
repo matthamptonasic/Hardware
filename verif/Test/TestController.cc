@@ -122,7 +122,7 @@ string TestController::GetCmdArg_string(string iName)
   string l_retVal = getCmdArg_string(iName, l_found);
   if(!l_found)
   {
-    LOG_ERR_ENV << "Argument with name '" << iName << "' was not found." << endl;
+    LOG_DEBUG << "Argument with name '" << iName << "' was not found." << endl;
   }
   return l_retVal;
 }
