@@ -26,6 +26,7 @@ namespace Text {
 class Parsing {
 
   public:
+    static bool Contains(const string & iText, const string & iPattern);
     static bool StartsWith(const string & iText, const string & iPattern);
     static bool CheckNumberBase10(const char & iChar);
     static bool CheckNumberBase16(const char & iChar);
