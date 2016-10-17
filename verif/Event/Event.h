@@ -9,7 +9,34 @@
 #   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
 #   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   10/14/16
-#   Description   :   
+#   Description   :   A template class for Events.
+#                     You can declare an event in your code based on any types
+#                     you require (any method signature).
+#                     You then connect any method with matching signature to
+#                     the event using the += operator.
+#                     i.e.
+#                           _myEventInst += myTestMethod;
+#                     
+#                     Then, when the event occurs, it will call each method
+#                     in the event's list of delegates.
+#                     The list of delegates will be called from the first
+#                     delegate added to the last in order.
+#                     Example:
+#                               // Event delegate methods will return void
+#                               // and pass an Int32 and a UInt32 as params.
+#                       public: Event<void, Int32, UInt32> _myEvent;
+#                          ....
+#                       void myInit() {
+#                         ...
+#                         _myEvent += myTestMethod;
+#                       }
+#                       void myTestMethod(Int32 a, UInt32 b) {
+#                         // Do event handling here.
+#                       }
+#                       void body() {
+#                         ...
+#                         _myEvent(-16, 32);  // This will call 'myTestMethod'.
+#                       }
 #
 ###############################################################################
 */
