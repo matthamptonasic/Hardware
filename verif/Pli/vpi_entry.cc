@@ -20,8 +20,9 @@
 #include "EnvManager.h"
 #include "Logger.h"
 #include "TestController.h"
-#include "vpi_entry.h"
 #include "V_Signal.h"
+
+#include "vpi_entry.h"
 
 // ===============================
 // ===**  Master Export List **===
@@ -39,9 +40,12 @@ void (*vlog_startup_routines[])() = {
 };
 
 // ====================================
-// ===**  Private Static Members  **===
+// ===**     Static Members       **===
 // ====================================
 vpiHandle vpi_entry::m_topModule = NULL;
+Event<void> vpi_entry::_s_EndOfCompilation;
+Event<void> vpi_entry::_s_StartOfSimulation;
+Event<void> vpi_entry::_s_EndOfSimulation;
 
 // ===============================
 // ===**  Public Properties  **===
@@ -98,6 +102,7 @@ Int32 vpi_entry::EndOfCompilationCB(Vpi::t_cb_data * UNUSED(iCbData))
   cout << LINE_HDR << "========= End of Compilation =========" << endl;
   // Creating the EnvManager runs inits on the environment.
   EnvManager::Access();
+  _s_EndOfCompilation();
   return 0;
 }
 void vpi_entry::EndOfCompilationCB_register()
@@ -127,6 +132,7 @@ void vpi_entry::EndOfCompilationCB_register()
 Int32 vpi_entry::StartOfSimulationCB(Vpi::t_cb_data * UNUSED(iCbData))
 {
   LOG_DEBUG << "========= Start of Simulation =========" << endl;
+  _s_StartOfSimulation();
   // Stub
   return 0;
 }
@@ -156,8 +162,9 @@ void vpi_entry::StartOfSimulationCB_register()
 
 Int32 vpi_entry::EndOfSimulationCB(Vpi::t_cb_data * UNUSED(iCbData))
 {
-  // Stub
   LOG_DEBUG << "========= End of Simulation =========" << endl;
+  _s_EndOfSimulation();
+  // Stub
   return 0;
 }
 void vpi_entry::EndOfSimulationCB_register()
@@ -218,4 +225,3 @@ bool vpi_entry::setTopModule(vpiHandle iSysTfCall)
   m_topModule = arg_handle;
   return true;
 }
-
