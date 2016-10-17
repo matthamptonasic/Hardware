@@ -40,6 +40,7 @@ class vpi_entry
 
   // Public Methods
   public:
+  static Int32  tb_build_compile(char * UNUSED(iUserData));
   static Int32  tb_build(char * UNUSED(iUserData));
   static void   tb_build_register();
   static Int32  EndOfCompilationCB(Vpi::t_cb_data * UNUSED(iUserData));
@@ -51,7 +52,6 @@ class vpi_entry
 
   // Private Methods
   private:
-  static bool   setTopModule(vpiHandle iSysTfCall);
   
 };
 
