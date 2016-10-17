@@ -3,13 +3,15 @@ CCFLAGS = -fPIC
 ODIR = $(DUMP_DIR)
 SDIR = .
 INC = -I../Common \
-			-I$(VPI_USER) \
-			-I../Logging/ \
-			-I../Pli/
+			-I../Event \
+			-I../Logging \
+			-I../Pli \
+			-I$(VPI_USER)
 VPATH = ../Common \
-				$(VPI_USER) \
-				../Logging/ \
-				../Pli/
+				../Event \
+				../Logging \
+				../Pli \
+				$(VPI_USER)
 
 SRCS = $(wildcard *.cc)
 
