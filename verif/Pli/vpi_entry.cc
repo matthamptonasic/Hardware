@@ -20,7 +20,7 @@
 #include "EnvManager.h"
 #include "Logger.h"
 #include "TestController.h"
-#include "V_Signal.h"
+#include "TypeBase.h"
 
 #include "vpi_entry.h"
 
