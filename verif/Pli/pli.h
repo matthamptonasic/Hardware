@@ -33,6 +33,7 @@ class Pli
 
   // Public Methods
   public:
+  static void             DollarFinish();
   static Vpi::SCALAR_VAL  GetScalar(vpiHandle iHndl);
   static Vpi::OBJECT      GetType(vpiHandle iHndl);
   static UInt32           GetVector(vpiHandle iHndl);
