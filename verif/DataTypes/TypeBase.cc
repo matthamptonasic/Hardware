@@ -5,7 +5,7 @@
 #   In file LICENSING.md
 ###############################################################################
 #
-#   File          :   V_Signal.cc 
+#   File          :   TypeBase.cc 
 #   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
 #   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   09/16/16
@@ -17,14 +17,15 @@
 #include <iostream>
 
 #include "Logger.h"
-#include "V_Signal.h"
 #include "vpi_entry.h"
 #include "pli.h"
 
+#include "TypeBase.h"
+
 // Constructors
-V_Signal::V_Signal(string iFullName)
+TypeBase::TypeBase(string iFullName)
 {
-  init(iFullName, V_Signal::NB_STATES::FOUR_STATE);
+  init(iFullName, TypeBase::NB_STATES::FOUR_STATE);
   UInt32 curVal = (UInt32)Pli::GetScalar(m_sigHandle);
   LOG_DEBUG << "Scalar value is 0x" << hex << curVal << dec << "." << endl;
   curVal = (UInt32)Pli::GetVector(m_sigHandle);
@@ -32,7 +33,7 @@ V_Signal::V_Signal(string iFullName)
 }
 
 // Inits
-bool V_Signal::init(string iFullName, V_Signal::NB_STATES iValue)
+bool TypeBase::init(string iFullName, TypeBase::NB_STATES iValue)
 {
   m_name_full = iFullName;
   m_nb_states = iValue;
@@ -41,7 +42,7 @@ bool V_Signal::init(string iFullName, V_Signal::NB_STATES iValue)
 }
 
 // Public Methods
-UInt32 V_Signal::GetValue()
+UInt32 TypeBase::GetValue()
 {
   UInt32 retVal = 0xffffffff;
 
@@ -49,7 +50,7 @@ UInt32 V_Signal::GetValue()
 }
 
 // Private Methods
-bool V_Signal::setHandle()
+bool TypeBase::setHandle()
 {
 
   LOG_DEBUG << "Looking for signal '" << m_name_full << "'" << endl;
