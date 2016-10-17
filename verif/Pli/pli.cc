@@ -33,6 +33,10 @@
 // ============================
 // ===**  Public Methods  **===
 // ============================
+void Pli::DollarFinish()
+{
+  Vpi::vpi_control((Int32)Vpi::CTL_OPERATION::FINISH);
+}
 Vpi::SCALAR_VAL Pli::GetScalar(vpiHandle iHndl)
 {
   Vpi::SCALAR_VAL retVal = Vpi::SCALAR_VAL::DONT_CARE;
