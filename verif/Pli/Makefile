@@ -5,19 +5,19 @@ SDIR = .
 INC = -I./ \
 			-I../BitVector \
 			-I../Common \
+			-I../DataTypes \
 			-I../Environment \
 			-I../Event \
 			-I../Logging \
-			-I../Signals \
 			-I../Test \
 			-I$(VPI_USER)
 VPATH = ./ \
 				../BitVector \
 				../Common \
+			  ../DataTypes \
 				../Environment \
 				../Event \
 				../Logging \
-				../Signals \
 				../Test \
 				$(VPI_USER)
 
