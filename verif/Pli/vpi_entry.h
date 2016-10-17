@@ -17,6 +17,7 @@
 #define VPI_ENTRY_H
 
 #include "Common.h"
+#include "Event.h"
 #include "vpi.h"
 
 // This (static) class will serve as a layer of test flow control
@@ -32,6 +33,9 @@ class vpi_entry
 
   // Public Properties (get/set)
   public:
+  static Event<void> _s_EndOfCompilation;
+  static Event<void> _s_StartOfSimulation;
+  static Event<void> _s_EndOfSimulation;
   static vpiHandle TopModule_get();
 
   // Public Methods
