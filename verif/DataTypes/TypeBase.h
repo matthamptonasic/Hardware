@@ -5,7 +5,7 @@
 #   In file LICENSING.md
 ###############################################################################
 #
-#   File          :   V_Signal.h 
+#   File          :   TypeBase.h 
 #   Creator       :   Matt Hampton (matthamptonasic@gmail.com)
 #   Owner         :   Matt Hampton (matthamptonasic@gmail.com)
 #   Creation Date :   09/16/16
@@ -13,8 +13,8 @@
 #
 ###############################################################################
 */
-#ifndef V_SIGNAL_H
-#define V_SIGNAL_H
+#ifndef TypeBase_H
+#define TypeBase_H
 
 #include <string>
 
@@ -23,7 +23,12 @@
 
 using namespace std;
 
-class V_Signal 
+// Make this abstract. This will carry the BitVector (move it to this directory).
+// Make a 2-state and 4-state abstract base as well.
+// 2-state child will only have the 'bit' class.
+// 4-state children will be logic, (typedef reg to be same as logic), & integer (32-bit BV).
+
+class TypeBase 
 {
   // Enums
   public:
@@ -43,11 +48,11 @@ class V_Signal
 
   // Constructors
   public:
-    V_Signal(string iFullName);
+    TypeBase(string iFullName);
 
   // Inits
   private:
-    bool init(string iFullName, V_Signal::NB_STATES iValue);
+    bool init(string iFullName, TypeBase::NB_STATES iValue);
 
   // Public Methods
   public:
@@ -58,5 +63,5 @@ class V_Signal
     bool setHandle();
 };
 
-#endif /* V_SIGNAL_H */
+#endif /* TypeBase_H */
 
