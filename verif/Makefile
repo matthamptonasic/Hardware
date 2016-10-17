@@ -2,7 +2,6 @@ ODIR = $(DUMP_DIR)
 CCFLAGS = -fPIC -std=c++11
 
 all:
-	cd BitVector && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 	cd DataTypes && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 	cd Event  && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
 	cd Pli && $(MAKE) -e CCFLAGS="$(CCFLAGS)"
