@@ -3,21 +3,23 @@ CCFLAGS = -fPIC -std=c++11
 ODIR = $(DUMP_DIR)
 SDIR = .
 INC = -I./ \
-			-I../Common \
-			-I$(VPI_USER) \
-			-I../Signals \
 			-I../BitVector \
-			-I../Logging \
+			-I../Common \
 			-I../Environment \
-			-I../Test
+			-I../Event \
+			-I../Logging \
+			-I../Signals \
+			-I../Test \
+			-I$(VPI_USER)
 VPATH = ./ \
-				../Common \
-				$(VPI_USER) \
-				../Signals \
 				../BitVector \
-				../Logging \
+				../Common \
 				../Environment \
-				../Test
+				../Event \
+				../Logging \
+				../Signals \
+				../Test \
+				$(VPI_USER)
 
 SRCS = $(wildcard *.cc)
 
