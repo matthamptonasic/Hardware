@@ -19,6 +19,7 @@
 #include "BitVector.h"
 #include "EnvManager.h"
 #include "Logger.h"
+#include "pli.h"
 #include "TestController.h"
 #include "TypeBase.h"
 
@@ -59,31 +60,72 @@ vpiHandle vpi_entry::TopModule_get()
 // ===**  Public Methods  **===
 // ============================
 
-// TBD - create the compile check.
+Int32 vpi_entry::tb_build_compile(char * UNUSED(iUserData))
+{
+  vpiHandle systf_handle = Vpi::vpi_handle(Vpi::OBJECT::SYS_TF_CALL, NULL);
+  if(systf_handle == NULL)
+  {
+    cout << "Failed to get SYS_TF_CALL handle to tb_build." << endl;
+    Pli::DollarFinish();
+    return 0;
+  }
+
+  string l_systfName = Vpi::vpi_get_str(Vpi::PROPERTY::NAME, systf_handle);
+
+  // Get iterator handle for the arguments.
+  vpiHandle arg_iterator = Vpi::vpi_iterate(Vpi::OBJECT::ARGUMENT, systf_handle);
+  if(arg_iterator == NULL)
+  {
+    cout << "No arguments were passed to sysTf '" << l_systfName << "'. Exiting." << endl;
+    Pli::DollarFinish();
+    return 0;
+  }
+
+  // Check the argument type.
+  vpiHandle arg_handle = Vpi::vpi_scan(arg_iterator);
+  Vpi::OBJECT obj = (Vpi::OBJECT)Vpi::vpi_get(Vpi::PROPERTY::TYPE, arg_handle);
+  if(obj != Vpi::OBJECT::MODULE)
+  {
+    string l_name = Vpi::vpi_get_str(Vpi::PROPERTY::NAME, arg_handle);
+    cout << "Argument (" << l_name << ") to SysTfCall '" << l_systfName << "' was not a module." << endl;
+    Pli::DollarFinish();
+    return 0;
+  }
+  bool isTopModule = (bool)Vpi::vpi_get(Vpi::PROPERTY::TOP_MODULE, arg_handle);
+  if(!isTopModule)
+  {
+    string l_name = Vpi::vpi_get_str(Vpi::PROPERTY::NAME, arg_handle);
+    cout << "Argument (" << l_name << ") to SysTfCall '" << l_systfName << "' was not the top-level module." << endl;
+    Pli::DollarFinish();
+    return 0;
+  }
+
+  // Check that there are no more arguments.
+  arg_handle = Vpi::vpi_scan(arg_iterator);
+  if(arg_handle != NULL)
+  {
+    cout << "SysTfCall '" << l_systfName << "' has too many arguments." << endl;
+    Vpi::vpi_free_object(arg_iterator);
+    Pli::DollarFinish();
+    return 0;
+  }
+}
 Int32 vpi_entry::tb_build(char * UNUSED(iUserData))
 {
   LOG_DEBUG << "tb_build: Entry." << endl;
 
   // Get the Sys TF Call Handle
   vpiHandle systf_handle = Vpi::vpi_handle(Vpi::OBJECT::SYS_TF_CALL, NULL);
-  if(systf_handle == NULL)
-  {
-    LOG_ERR_ENV << "Failed to get SYS_TF_CALL handle to tb_build." << endl;
-    return 0;
-  }
 
-  if(!setTopModule(systf_handle))
-  {
-    return 0;
-  }
+  vpiHandle arg_iterator = Vpi::vpi_iterate(Vpi::OBJECT::ARGUMENT, systf_handle);
+  m_topModule = Vpi::vpi_scan(arg_iterator);
+
   LOG_DEBUG << "m_topModule name is '" 
             << Vpi::vpi_get_str(Vpi::PROPERTY::NAME, m_topModule)
             << "'." << endl;
-  
   LOG_DEBUG << "tb_build: Exit." << endl;
   return 0;
 }
-
 void vpi_entry::tb_build_register()
 {
   Vpi::t_vpi_systf_data tf_data;
@@ -91,7 +133,7 @@ void vpi_entry::tb_build_register()
   tf_data.type      = Vpi::SYS_TASK_FUNC::TASK;
   tf_data.tfname    = "$tb_build";
   tf_data.calltf    = tb_build;
-  tf_data.compiletf = 0;
+  tf_data.compiletf = tb_build_compile;
   tf_data.sizetf    = 0;
 
   Vpi::vpi_register_systf(&tf_data);
@@ -107,15 +149,6 @@ Int32 vpi_entry::EndOfCompilationCB(Vpi::t_cb_data * UNUSED(iCbData))
 }
 void vpi_entry::EndOfCompilationCB_register()
 {
-  /*
-    CB_REASON   reason;
-    Int32       (*cb_rtn)(t_cb_data *cb);
-    vpiHandle   obj;
-    p_vpi_time  time;
-    p_vpi_value value;
-    Int32       index;
-    char *      user_data;
-  */
   Vpi::t_cb_data l_cb_data;
 
   l_cb_data.reason = Vpi::CB_REASON::END_OF_COMPILE;
@@ -128,7 +161,6 @@ void vpi_entry::EndOfCompilationCB_register()
 
   Vpi::vpi_register_cb(&l_cb_data);
 }
-
 Int32 vpi_entry::StartOfSimulationCB(Vpi::t_cb_data * UNUSED(iCbData))
 {
   LOG_DEBUG << "========= Start of Simulation =========" << endl;
@@ -138,15 +170,6 @@ Int32 vpi_entry::StartOfSimulationCB(Vpi::t_cb_data * UNUSED(iCbData))
 }
 void vpi_entry::StartOfSimulationCB_register()
 {
-  /*
-    CB_REASON   reason;
-    Int32       (*cb_rtn)(t_cb_data *cb);
-    vpiHandle   obj;
-    p_vpi_time  time;
-    p_vpi_value value;
-    Int32       index;
-    char *      user_data;
-  */
   Vpi::t_cb_data l_cb_data;
 
   l_cb_data.reason = Vpi::CB_REASON::START_OF_SIMULATION;
@@ -159,7 +182,6 @@ void vpi_entry::StartOfSimulationCB_register()
 
   Vpi::vpi_register_cb(&l_cb_data);
 }
-
 Int32 vpi_entry::EndOfSimulationCB(Vpi::t_cb_data * UNUSED(iCbData))
 {
   LOG_DEBUG << "========= End of Simulation =========" << endl;
@@ -169,15 +191,6 @@ Int32 vpi_entry::EndOfSimulationCB(Vpi::t_cb_data * UNUSED(iCbData))
 }
 void vpi_entry::EndOfSimulationCB_register()
 {
-  /*
-    CB_REASON   reason;
-    Int32       (*cb_rtn)(t_cb_data *cb);
-    vpiHandle   obj;
-    p_vpi_time  time;
-    p_vpi_value value;
-    Int32       index;
-    char *      user_data;
-  */
   Vpi::t_cb_data l_cb_data;
 
   l_cb_data.reason = Vpi::CB_REASON::END_OF_SIMULATION;
@@ -195,33 +208,3 @@ void vpi_entry::EndOfSimulationCB_register()
 // =============================
 // ===**  Private Methods  **===
 // =============================
-
-bool vpi_entry::setTopModule(vpiHandle iSysTfCall)
-{
-  if(iSysTfCall == NULL)
-  {
-    return false;
-  }
-
-  // Get iterator handle for the arguments.
-  vpiHandle arg_iterator = Vpi::vpi_iterate(Vpi::OBJECT::ARGUMENT, iSysTfCall);
-  vpiHandle arg_handle = Vpi::vpi_scan(arg_iterator);
-
-  Vpi::OBJECT obj = (Vpi::OBJECT)vpi_get((int)Vpi::PROPERTY::TYPE, arg_handle);
-  if(obj != Vpi::OBJECT::MODULE)
-  {
-    // TBD - Add report of systf name, param name.
-    //vpi_printf("ERROR: Argument was not a module.\n");
-    LOG_ERR_ENV << "Argument was not a module." << endl;
-    return false;
-  }
-  bool isTopModule = (bool)Vpi::vpi_get(Vpi::PROPERTY::TOP_MODULE, arg_handle);
-  if(!isTopModule)
-  {
-    // TBD - Add report of systf name, param name.
-    LOG_ERR_ENV << "Argument was not the top-level module." << endl;
-    return false;
-  }
-  m_topModule = arg_handle;
-  return true;
-}
