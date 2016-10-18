@@ -37,6 +37,7 @@ class Pli
   static Vpi::SCALAR_VAL  GetScalar(vpiHandle iHndl);
   static Vpi::OBJECT      GetType(vpiHandle iHndl);
   static UInt32           GetVector(vpiHandle iHndl);
+  static UInt32           GetSize(vpiHandle iHndl);
   static vector<string> * GetCommandLineArgs();
 
   // Private Methods
