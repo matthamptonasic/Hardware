@@ -61,6 +61,7 @@ Vpi::SCALAR_VAL Pli::GetScalar(vpiHandle iHndl)
     case Vpi::OBJECT::SYS_FUNC_CALL:
     case Vpi::OBJECT::MEMORY_WORD:
     case Vpi::OBJECT::VARIABLES:
+    case Vpi::OBJECT::BIT:
       break;
     default:
     LOG_ERR_ENV << "Object type (" << (Int32)type << ") of vpiHandle was not a value type." << endl;
@@ -94,7 +95,6 @@ UInt32 Pli::GetVector(vpiHandle iHndl)
     LOG_ERR_ENV << "Vector size was invalid (" << vec_size << ")." << endl;
     return retVal;
   }
-  
 
   Vpi::p_vpi_value data = new Vpi::t_vpi_value();
   data->format = Vpi::VALUE_FORMAT::VECTOR;
@@ -108,7 +108,26 @@ UInt32 Pli::GetVector(vpiHandle iHndl)
     Int32 bVal = data->value.vector[ii].bval;
     retVal = aVal; 
   }
+  delete data;
   return retVal;
+}
+
+UInt32 Pli::GetSize(vpiHandle iHndl)
+{
+  UInt32 retVal = 0;
+  if(iHndl == NULL)
+  {
+    LOG_ERR_ENV << "vpiHandle was NULL." << endl;
+    return retVal;
+  }
+
+  Int32 vec_size = Vpi::vpi_get(Vpi::PROPERTY::SIZE, iHndl);
+  if(vec_size <= 0)
+  {
+    LOG_ERR_ENV << "Vector size was invalid (" << vec_size << ")." << endl;
+    return retVal;
+  }
+  return (UInt32)vec_size;
 }
 
 Vpi::OBJECT Pli::GetType(vpiHandle iHndl)
