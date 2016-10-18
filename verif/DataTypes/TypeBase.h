@@ -13,8 +13,8 @@
 #
 ###############################################################################
 */
-#ifndef TypeBase_H
-#define TypeBase_H
+#ifndef TYPEBASE_H
+#define TYPEBASE_H
 
 #include <string>
 
@@ -32,27 +32,30 @@ class TypeBase
 {
   // Enums
   public:
-  enum class NB_STATES : Byte
-  {
-    TWO_STATE = 0,
-    FOUR_STATE = 1
-  };
 
-  // Members
+  // Private Members
   private:
-    string m_name;
-    string m_name_full;
-    vpiHandle m_sigHandle;
+    string                m_name;
+    string                m_nameFull;
+    vpiHandle             m_sigHandle;
+    UInt32                m_size;
+    BitVector *           m_bv;
 
-    NB_STATES m_nb_states;
+    BitVector::NB_STATES  m_nbStates;
+
+  // Protected Properties
+  protected:
+
+  // Public Properties
+  public:
 
   // Constructors
   public:
-    TypeBase(string iFullName);
+    TypeBase(string iFullName, BitVector::NB_STATES iStates);
 
   // Inits
   private:
-    bool init(string iFullName, TypeBase::NB_STATES iValue);
+    bool init(string iFullName, BitVector::NB_STATES iStates);
 
   // Public Methods
   public:
@@ -61,7 +64,16 @@ class TypeBase
   // Private Methods
   private:
     bool setHandle();
+    void createBV();
+
+  // Protected Methods
+  protected:
+    virtual void setSize() = 0;
+
+  // Operators
+  public:
+
 };
 
-#endif /* TypeBase_H */
+#endif /* TYPEBASE_H */
 
