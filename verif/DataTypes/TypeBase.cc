@@ -16,32 +16,69 @@
 
 #include <iostream>
 
+#include "BitVector.h"
 #include "Logger.h"
-#include "vpi_entry.h"
+#include "Manip.h"
 #include "pli.h"
+#include "vpi_entry.h"
 
 #include "TypeBase.h"
 
-// Constructors
-TypeBase::TypeBase(string iFullName)
+using namespace Text;
+
+// ====================================
+// ===**  Private Static Members  **===
+// ====================================
+
+// ================================
+// ===** Protected Properties **===
+// ================================
+
+// =============================
+// ===** Public Properties **===
+// =============================
+
+// =============================
+// ===**   Constructors    **===
+// =============================
+TypeBase::TypeBase(string iFullName, BitVector::NB_STATES iStates)
 {
-  init(iFullName, TypeBase::NB_STATES::FOUR_STATE);
+  init(iFullName, iStates);
   UInt32 curVal = (UInt32)Pli::GetScalar(m_sigHandle);
   LOG_DEBUG << "Scalar value is 0x" << hex << curVal << dec << "." << endl;
   curVal = (UInt32)Pli::GetVector(m_sigHandle);
   LOG_DEBUG << "Vector value is 0x" << hex << curVal << dec << "." << endl;
 }
 
-// Inits
-bool TypeBase::init(string iFullName, TypeBase::NB_STATES iValue)
+// =============================
+// ===**      Inits        **===
+// =============================
+bool TypeBase::init(string iFullName, BitVector::NB_STATES iValue)
 {
-  m_name_full = iFullName;
-  m_nb_states = iValue;
+  m_nameFull = iFullName;
+  m_nbStates = iValue;
+  vector<string> l_layers = Manip::Split(iFullName, '.');
+  if(l_layers.size() > 0)
+  {
+    // Take the last element as the name.
+    m_name = l_layers[l_layers.size() - 1];
+  }
+  else
+  {
+    m_name = m_nameFull;
+  }
 
-  return setHandle();
+  if(!setHandle())
+  {
+    return false;
+  }
+  // Set the bitvector size based on the type and/or size of the verilog object.
+  setSize();
 }
 
-// Public Methods
+// =============================
+// ===**  Public Methods   **===
+// =============================
 UInt32 TypeBase::GetValue()
 {
   UInt32 retVal = 0xffffffff;
@@ -49,21 +86,36 @@ UInt32 TypeBase::GetValue()
   return retVal;
 }
 
-// Private Methods
+// =============================
+// ===**  Private Methods  **===
+// =============================
 bool TypeBase::setHandle()
 {
 
-  LOG_DEBUG << "Looking for signal '" << m_name_full << "'" << endl;
-  m_sigHandle = Vpi::vpi_handle_by_name(m_name_full.c_str(), vpi_entry::TopModule_get());
+  LOG_DEBUG << "Looking for signal '" << m_nameFull << "'" << endl;
+  m_sigHandle = Vpi::vpi_handle_by_name(m_nameFull.c_str(), vpi_entry::TopModule_get());
   if(m_sigHandle == NULL) 
   {
-    LOG_WRN_ENV << "Could not find signal '" << m_name_full << "'" << endl;
+    LOG_WRN_ENV << "Could not find signal '" << m_nameFull << "'" << endl;
+    return false;
   }
   else
   {
-    LOG_DEBUG << "Found signal '" << m_name_full << "'" << endl;
+    LOG_DEBUG << "Found signal '" << m_nameFull << "'" << endl;
+    return true;
   }
-  return true;
 }
 
+void TypeBase::createBV()
+{
+  m_bv = new BitVector(m_nameFull, m_size, m_nbStates);
+}
+
+// =============================
+// ===** Protected Methods **===
+// =============================
+
+// =============================
+// ===**     Operators     **===
+// =============================
 
