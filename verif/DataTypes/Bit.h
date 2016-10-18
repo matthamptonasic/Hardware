@@ -49,11 +49,11 @@ class Bit : TypeBase_TwoState
 
   // Protected Methods
   protected:
-    virtual void setSize();
+    void setSize();
   
   // Operators
   public:
-  
+
 };
 
 #endif /* BIT_H */
