@@ -26,6 +26,8 @@
 
 using namespace std;
 
+#define VPI_BIT_OBJECT 620  // This appears to be how it's defined in iVerilog.
+
 class Vpi
 {
 
@@ -202,6 +204,7 @@ class Vpi
       CALLBACK        = vpiCallback,
       REG_ARRAY       = vpiRegArray,
       GEN_SCOPE       = vpiGenScope,
+      BIT             = VPI_BIT_OBJECT,
       UNKNOWN         = 0x7fffffff
     };
     
