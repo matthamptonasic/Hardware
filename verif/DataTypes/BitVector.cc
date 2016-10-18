@@ -17,8 +17,9 @@
 #include <iomanip>
 #include <sstream>
 
+#include "Logger.h"
+
 #include "BitVector.h"
-#include "vpi.h"
 
 // ====================================
 // ===**  Private Static Members  **===
@@ -146,7 +147,7 @@ string BitVector::ToString() const
 }
 void BitVector::Print() const
 {
-    Vpi::vpi_printf("%s value is %s\n", m_name.c_str(), ToString().c_str());
+    LOG_MSG << m_name << " value is " << ToString() << endl;
 }
 
 // =============================
@@ -324,7 +325,7 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
   }
   if(this->m_size == 0)
   {
-    // TBD - log warning;
+    LOG_WRN_ENV << "Size of '" << this->m_name << "' is 0." << endl;
     this->Resize(iRhs.m_size);
   }
   bool l_imBigger = false;
@@ -512,16 +513,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
   UInt32 l_nbSrcBitsCopied = 0;
   UInt32 l_transferWord = 0;
   UInt32 l_dstWordCnt = l_dstUpperWord - l_dstLowerWord + 1;
-/*
-  Vpi::vpi_printf("setParentBits: l_dstWordCnt %d\n", l_dstWordCnt);
-  Vpi::vpi_printf("setParentBits: l_srcLowerWord %d\n", l_srcLowerWord);
-  Vpi::vpi_printf("setParentBits: l_srcUpperWord %d\n", l_srcUpperWord);
-  Vpi::vpi_printf("setParentBits: l_dstLowerWord %d\n", l_dstLowerWord);
-  Vpi::vpi_printf("setParentBits: l_dstUpperWord %d\n", l_dstUpperWord);
-  Vpi::vpi_printf("setParentBits: l_srcLowerShift %d\n", l_srcLowerShift);
-  Vpi::vpi_printf("setParentBits: l_dstLowerShift %d\n", l_dstLowerShift);
-  Vpi::vpi_printf("setParentBits: l_dstUpperShift %d\n", l_dstUpperShift);
-*/
+
   for(UInt32 ii=0; ii<l_dstWordCnt; ii++)
   {
     UInt32 l_transferWord = 0;
@@ -541,12 +533,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
     UInt32 l_srcLo = l_srcLowerIdx + l_nbSrcBitsCopied;
     UInt32 l_srcHi = l_srcLowerIdx + l_nbSrcBitsCopied + l_nbSrcBits - 1;
     l_transferWord = iBits.m_parent->getBits(l_srcHi, l_srcLo);
-/*
-    Vpi::vpi_printf("setParentBits: l_nbSrcBits %d\n", l_nbSrcBits);
-    Vpi::vpi_printf("setParentBits: l_srcHi %d\n", l_srcHi);
-    Vpi::vpi_printf("setParentBits: l_srcLo %d\n", l_srcLo);
-    Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
-*/
+
     if(ii == 0)
     {
       l_transferWord <<= l_dstLowerShift;
@@ -554,15 +541,11 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
       // Then OR it with our current result which will fit in the part we just wiped out.
       UInt32 msk = this->m_parent->getMask(l_dstLowerShift, true);
       l_transferWord |= this->m_parent->m_aval->at(l_dstLowerWord) & msk;
-      //Vpi::vpi_printf("setParentBits: msk %x\n", msk);
-      //Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
     }
     if(ii == (l_dstWordCnt - 1))
     {
       UInt32 msk = this->m_parent->getMask(l_dstUpperShift);
       l_transferWord |= this->m_parent->m_aval->at(l_dstUpperWord) & msk;
-      //Vpi::vpi_printf("setParentBits: msk %x\n", msk);
-      //Vpi::vpi_printf("setParentBits: l_transferWord %x\n", l_transferWord);
     }
     this->m_parent->m_aval->at(l_dstLowerWord + ii) = l_transferWord;
     l_nbSrcBitsCopied += l_nbSrcBits;
