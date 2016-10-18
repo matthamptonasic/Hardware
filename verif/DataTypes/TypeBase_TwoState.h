@@ -39,6 +39,15 @@ class TypeBase_TwoState : TypeBase
   // Public Properties
   public:
 
+  // Protected Properties
+  protected:
+    string      Name_get() const      { return TypeBase::Name_get(); }
+    string      NameFull_get() const  { return TypeBase::NameFull_get(); }
+    vpiHandle   SigHandle_get() const { return TypeBase::SigHandle_get(); }
+    UInt32      Size_get() const      { return TypeBase::Size_get(); }
+    void        Size_set(UInt32 iSize) { TypeBase::Size_set(iSize); }
+    BitVector & Bv_get() const        { return TypeBase::Bv_get(); };
+
   // Constructors
   public:
     TypeBase_TwoState(string iFullName);
@@ -55,6 +64,8 @@ class TypeBase_TwoState : TypeBase
   // Protected Methods
   protected:
     virtual void setSize() = 0;
+    bool setHandle() { return TypeBase::setHandle(); }
+    void createBV() { TypeBase::createBV(); }
   
   // Operators
   public:
