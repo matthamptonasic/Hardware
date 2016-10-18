@@ -43,7 +43,11 @@ using namespace Text;
 // =============================
 TypeBase::TypeBase(string iFullName, BitVector::NB_STATES iStates)
 {
-  init(iFullName, iStates);
+  if(!init(iFullName, iStates))
+  {
+    LOG_ERR_ENV << "Could not initialize the signal '" << iFullName << "'." << endl;
+    return;
+  }
   UInt32 curVal = (UInt32)Pli::GetScalar(m_sigHandle);
   LOG_DEBUG << "Scalar value is 0x" << hex << curVal << dec << "." << endl;
   curVal = (UInt32)Pli::GetVector(m_sigHandle);
@@ -72,8 +76,7 @@ bool TypeBase::init(string iFullName, BitVector::NB_STATES iValue)
   {
     return false;
   }
-  // Set the bitvector size based on the type and/or size of the verilog object.
-  setSize();
+  return true;
 }
 
 // =============================
@@ -88,6 +91,10 @@ UInt32 TypeBase::GetValue()
 
 // =============================
 // ===**  Private Methods  **===
+// =============================
+
+// =============================
+// ===** Protected Methods **===
 // =============================
 bool TypeBase::setHandle()
 {
@@ -110,10 +117,6 @@ void TypeBase::createBV()
 {
   m_bv = new BitVector(m_nameFull, m_size, m_nbStates);
 }
-
-// =============================
-// ===** Protected Methods **===
-// =============================
 
 // =============================
 // ===**     Operators     **===
