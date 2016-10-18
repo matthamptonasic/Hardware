@@ -45,6 +45,12 @@ class TypeBase
 
   // Protected Properties
   protected:
+    string      Name_get() const      { return m_name; }
+    string      NameFull_get() const  { return m_nameFull; }
+    vpiHandle   SigHandle_get() const { return m_sigHandle; }
+    UInt32      Size_get() const      { return m_size; }
+    void        Size_set(UInt32 iSize) { m_size = iSize; }
+    BitVector & Bv_get() const        { return *m_bv; };
 
   // Public Properties
   public:
@@ -63,12 +69,13 @@ class TypeBase
 
   // Private Methods
   private:
-    bool setHandle();
-    void createBV();
+    
 
   // Protected Methods
   protected:
     virtual void setSize() = 0;
+    bool setHandle();
+    void createBV();
 
   // Operators
   public:
