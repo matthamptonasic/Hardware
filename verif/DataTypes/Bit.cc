@@ -15,6 +15,8 @@
 */
 
 #include "BitVector.h"
+#include "Logger.h"
+#include "pli.h"
 
 #include "Bit.h"
 
@@ -32,7 +34,10 @@
 Bit::Bit(string iFullName)
   : TypeBase_TwoState(iFullName)
 {
-
+  // Set the bitvector size based on the type and/or size of the verilog object.
+  setSize();
+  createBV();
+  Bv_get() = Pli::GetVector(SigHandle_get());
 }
 
 // =============================
@@ -53,6 +58,13 @@ Bit::Bit(string iFullName)
 void Bit::setSize()
 {
   // TBD - Get the size based on the verilog object.
+  Vpi::OBJECT l_type = Pli::GetType(SigHandle_get());
+  if(l_type != Vpi::OBJECT::BIT)
+  {
+    LOG_WRN_ENV << "Object " << NameFull_get() << " type (" << (Int32)l_type
+                << ") was not the expected type for a bit object." << endl;
+  }
+  Size_set(Pli::GetSize(SigHandle_get()));
 }
 
 // =============================
