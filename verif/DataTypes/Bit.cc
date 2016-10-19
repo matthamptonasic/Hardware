@@ -32,7 +32,7 @@
 // ===**   Constructors    **===
 // =============================
 Bit::Bit(string iFullName)
-  : TypeBase_TwoState(iFullName)
+  : TypeBase(iFullName, BitVector::NB_STATES::TWO_STATE)
 {
   // Set the bitvector size based on the type and/or size of the verilog object.
   setSize();

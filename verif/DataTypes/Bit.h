@@ -19,11 +19,11 @@
 #include <string>
 
 #include "Common.h"
-#include "TypeBase_TwoState.h"
+#include "TypeBase.h"
 
 using namespace std;
 
-class Bit : TypeBase_TwoState
+class Bit : TypeBase
 {
   // Enums
   public:
