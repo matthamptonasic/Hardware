@@ -19,7 +19,6 @@
 #include <string>
 #include <vector>
 
-//#include "BitVector.h"
 #include "Common.h"
 #include "vpi.h"
 
