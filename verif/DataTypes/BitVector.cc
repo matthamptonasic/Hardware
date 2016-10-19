@@ -24,7 +24,7 @@
 // ====================================
 // ===**  Private Static Members  **===
 // ====================================
-BitVector::NB_STATES BitVector::s_nbStates = BitVector::NB_STATES::TWO_STATE;
+NB_STATES BitVector::s_nbStates = NB_STATES::TWO_STATE;
 bool BitVector::s_useGlobalStates = true;
 const string BitVector::s_default_name = "Anonymous";
 const UInt32 BitVector::s_default_size = 32;
@@ -41,7 +41,7 @@ BitVector::BitVector(string iName)
 {
   init(iName, 0, s_nbStates);
 }
-BitVector::BitVector(string iName, UInt32 iSize, BitVector::NB_STATES iStates)
+BitVector::BitVector(string iName, UInt32 iSize, NB_STATES iStates)
 {
   init(iName, iSize, iStates);
 }
@@ -60,7 +60,7 @@ void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
   m_nbStates = iStates;
   Int32 nbWds = (iSize - 1) / 32 + 1;
   m_aval = new vector<UInt32>(nbWds, 0);
-  if(m_nbStates == BitVector::NB_STATES::FOUR_STATE)
+  if(m_nbStates == NB_STATES::FOUR_STATE)
   {
     m_bval = new vector<UInt32>(nbWds, 0);
   }

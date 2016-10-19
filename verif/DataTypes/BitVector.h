@@ -43,18 +43,17 @@
 #include <string>
 #include <vector>
 
+#include "TypeBase.h"
 #include "Common.h"
 
 using namespace std;
 
 class BitVector {
+  friend class TypeBase;
+
   // Enums
   public:
-  enum class NB_STATES : Byte
-  {
-    TWO_STATE = 0,
-    FOUR_STATE = 1
-  };
+
   enum class PRINT_FMT : Byte
   {
     DEC = 0,
@@ -144,6 +143,8 @@ class BitVector {
     void    setUInt32(UInt32 iVal);
     void    setUInt64(UInt64 iVal);
 
+    void    setAval(UInt32 iVal, UInt32 iWord);
+    void    setBval(UInt32 iVal, UInt32 iWord);
 
   // ===== Part Select Class =====
   // Why?
