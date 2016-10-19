@@ -332,12 +332,6 @@ class Vpi
     // Used to represent a 4-state value being read or written.
     typedef struct t_vpi_vecval
     {
-      // TBD - change to an enum (UInt64)?
-      // Reading up on struct data alignment and this should be okay.
-      // Since the pair of Int32's are the same size and a nominal alignment
-      // of 4-bytes, no padding will ever be inserted between them.
-      // And since a pair of Int32's and an Int64 have the same size,
-      // they should be able to be cast back and forth without any issues.
       Int32 aval;
       Int32 bval;
     } s_vpi_vecval, *p_vpi_vecval;
