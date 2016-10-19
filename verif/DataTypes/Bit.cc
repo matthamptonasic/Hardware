@@ -32,12 +32,16 @@
 // ===**   Constructors    **===
 // =============================
 Bit::Bit(string iFullName)
-  : TypeBase(iFullName, BitVector::NB_STATES::TWO_STATE)
+  : TypeBase(iFullName, NB_STATES::TWO_STATE)
 {
   // Set the bitvector size based on the type and/or size of the verilog object.
   setSize();
   createBV();
-  Bv_get() = Pli::GetVector(SigHandle_get());
+  getRtlValue();
+  LOG_DEBUG << "Bit::Bit: Initial value: " << Bv_get().ToString() << endl;
+  Bv_get() = (UInt64)0x0123456789abcdef;
+  setRtlValue();
+  LOG_DEBUG << "Bit::Bit: After setting to 0x01...ef: " << Bv_get().ToString() << endl;
 }
 
 // =============================
