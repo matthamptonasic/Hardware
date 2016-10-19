@@ -28,6 +28,14 @@ using namespace std;
 // 2-state child will only have the 'bit' class.
 // 4-state children will be logic, (typedef reg to be same as logic), & integer (32-bit BV).
 
+class BitVector;
+
+enum class NB_STATES : Byte
+{
+  TWO_STATE = 0,
+  FOUR_STATE = 1
+};
+
 class TypeBase 
 {
   // Enums
@@ -41,7 +49,7 @@ class TypeBase
     UInt32                m_size;
     BitVector *           m_bv;
 
-    BitVector::NB_STATES  m_nbStates;
+    NB_STATES  m_nbStates;
 
   // Protected Properties
   protected:
@@ -57,11 +65,11 @@ class TypeBase
 
   // Constructors
   public:
-    TypeBase(string iFullName, BitVector::NB_STATES iStates);
+    TypeBase(string iFullName, NB_STATES iStates);
 
   // Inits
   private:
-    bool init(string iFullName, BitVector::NB_STATES iStates);
+    bool init(string iFullName, NB_STATES iStates);
 
   // Public Methods
   public:
@@ -76,6 +84,8 @@ class TypeBase
     virtual void setSize() = 0;
     bool setHandle();
     void createBV();
+    void getRtlValue();
+    void setRtlValue();
 
   // Operators
   public:
