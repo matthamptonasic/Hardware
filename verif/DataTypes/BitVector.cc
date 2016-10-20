@@ -14,6 +14,7 @@
 ###############################################################################
 */
 
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 
@@ -87,19 +88,44 @@ void   BitVector::Resize(UInt32 iNewSize)
     }
   }
   setMask();
-  m_aval->back() = m_aval->back() & m_mask;
+  applyMask();
 }
 UInt32 BitVector::GetUInt32() const
 {
-  return (*m_aval)[0];
+  return GetUInt32(0);
+}
+UInt32 BitVector::GetUInt32(UInt32 iWordNb) const
+{
+  if(m_aval->size() < (iWordNb + 1))
+  {
+    LOG_WRN_ENV << "Size is " << m_aval->size() 
+                << ", less than the selected index of " 
+                << iWordNb << ". Returning 0." << endl;
+    return 0;
+  }
+  return (*m_aval)[iWordNb];
 }
 UInt64 BitVector::GetUInt64() const
 {
-  // TBD - Add size checking as well as masking if < 64b.
+  return GetUInt64(0);
+}
+UInt64 BitVector::GetUInt64(UInt32 iLowerWordNb) const
+{
   UInt64 retVal = 0;
-  UInt64 hi = (*m_aval)[1]; 
-  retVal = hi << 32;
-  retVal |=  (*m_aval)[0];
+  if(m_aval->size() < (iLowerWordNb + 1))
+  {
+    LOG_WRN_ENV << "Size is " << m_aval->size() 
+                << ", less than the lower selected index of " 
+                << iLowerWordNb << ". Returning 0." << endl;
+    return 0;
+  }
+  UInt64 hi = 0;
+  if(m_aval->size() >= (iLowerWordNb + 2))
+  {
+    hi = (*m_aval)[iLowerWordNb + 1];
+    retVal = hi << 32;
+  } 
+  retVal |=  (*m_aval)[iLowerWordNb];
   return retVal;
 }
 string BitVector::ToString() const
@@ -141,8 +167,7 @@ string BitVector::ToString() const
       l_ss << "_";
     }
   }
-  //const string l_retVal = l_ss.str();
-  //return l_retVal;
+
   return l_ss.str();
 }
 void BitVector::Print() const
@@ -153,7 +178,7 @@ void BitVector::Print() const
 // =============================
 // ===**  Private Methods  **===
 // =============================
-void BitVector::checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex)
+void BitVector::checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex) const
 {
   if(iUpperIndex < iLowerIndex)
   {
@@ -162,16 +187,16 @@ void BitVector::checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex)
     iUpperIndex = tmp;
   }
 }
-inline UInt32 BitVector::getWordNb(UInt32 iBitPos)
+inline UInt32 BitVector::getWordNb(UInt32 iBitPos) const
 {
   // Word Nb is Bit Position / 32.
   return (iBitPos >> 5);
 }
-inline Byte BitVector::getShift(UInt32 iBitPos)
+inline Byte BitVector::getShift(UInt32 iBitPos) const
 {
   return iBitPos % 32;
 }
-UInt32 BitVector::getMask(UInt32 iUpperIndex, bool iReverse)
+UInt32 BitVector::getMask(UInt32 iUpperIndex, bool iReverse) const
 {
   // Forward mask with upperIndex = 7 (keep bits 7:0)
   // 0000 0000 0000 0000 0000 0000 1111 1111
@@ -205,7 +230,19 @@ void BitVector::setMask()
   }
   m_mask = getMask(m_size - 1);
 }
-UInt32 BitVector::getBits(UInt32 iUpperIndex, UInt32 iLowerIndex)
+void BitVector::applyMask()
+{
+  UInt32 l_size = m_aval->size();
+  if(l_size >= 1)
+  {
+    (*m_aval)[l_size - 1] &= m_mask;
+    if(m_nbStates == NB_STATES::FOUR_STATE)
+    {
+      (*m_bval)[l_size - 1] &= m_mask;
+    }
+  }
+}
+UInt32 BitVector::getBits(UInt32 iUpperIndex, UInt32 iLowerIndex) const
 {
   checkIndices(iUpperIndex, iLowerIndex);
   UInt32 l_selSize = iUpperIndex - iLowerIndex + 1;
@@ -255,6 +292,7 @@ void BitVector::setUInt32(UInt32 iVal)
       m_aval->at(ii) = 0;
     }
   }
+  applyMask();
 }
 void BitVector::setUInt64(UInt64 iVal)
 {
@@ -262,30 +300,51 @@ void BitVector::setUInt64(UInt64 iVal)
   UInt32 lo = (UInt32)iVal;
 
   // Wipe bits if the BV is < 64 wide.
-  if(m_size < 64)
-  {
-    if(m_size < 32)
-    {
-      hi = 0;
-      lo &= ~getMask(m_size);
-    }
-    else
-    {
-      hi &= ~getMask(m_size);
-    }
-  }
   m_aval->at(0) = lo;
   if(m_size > 32)
   {
     m_aval->at(1) = hi;
   }
   // Wipe anything above 64 bits if BV is > 64 wide.
-  if(m_size > 64)
+  for(UInt32 ii=2; ii<m_aval->size(); ii++)
   {
-    for(UInt32 ii=2; ii<m_aval->size(); ii++)
+    m_aval->at(ii) = 0;
+  }
+  applyMask();
+}
+void BitVector::add(UInt32 iVal, UInt32 iWordNb)
+{
+  UInt32 l_nbWords = m_aval->size();
+  if(l_nbWords <= iWordNb)
+  {
+    LOG_WRN_ENV << "Size is " << m_aval->size() 
+                << ", less than the selected index of " 
+                << iWordNb << ". No change made." << endl;
+    return;
+  }
+  UInt32 l_prevVal = (*m_aval)[iWordNb];
+  (*m_aval)[iWordNb] += iVal;
+  bool l_carry = false;
+  if(l_prevVal > (*m_aval)[iWordNb])
+  {
+    l_carry = true;
+  }
+
+  // Add carry if this isn't the last word.
+  if((iWordNb < (l_nbWords - 1)) && l_carry)
+  {
+    (*m_aval)[iWordNb + 1]++;
+    if((iWordNb + 1) == (l_nbWords - 1))
     {
-      m_aval->at(ii) = 0;
+      applyMask();
+      return;
     }
+  }
+
+  // Apply the mask if we're on the last word.
+  if(iWordNb == (l_nbWords - 1))
+  {
+    applyMask();
   }
 }
 
@@ -335,10 +394,10 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
     if(ii <= l_upperWord)
     {
       this->m_aval->at(ii) = iRhs.m_aval->at(ii);
-      if(ii == l_upperWord)
-      {
-        this->m_aval->at(ii) &= this->m_mask;
-      }
+      //if(ii == l_upperWord)
+      //{
+      //  this->m_aval->at(ii) &= this->m_mask;
+      //}
     }
     else
     {
@@ -346,12 +405,35 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
     }
   }
 
+  applyMask();
   return *this;
 }
 BitVector::PartSelect BitVector::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex)
 {
   PartSelect retVal(this, iUpperIndex, iLowerIndex);
   return retVal;
+}
+BitVector & BitVector::operator+ (UInt32 iRhs)
+{
+  add(iRhs, 0);
+  return *this;
+}
+BitVector & BitVector::operator+ (UInt64 iRhs)
+{
+  UInt32 l_hi = iRhs >> 32;
+  UInt32 l_lo = (UInt32)iRhs;
+  add(l_lo, 0);
+  add(l_hi, 1);
+  return *this;
+}
+BitVector & BitVector::operator+ (const BitVector & iRhs)
+{
+  UInt32 l_smaller = min(iRhs.m_aval->size(), m_aval->size());
+  for(UInt32 ii=0; ii<l_smaller; ii++)
+  {
+    add((*iRhs.m_aval)[ii], ii);
+  }
+  return *this;
 }
 
 
@@ -390,7 +472,7 @@ void BitVector::PartSelect::init(BitVector * iBV, UInt32 iUpperIndex, UInt32 iLo
 // =============================
 // ===**  Public Methods   **===
 // =============================
-UInt32 BitVector::PartSelect::getUInt32()
+UInt32 BitVector::PartSelect::getUInt32() const
 {
   if(m_parent == NULL)
   {
@@ -416,7 +498,7 @@ UInt32 BitVector::PartSelect::getUInt32()
   }
   return l_retVal;
 }
-UInt64 BitVector::PartSelect::getUInt64()
+UInt64 BitVector::PartSelect::getUInt64() const
 {
   if(m_parent == NULL)
   {
@@ -462,7 +544,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
 {
   if((this->m_parent == NULL) || (iBits.m_parent == NULL))
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "m_parent was NULL." << endl;
     return;
   }
   // Note: Assuming that the upper and lower values of each PartSelect

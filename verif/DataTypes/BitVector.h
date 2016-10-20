@@ -43,8 +43,9 @@
 #include <string>
 #include <vector>
 
-#include "TypeBase.h"
 #include "Common.h"
+#include "Logger.h"
+#include "TypeBase.h"
 
 using namespace std;
 
@@ -127,26 +128,26 @@ class BitVector {
   public:
     void    Resize(UInt32 iNewSize);
     UInt32  GetUInt32() const;
+    UInt32  GetUInt32(UInt32 iWordNb) const;
     UInt64  GetUInt64() const;
+    UInt64  GetUInt64(UInt32 iLowerWordNb) const;
     string  ToString() const;
     void    Print() const;
 
   // Private Methods
   private:
-    void    checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex);
-    UInt32  getWordNb(UInt32 iBitPos);
-    Byte    getShift(UInt32 iBitPos);
-    UInt32  getMask(UInt32 iUpperIndex, bool iReverse = false);
+    void    checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex) const;
+    UInt32  getWordNb(UInt32 iBitPos) const;
+    Byte    getShift(UInt32 iBitPos) const;
+    UInt32  getMask(UInt32 iUpperIndex, bool iReverse = false) const;
     void    setMask();
+    void    applyMask();
     //Must be 32-bits or less.
-    UInt32  getBits(UInt32 iUpperIndex, UInt32 iLowerIndex);
+    UInt32  getBits(UInt32 iUpperIndex, UInt32 iLowerIndex) const;
     void    setUInt32(UInt32 iVal);
     void    setUInt64(UInt64 iVal);
+    void    add(UInt32 iVal, UInt32 iWordNb = 0);
 
-    void    setAval(UInt32 iVal, UInt32 iWord);
-    void    setBval(UInt32 iVal, UInt32 iWord);
-
-  
   protected:
   class PartSelect
   {
@@ -208,8 +209,8 @@ class BitVector {
 
     // Public Methods
     public:
-    UInt32 getUInt32();
-    UInt64 getUInt64();
+    UInt32 getUInt32() const;
+    UInt64 getUInt64() const;
 
     // Private Methods
     private:
@@ -234,6 +235,11 @@ class BitVector {
   BitVector & operator= (long long int iRhs) { return *this = (UInt64)iRhs; }
   BitVector & operator= (Int64 iRhs) { return *this = (UInt64)iRhs; }
   BitVector & operator= (int iRhs) { return *this = (UInt32)iRhs; }
+
+  BitVector & operator+ (UInt32 iRhs);
+  BitVector & operator+ (UInt64 iRhs);
+  BitVector & operator+ (const BitVector & iRhs);
+  //BitVector & operator+ (const PartSelect & iRhs);
 
 };
 
