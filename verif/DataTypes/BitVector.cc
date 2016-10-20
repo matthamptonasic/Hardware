@@ -333,7 +333,42 @@ void BitVector::add(UInt32 iVal, UInt32 iWordNb)
   // Add carry if this isn't the last word.
   if((iWordNb < (l_nbWords - 1)) && l_carry)
   {
-    (*m_aval)[iWordNb + 1]++;
+    add(1, iWordNb + 1);
+    if((iWordNb + 1) == (l_nbWords - 1))
+    {
+      applyMask();
+      return;
+    }
+  }
+
+  // Apply the mask if we're on the last word.
+  if(iWordNb == (l_nbWords - 1))
+  {
+    applyMask();
+  }
+}
+void BitVector::subtract(UInt32 iVal, UInt32 iWordNb)
+{
+  UInt32 l_nbWords = m_aval->size();
+  if(l_nbWords <= iWordNb)
+  {
+    LOG_WRN_ENV << "Size is " << m_aval->size() 
+                << ", less than the selected index of " 
+                << iWordNb << ". No change made." << endl;
+    return;
+  }
+  UInt32 l_prevVal = (*m_aval)[iWordNb];
+  (*m_aval)[iWordNb] -= iVal;
+  bool l_borrow = false;
+  if(l_prevVal < (*m_aval)[iWordNb])
+  {
+    l_borrow = true;
+  }
+
+  // Subtract borrow if this isn't the last word.
+  if((iWordNb < (l_nbWords - 1)) && l_borrow)
+  {
+    subtract(1, iWordNb + 1);
     if((iWordNb + 1) == (l_nbWords - 1))
     {
       applyMask();
@@ -394,10 +429,6 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
     if(ii <= l_upperWord)
     {
       this->m_aval->at(ii) = iRhs.m_aval->at(ii);
-      //if(ii == l_upperWord)
-      //{
-      //  this->m_aval->at(ii) &= this->m_mask;
-      //}
     }
     else
     {
@@ -437,9 +468,37 @@ BitVector & BitVector::operator+ (const BitVector & iRhs)
 }
 BitVector & BitVector::operator+ (const PartSelect & iRhs)
 {
-  BitVector bv("tmp", 1, NB_STATES::TWO_STATE);
+  BitVector bv("BitVector::operator+_PartSelect", 1, m_nbStates);
   iRhs.getParentBits(bv);
   return *this + bv;
+}
+BitVector & BitVector::operator- (UInt32 iRhs)
+{
+  subtract(iRhs, 0);
+  return *this;
+}
+BitVector & BitVector::operator- (UInt64 iRhs)
+{
+  UInt32 l_hi = iRhs >> 32;
+  UInt32 l_lo = (UInt32)iRhs;
+  subtract(l_lo, 0);
+  subtract(l_hi, 1);
+  return *this;
+}
+BitVector & BitVector::operator- (const BitVector & iRhs)
+{
+  UInt32 l_smaller = min(iRhs.m_aval->size(), m_aval->size());
+  for(UInt32 ii=0; ii<l_smaller; ii++)
+  {
+    subtract((*iRhs.m_aval)[ii], ii);
+  }
+  return *this;
+}
+BitVector & BitVector::operator- (const PartSelect & iRhs)
+{
+  BitVector bv("BitVector::operator-_PartSelect", 1, m_nbStates);
+  iRhs.getParentBits(bv);
+  return *this - bv;
 }
 
 
@@ -669,7 +728,6 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
 {
   BitVector l_bv("BitVector::PartSelect::operator=", 32);
   l_bv = iRhs;
-  l_bv.Print();
   setParentBits(l_bv(31,0));
   return *this;
 }

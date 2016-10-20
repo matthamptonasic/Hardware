@@ -147,6 +147,7 @@ class BitVector {
     void    setUInt32(UInt32 iVal);
     void    setUInt64(UInt64 iVal);
     void    add(UInt32 iVal, UInt32 iWordNb = 0);
+    void    subtract(UInt32 iVal, UInt32 iWordNb = 0);
 
   protected:
   class PartSelect
@@ -241,6 +242,18 @@ class BitVector {
   BitVector & operator+ (UInt64 iRhs);
   BitVector & operator+ (const BitVector & iRhs);
   BitVector & operator+ (const PartSelect & iRhs);
+  BitVector & operator+ (long long unsigned int iRhs) { return *this + (UInt64)iRhs; }
+  BitVector & operator+ (long long int iRhs) { return *this + (UInt64)iRhs; }
+  BitVector & operator+ (Int64 iRhs) { return *this + (UInt64)iRhs; }
+  BitVector & operator+ (int iRhs) { return *this + (UInt32)iRhs; }
+  BitVector & operator- (UInt32 iRhs);
+  BitVector & operator- (UInt64 iRhs);
+  BitVector & operator- (const BitVector & iRhs);
+  BitVector & operator- (const PartSelect & iRhs);
+  BitVector & operator- (long long unsigned int iRhs) { return *this - (UInt64)iRhs; }
+  BitVector & operator- (long long int iRhs) { return *this - (UInt64)iRhs; }
+  BitVector & operator- (Int64 iRhs) { return *this - (UInt64)iRhs; }
+  BitVector & operator- (int iRhs) { return *this - (UInt32)iRhs; }
 
 };
 
