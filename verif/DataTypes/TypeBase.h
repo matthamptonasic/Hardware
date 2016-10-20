@@ -49,7 +49,7 @@ class TypeBase
     UInt32                m_size;
     BitVector *           m_bv;
 
-    NB_STATES  m_nbStates;
+    NB_STATES             m_nbStates;
 
   // Protected Properties
   protected:
