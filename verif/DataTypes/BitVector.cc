@@ -296,31 +296,27 @@ BitVector & BitVector::operator= (UInt32 iRhs)
 {
   if(m_size == 0)
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "BitVector size was 0." << endl;
     return *this;
   }
-  m_aval->at(0) = iRhs;
+  setUInt32(iRhs);
   return *this;
 }
 BitVector & BitVector::operator= (UInt64 iRhs)
 {
   if(m_size == 0)
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "BitVector size was 0." << endl;
     return *this;
   }
-  m_aval->at(0) = (UInt32)iRhs;
-  if(m_aval->size() > 1)
-  {
-    m_aval->at(1) = iRhs >> 32;
-  }
+  setUInt64(iRhs);
   return *this;
 }
 BitVector & BitVector::operator= (const BitVector & iRhs)
 {
   if(&iRhs == NULL)
   {
-    // TBD - log error;
+    LOG_ERR_ENV << "BitVector size was 0." << endl;
     return *this;
   }
   if(this->m_size == 0)
