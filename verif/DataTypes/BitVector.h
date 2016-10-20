@@ -151,6 +151,7 @@ class BitVector {
   protected:
   class PartSelect
   {
+    friend class BitVector;
     // ===== Part Select Class =====
     // Why?
     // Example #1:
@@ -239,7 +240,7 @@ class BitVector {
   BitVector & operator+ (UInt32 iRhs);
   BitVector & operator+ (UInt64 iRhs);
   BitVector & operator+ (const BitVector & iRhs);
-  //BitVector & operator+ (const PartSelect & iRhs);
+  BitVector & operator+ (const PartSelect & iRhs);
 
 };
 

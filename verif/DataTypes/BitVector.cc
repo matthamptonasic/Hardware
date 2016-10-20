@@ -435,6 +435,12 @@ BitVector & BitVector::operator+ (const BitVector & iRhs)
   }
   return *this;
 }
+BitVector & BitVector::operator+ (const PartSelect & iRhs)
+{
+  BitVector bv("tmp", 1, NB_STATES::TWO_STATE);
+  iRhs.getParentBits(bv);
+  return *this + bv;
+}
 
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
@@ -631,7 +637,29 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
 }
 void BitVector::PartSelect::getParentBits(BitVector & oBV) const
 {
-  
+  if(this->m_parent == NULL)
+  {
+    LOG_ERR_ENV << "m_parent was NULL." << endl;
+    return;
+  }
+
+  // Check oBV size and/or resize.
+  UInt32 l_bitCnt = m_upperIndex - m_lowerIndex + 1;
+  if(oBV.m_size != l_bitCnt)
+  {
+    oBV.Resize(l_bitCnt);
+  }
+
+  UInt32 l_srcLowerWord = m_parent->getWordNb(m_lowerIndex);
+  UInt32 l_shift = m_parent->getShift(m_lowerIndex);
+  UInt32 l_wordCnt = oBV.m_aval->size();
+
+  for(UInt32 ii=0; ii<l_wordCnt; ii++)
+  {
+    (*oBV.m_aval)[ii] = (*m_parent->m_aval)[l_srcLowerWord + ii] >> l_shift;
+    (*oBV.m_aval)[ii] |= (*m_parent->m_aval)[l_srcLowerWord + ii + 1] << (32 - l_shift);
+  }
+  oBV.applyMask();
 }
 
 // =============================
