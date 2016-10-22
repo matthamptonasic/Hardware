@@ -255,6 +255,46 @@ class BitVector {
   BitVector & operator- (Int64 iRhs) { return *this - (UInt64)iRhs; }
   BitVector & operator- (int iRhs) { return *this - (UInt32)iRhs; }
 
+  //================
+  // TBD operators:
+  //================
+  // TBD - Create copy constructor.
+  // Binary arithmetic operators should return a copy, not a reference to the first operand.
+  // Move the binary operators outside and base them on the compound operators (+=, etc).
+  // Implement both sides of binary operators.
+  // operator+=
+  // operator-=
+  // operator++
+  // operator--
+  // operator==
+  // operator!=
+  // operator!
+  // operator&&
+  // operator||
+  // operator<=
+  // operator>=
+  // operator<
+  // operator>
+  // operator<<
+  // operator<<=
+  // operator>>
+  // operator>>=
+  // operator~
+  // operator&
+  // operator&=
+  // operator|
+  // operator|=
+  // operator^
+  // operator^=
+  // operator, (concatination)
+  // operator bool
+  // operator UInt32
+  // operator UInt64
+  // operator Int32
+  // operator Int64
+
+  // TBD - Add operators for interacting with strings for 4-state values.
+
 };
 
 #endif /* BITVECTOR_H */
