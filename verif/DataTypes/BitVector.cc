@@ -50,6 +50,15 @@ BitVector::BitVector(UInt32 iSize)
 {
   init(s_default_name, iSize, s_nbStates);
 }
+BitVector::~BitVector()
+{
+  delete m_aval;
+  if(m_bval != nullptr)
+  {
+    delete m_bval;
+  }
+
+}
 
 // =============================
 // ===**      Inits        **===
