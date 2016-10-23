@@ -119,6 +119,7 @@ class BitVector {
     BitVector(string iName = s_default_name);
     BitVector(string iName, UInt32 iSize, NB_STATES iStates = s_nbStates);
     BitVector(UInt32 iSize = s_default_size);
+    ~BitVector();
 
   // Inits
   private:
