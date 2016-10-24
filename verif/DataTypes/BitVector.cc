@@ -50,6 +50,49 @@ BitVector::BitVector(UInt32 iSize)
 {
   init(s_default_name, iSize, s_nbStates);
 }
+// Copy Constructor
+BitVector::BitVector(const BitVector & iSource)
+{
+  //LOG_DEBUG << "Copy constructor." << endl;
+  m_size = iSource.m_size;
+  m_mask = iSource.m_mask;
+  m_name = iSource.m_name;
+
+  m_aval = new vector<UInt32>(*iSource.m_aval);
+  if(m_nbStates == NB_STATES::FOUR_STATE)
+  {
+    m_bval = new vector<UInt32>(*iSource.m_bval);
+  }
+  else
+  {
+    m_bval = nullptr;
+  }
+
+  m_nbStates = iSource.m_nbStates;
+  m_printFmt = iSource.m_printFmt;
+  m_printBasePrefix = iSource.m_printBasePrefix;
+  m_printPrependZeros = iSource.m_printPrependZeros;
+  m_printHexWordDivider = iSource.m_printHexWordDivider;
+}
+// Move Constructor
+BitVector::BitVector(BitVector && iSource)
+{
+  //LOG_DEBUG << "Move constructor." << endl;
+  m_size = iSource.m_size;
+  m_mask = iSource.m_mask;
+  m_name = iSource.m_name;
+
+  m_aval = iSource.m_aval;
+  iSource.m_aval = nullptr;
+  m_bval = iSource.m_bval;
+  iSource.m_bval = nullptr;
+
+  m_nbStates = iSource.m_nbStates;
+  m_printFmt = iSource.m_printFmt;
+  m_printBasePrefix = iSource.m_printBasePrefix;
+  m_printPrependZeros = iSource.m_printPrependZeros;
+  m_printHexWordDivider = iSource.m_printHexWordDivider;
+}
 BitVector::~BitVector()
 {
   delete m_aval;
@@ -57,7 +100,7 @@ BitVector::~BitVector()
   {
     delete m_bval;
   }
-
+  LOG_MSG << "Destroying " << m_name << endl;
 }
 
 // =============================
@@ -65,6 +108,7 @@ BitVector::~BitVector()
 // =============================
 void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
 {
+  LOG_MSG << "Creating " << iName << endl;
   m_name = iName;
   m_size = iSize;
   m_nbStates = iStates;
@@ -73,6 +117,10 @@ void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
   if(m_nbStates == NB_STATES::FOUR_STATE)
   {
     m_bval = new vector<UInt32>(nbWds, 0);
+  }
+  else
+  {
+    m_bval = nullptr;
   }
   setMask();
   m_printFmt = s_printFmt;
