@@ -270,8 +270,6 @@ class BitVector {
   // Binary arithmetic operators should return a copy, not a reference to the first operand.
   // Move the binary operators outside and base them on the compound operators (+=, etc).
   // Implement both sides of binary operators.
-  // operator+=
-  // operator-=
   // operator++
   // operator--
   // operator==
@@ -309,6 +307,8 @@ class BitVector {
 BitVector   operator+ (const BitVector & iLhs, UInt64 iRhs);
 BitVector   operator+ (const BitVector & iLhs, const BitVector & iRhs);
 BitVector   operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
+BitVector   operator+ (UInt64 iLhs, const BitVector & iRhs) { return iRhs + iLhs; };
+BitVector   operator+ (const BitVector::PartSelect & iLhs, const BitVector & iRhs) { return iRhs + iLhs; };
 
 BitVector   operator- (const BitVector & iLhs, UInt64 iRhs);
 BitVector   operator- (const BitVector & iLhs, const BitVector & iRhs);
