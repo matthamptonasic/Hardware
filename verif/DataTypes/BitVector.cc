@@ -545,6 +545,16 @@ BitVector & BitVector::operator+= (const PartSelect & iRhs)
   *this += bv;
   return *this;
 }
+BitVector & BitVector::operator++ ()
+{
+  *this += 1;
+  return *this;
+}
+BitVector & BitVector::operator++ (int iDummy)
+{
+  *this += 1;
+  return *this;
+}
 BitVector & BitVector::operator-= (UInt32 iRhs)
 {
   subtract(iRhs, 0);
@@ -577,14 +587,14 @@ BitVector & BitVector::operator-= (const PartSelect & iRhs)
   *this -= bv;
   return *this;
 }
-BitVector & BitVector::operator++ ()
+BitVector & BitVector::operator-- ()
 {
-  *this += 1;
+  *this -= 1;
   return *this;
 }
-BitVector & BitVector::operator++ (int iDummy)
+BitVector & BitVector::operator-- (int iDummy)
 {
-  *this += 1;
+  *this -= 1;
   return *this;
 }
 

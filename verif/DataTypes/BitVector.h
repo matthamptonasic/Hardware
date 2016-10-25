@@ -266,6 +266,9 @@ class BitVector {
   BitVector & operator-= (Int64 iRhs) { return *this -= (UInt64)iRhs; }
   BitVector & operator-= (int iRhs) { return *this -= (UInt32)iRhs; }
 
+  BitVector & operator-- ();
+  BitVector & operator-- (int iDummy);
+
   friend BitVector operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
 
   //================
@@ -275,7 +278,6 @@ class BitVector {
   // Binary arithmetic operators should return a copy, not a reference to the first operand.
   // Move the binary operators outside and base them on the compound operators (+=, etc).
   // Implement both sides of binary operators.
-  // operator++
   // operator--
   // operator==
   // operator!=
