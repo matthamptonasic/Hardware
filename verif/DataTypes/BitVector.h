@@ -250,7 +250,12 @@ class BitVector {
   BitVector & operator+= (Int64 iRhs) { return *this += (UInt64)iRhs; }
   BitVector & operator+= (int iRhs) { return *this += (UInt32)iRhs; }
 
+  BitVector & operator++ ();
+  BitVector & operator++ (int iDummy);
+
   friend BitVector operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
+  friend BitVector operator+ (const BitVector::PartSelect & iLhs, const BitVector & iRhs);
+
 
   BitVector & operator-= (UInt32 iRhs);
   BitVector & operator-= (UInt64 iRhs);
@@ -303,16 +308,25 @@ class BitVector {
 
 };
 
-// Non-Member Operators
-BitVector   operator+ (const BitVector & iLhs, UInt64 iRhs);
-BitVector   operator+ (const BitVector & iLhs, const BitVector & iRhs);
-BitVector   operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
-BitVector   operator+ (UInt64 iLhs, const BitVector & iRhs) { return iRhs + iLhs; };
-BitVector   operator+ (const BitVector::PartSelect & iLhs, const BitVector & iRhs) { return iRhs + iLhs; };
+BitVector operator+ (const BitVector & iLhs, UInt32 iRhs);
+BitVector operator+ (const BitVector & iLhs, UInt64 iRhs);
+BitVector operator+ (const BitVector & iLhs, const BitVector & iRhs);
+BitVector operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
+BitVector operator+ (UInt64 iLhs, const BitVector & iRhs);
+BitVector operator+ (const BitVector::PartSelect & iLhs, const BitVector & iRhs);
+BitVector operator+ (const BitVector & iLhs, long long unsigned int iRhs);
+BitVector operator+ (const BitVector & iLhs, long long int iRhs);
+BitVector operator+ (const BitVector & iLhs, Int64 iRhs);
+BitVector operator+ (const BitVector & iLhs, int iRhs);
 
-BitVector   operator- (const BitVector & iLhs, UInt64 iRhs);
-BitVector   operator- (const BitVector & iLhs, const BitVector & iRhs);
-BitVector   operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
+BitVector operator- (const BitVector & iLhs, UInt32 iRhs);
+BitVector operator- (const BitVector & iLhs, UInt64 iRhs);
+BitVector operator- (const BitVector & iLhs, const BitVector & iRhs);
+BitVector operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
+BitVector operator- (const BitVector & iLhs, long long unsigned int iRhs);
+BitVector operator- (const BitVector & iLhs, long long int iRhs);
+BitVector operator- (const BitVector & iLhs, Int64 iRhs);
+BitVector operator- (const BitVector & iLhs, int iRhs);
 
 #endif /* BITVECTOR_H */
 
