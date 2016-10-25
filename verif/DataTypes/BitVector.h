@@ -233,30 +233,35 @@ class BitVector {
   BitVector & operator= (UInt32 iRhs);
   BitVector & operator= (UInt64 iRhs);
   BitVector & operator= (const BitVector & iRhs);
-  PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
-
-  // Other common 32/64 bit types.
+  BitVector & operator= (BitVector && iRhs); // Move if the sizes are the same.
   BitVector & operator= (long long unsigned int iRhs) { return *this = (UInt64)iRhs; }
   BitVector & operator= (long long int iRhs) { return *this = (UInt64)iRhs; }
   BitVector & operator= (Int64 iRhs) { return *this = (UInt64)iRhs; }
   BitVector & operator= (int iRhs) { return *this = (UInt32)iRhs; }
 
-  BitVector & operator+ (UInt32 iRhs);
-  BitVector & operator+ (UInt64 iRhs);
-  BitVector & operator+ (const BitVector & iRhs);
-  BitVector & operator+ (const PartSelect & iRhs);
-  BitVector & operator+ (long long unsigned int iRhs) { return *this + (UInt64)iRhs; }
-  BitVector & operator+ (long long int iRhs) { return *this + (UInt64)iRhs; }
-  BitVector & operator+ (Int64 iRhs) { return *this + (UInt64)iRhs; }
-  BitVector & operator+ (int iRhs) { return *this + (UInt32)iRhs; }
-  BitVector & operator- (UInt32 iRhs);
-  BitVector & operator- (UInt64 iRhs);
-  BitVector & operator- (const BitVector & iRhs);
-  BitVector & operator- (const PartSelect & iRhs);
-  BitVector & operator- (long long unsigned int iRhs) { return *this - (UInt64)iRhs; }
-  BitVector & operator- (long long int iRhs) { return *this - (UInt64)iRhs; }
-  BitVector & operator- (Int64 iRhs) { return *this - (UInt64)iRhs; }
-  BitVector & operator- (int iRhs) { return *this - (UInt32)iRhs; }
+  PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
+
+  BitVector & operator+= (UInt32 iRhs);
+  BitVector & operator+= (UInt64 iRhs);
+  BitVector & operator+= (const BitVector & iRhs);
+  BitVector & operator+= (const PartSelect & iRhs);
+  BitVector & operator+= (long long unsigned int iRhs) { return *this += (UInt64)iRhs; }
+  BitVector & operator+= (long long int iRhs) { return *this += (UInt64)iRhs; }
+  BitVector & operator+= (Int64 iRhs) { return *this += (UInt64)iRhs; }
+  BitVector & operator+= (int iRhs) { return *this += (UInt32)iRhs; }
+
+  friend BitVector operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
+
+  BitVector & operator-= (UInt32 iRhs);
+  BitVector & operator-= (UInt64 iRhs);
+  BitVector & operator-= (const BitVector & iRhs);
+  BitVector & operator-= (const PartSelect & iRhs);
+  BitVector & operator-= (long long unsigned int iRhs) { return *this -= (UInt64)iRhs; }
+  BitVector & operator-= (long long int iRhs) { return *this -= (UInt64)iRhs; }
+  BitVector & operator-= (Int64 iRhs) { return *this -= (UInt64)iRhs; }
+  BitVector & operator-= (int iRhs) { return *this -= (UInt32)iRhs; }
+
+  friend BitVector operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
 
   //================
   // TBD operators:
@@ -299,6 +304,15 @@ class BitVector {
   // TBD - Add operators for interacting with strings for 4-state values.
 
 };
+
+// Non-Member Operators
+BitVector   operator+ (const BitVector & iLhs, UInt64 iRhs);
+BitVector   operator+ (const BitVector & iLhs, const BitVector & iRhs);
+BitVector   operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
+
+BitVector   operator- (const BitVector & iLhs, UInt64 iRhs);
+BitVector   operator- (const BitVector & iLhs, const BitVector & iRhs);
+BitVector   operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
 
 #endif /* BITVECTOR_H */
 
