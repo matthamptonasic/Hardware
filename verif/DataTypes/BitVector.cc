@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
+#include <utility>
 
 #include "Logger.h"
 
@@ -53,10 +54,10 @@ BitVector::BitVector(UInt32 iSize)
 // Copy Constructor
 BitVector::BitVector(const BitVector & iSource)
 {
-  //LOG_DEBUG << "Copy constructor." << endl;
   m_size = iSource.m_size;
   m_mask = iSource.m_mask;
   m_name = iSource.m_name;
+  LOG_DEBUG << "Copy constructor (" << m_name << ")." << endl;
 
   m_aval = new vector<UInt32>(*iSource.m_aval);
   if(m_nbStates == NB_STATES::FOUR_STATE)
@@ -77,10 +78,10 @@ BitVector::BitVector(const BitVector & iSource)
 // Move Constructor
 BitVector::BitVector(BitVector && iSource)
 {
-  //LOG_DEBUG << "Move constructor." << endl;
   m_size = iSource.m_size;
   m_mask = iSource.m_mask;
   m_name = iSource.m_name;
+  LOG_DEBUG << "Move constructor (" << m_name << ")." << endl;
 
   m_aval = iSource.m_aval;
   iSource.m_aval = nullptr;
@@ -100,7 +101,7 @@ BitVector::~BitVector()
   {
     delete m_bval;
   }
-  LOG_MSG << "Destroying " << m_name << endl;
+  LOG_DEBUG << "Destroying " << m_name << endl;
 }
 
 // =============================
@@ -108,7 +109,6 @@ BitVector::~BitVector()
 // =============================
 void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
 {
-  LOG_MSG << "Creating " << iName << endl;
   m_name = iName;
   m_size = iSize;
   m_nbStates = iStates;
@@ -465,11 +465,7 @@ BitVector & BitVector::operator= (UInt64 iRhs)
 }
 BitVector & BitVector::operator= (const BitVector & iRhs)
 {
-  if(&iRhs == NULL)
-  {
-    LOG_ERR_ENV << "BitVector size was 0." << endl;
-    return *this;
-  }
+  LOG_DEBUG << "Calling const BitVector& operator=" << endl;
   if(this->m_size == 0)
   {
     LOG_WRN_ENV << "Size of '" << this->m_name << "' is 0." << endl;
@@ -496,25 +492,44 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
   applyMask();
   return *this;
 }
+BitVector & BitVector::operator= (BitVector && iRhs)
+{
+  LOG_DEBUG << "Calling BitVector&& operator=" << endl;
+  if(m_size != iRhs.m_size)
+  {
+    // Different sizes, need to do the full copy.
+    return operator=(iRhs);
+  }
+  LOG_DEBUG << "Moving a/b_val." << endl;
+  // Simply pull over the vector values.
+  m_aval = iRhs.m_aval;
+  iRhs.m_aval = nullptr;
+  m_bval = iRhs.m_bval;
+  iRhs.m_bval = nullptr;
+  return *this;
+}
 BitVector::PartSelect BitVector::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex)
 {
   PartSelect retVal(this, iUpperIndex, iLowerIndex);
   return retVal;
 }
-BitVector & BitVector::operator+ (UInt32 iRhs)
+BitVector & BitVector::operator+= (UInt32 iRhs)
 {
   add(iRhs, 0);
   return *this;
 }
-BitVector & BitVector::operator+ (UInt64 iRhs)
+BitVector & BitVector::operator+= (UInt64 iRhs)
 {
   UInt32 l_hi = iRhs >> 32;
   UInt32 l_lo = (UInt32)iRhs;
   add(l_lo, 0);
-  add(l_hi, 1);
+  if(m_size > 32)
+  {
+    add(l_hi, 1);
+  }
   return *this;
 }
-BitVector & BitVector::operator+ (const BitVector & iRhs)
+BitVector & BitVector::operator+= (const BitVector & iRhs)
 {
   UInt32 l_smaller = min(iRhs.m_aval->size(), m_aval->size());
   for(UInt32 ii=0; ii<l_smaller; ii++)
@@ -523,26 +538,30 @@ BitVector & BitVector::operator+ (const BitVector & iRhs)
   }
   return *this;
 }
-BitVector & BitVector::operator+ (const PartSelect & iRhs)
+BitVector & BitVector::operator+= (const PartSelect & iRhs)
 {
-  BitVector bv("BitVector::operator+_PartSelect", 1, m_nbStates);
+  BitVector bv("BitVector::operator+=_PartSelect", 1, m_nbStates);
   iRhs.getParentBits(bv);
-  return *this + bv;
+  *this += bv;
+  return *this;
 }
-BitVector & BitVector::operator- (UInt32 iRhs)
+BitVector & BitVector::operator-= (UInt32 iRhs)
 {
   subtract(iRhs, 0);
   return *this;
 }
-BitVector & BitVector::operator- (UInt64 iRhs)
+BitVector & BitVector::operator-= (UInt64 iRhs)
 {
   UInt32 l_hi = iRhs >> 32;
   UInt32 l_lo = (UInt32)iRhs;
   subtract(l_lo, 0);
-  subtract(l_hi, 1);
+  if(m_size > 32)
+  {
+    subtract(l_hi, 1);
+  }
   return *this;
 }
-BitVector & BitVector::operator- (const BitVector & iRhs)
+BitVector & BitVector::operator-= (const BitVector & iRhs)
 {
   UInt32 l_smaller = min(iRhs.m_aval->size(), m_aval->size());
   for(UInt32 ii=0; ii<l_smaller; ii++)
@@ -551,13 +570,13 @@ BitVector & BitVector::operator- (const BitVector & iRhs)
   }
   return *this;
 }
-BitVector & BitVector::operator- (const PartSelect & iRhs)
+BitVector & BitVector::operator-= (const PartSelect & iRhs)
 {
-  BitVector bv("BitVector::operator-_PartSelect", 1, m_nbStates);
+  BitVector bv("BitVector::operator-=_PartSelect", 1, m_nbStates);
   iRhs.getParentBits(bv);
-  return *this - bv;
+  *this -= bv;
+  return *this;
 }
-
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -787,5 +806,45 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
   l_bv = iRhs;
   setParentBits(l_bv(31,0));
   return *this;
+}
+
+// ================================
+// ===** Non-Member Operators **===
+// ================================
+BitVector operator+ (const BitVector & iLhs, UInt64 iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal += iRhs;
+  return retVal;
+}
+BitVector operator+ (const BitVector & iLhs, const BitVector & iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal += iRhs;
+  return retVal;
+}
+BitVector operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal += iRhs;
+  return retVal;
+}
+BitVector operator- (const BitVector & iLhs, UInt64 iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal -= iRhs;
+  return retVal;
+}
+BitVector operator- (const BitVector & iLhs, const BitVector & iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal -= iRhs;
+  return retVal;
+}
+BitVector operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal -= iRhs;
+  return retVal;
 }
 
