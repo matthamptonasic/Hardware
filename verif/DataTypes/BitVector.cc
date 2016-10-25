@@ -577,6 +577,16 @@ BitVector & BitVector::operator-= (const PartSelect & iRhs)
   *this -= bv;
   return *this;
 }
+BitVector & BitVector::operator++ ()
+{
+  *this += 1;
+  return *this;
+}
+BitVector & BitVector::operator++ (int iDummy)
+{
+  *this += 1;
+  return *this;
+}
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -811,6 +821,12 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
 // ================================
 // ===** Non-Member Operators **===
 // ================================
+BitVector operator+ (const BitVector & iLhs, UInt32 iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal += iRhs;
+  return retVal;
+}
 BitVector operator+ (const BitVector & iLhs, UInt64 iRhs)
 {
   BitVector retVal(iLhs);
@@ -827,6 +843,36 @@ BitVector operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs)
 {
   BitVector retVal(iLhs);
   retVal += iRhs;
+  return retVal;
+}
+BitVector operator+ (UInt64 iLhs, const BitVector & iRhs)
+{
+  return iRhs + iLhs;
+}
+BitVector operator+ (const BitVector::PartSelect & iLhs, const BitVector & iRhs)
+{
+  return iRhs + iLhs;
+}
+BitVector operator+ (const BitVector & iLhs, long long unsigned int iRhs)
+{
+  return iLhs + (UInt64)iRhs;
+}
+BitVector operator+ (const BitVector & iLhs, long long int iRhs)
+{
+  return iLhs + (UInt64)iRhs;
+}
+BitVector operator+ (const BitVector & iLhs, Int64 iRhs)
+{
+  return iLhs + (UInt64)iRhs;
+}
+BitVector operator+ (const BitVector & iLhs, int iRhs)
+{
+  return iLhs + (UInt32)iRhs;
+}
+BitVector operator- (const BitVector & iLhs, UInt32 iRhs)
+{
+  BitVector retVal(iLhs);
+  retVal -= iRhs;
   return retVal;
 }
 BitVector operator- (const BitVector & iLhs, UInt64 iRhs)
@@ -847,4 +893,19 @@ BitVector operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs)
   retVal -= iRhs;
   return retVal;
 }
-
+BitVector operator- (const BitVector & iLhs, long long unsigned int iRhs)
+{
+  return iLhs - (UInt64)iRhs;
+}
+BitVector operator- (const BitVector & iLhs, long long int iRhs)
+{
+  return iLhs - (UInt64)iRhs;
+}
+BitVector operator- (const BitVector & iLhs, Int64 iRhs)
+{
+  return iLhs - (UInt64)iRhs;
+}
+BitVector operator- (const BitVector & iLhs, int iRhs)
+{
+  return iLhs - (UInt32)iRhs;
+}
