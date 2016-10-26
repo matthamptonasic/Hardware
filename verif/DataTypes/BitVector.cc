@@ -599,13 +599,11 @@ BitVector & BitVector::operator-- (int iDummy)
 }
 bool BitVector::operator== (UInt32 iRhs) const
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   bool l_retVal = equals(iRhs, 0);
   return l_retVal;
 }
 bool BitVector::operator== (UInt64 iRhs) const
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   UInt32 l_lo = (UInt32)iRhs;
   UInt32 l_hi = iRhs >> 32;
   bool l_retVal = equals(l_hi, 1);
@@ -614,7 +612,6 @@ bool BitVector::operator== (UInt64 iRhs) const
 }
 bool BitVector::operator== (const BitVector & iRhs) const
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   UInt32 l_lhsSize = m_aval->size();
   UInt32 l_rhsSize = iRhs.m_aval->size();
   if((l_lhsSize == 0) || (l_rhsSize == 0))
@@ -641,7 +638,6 @@ bool BitVector::operator== (const BitVector & iRhs) const
 }
 bool BitVector::operator== (const PartSelect & iRhs) const
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   BitVector bv("BitVector::operator==_PartSelect", 1, m_nbStates);
   iRhs.getParentBits(bv);
   bool l_retVal = (*this == bv);
@@ -991,42 +987,34 @@ BitVector operator- (const BitVector & iLhs, int iRhs)
 }
 bool operator== (UInt32 iLhs, const BitVector & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   return iRhs == iLhs;
 }
 bool operator== (UInt64 iLhs, const BitVector & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   return iRhs == iLhs;
 }
 bool operator== (const BitVector::PartSelect & iLhs, const BitVector & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   return iRhs == iLhs;
 }
 bool operator== (long long unsigned int iLhs, const BitVector & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   return iRhs == iLhs;
 }
 bool operator== (long long int iLhs, const BitVector & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   return iRhs == iLhs;
 }
 bool operator== (Int64 iLhs, const BitVector & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   return iRhs == iLhs;
 }
 bool operator== (int iLhs, const BitVector & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   return iRhs == iLhs;
 }
 bool operator== (const BitVector::PartSelect & iLhs, const BitVector::PartSelect & iRhs)
 {
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   BitVector bv("operator==_PartSelect_PartSelect", 1, iLhs.m_parent->m_nbStates);
   iLhs.getParentBits(bv);
   bool l_retVal = (bv == iRhs);

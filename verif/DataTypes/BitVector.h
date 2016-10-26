@@ -278,10 +278,10 @@ class BitVector {
   bool operator== (UInt64 iRhs) const;
   bool operator== (const BitVector & iRhs) const;
   bool operator== (const PartSelect & iRhs) const;
-  bool operator== (long long unsigned int iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt64)iRhs; };
-  bool operator== (long long int iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt64)iRhs; };
-  bool operator== (Int64 iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt64)iRhs; };
-  bool operator== (int iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt32)iRhs; };
+  bool operator== (long long unsigned int iRhs) const { return *this == (UInt64)iRhs; };
+  bool operator== (long long int iRhs) const { return *this == (UInt64)iRhs; };
+  bool operator== (Int64 iRhs) const { return *this == (UInt64)iRhs; };
+  bool operator== (int iRhs) const { return *this == (UInt32)iRhs; };
 
   friend bool operator== (const PartSelect & iLhs,  const BitVector & iRhs);
   friend bool operator== (const PartSelect & iLhs,  const PartSelect & iRhs);
