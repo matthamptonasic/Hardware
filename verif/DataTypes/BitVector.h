@@ -226,6 +226,7 @@ class BitVector {
     // Operators
     public:
     PartSelect & operator= (UInt32 iRhs);
+    PartSelect & operator= (UInt64 iRhs);
     PartSelect & operator= (Int32 iRhs) { return *this = (UInt32)iRhs; }
 
     bool operator== (const PartSelect & iRhs) const;
@@ -233,6 +234,26 @@ class BitVector {
   };
 
   // BitVector Operators
+  // 1. Unary modifiers must be members (++, --).
+  // 2. Binary modifiers with compound equivalents (+ / +=):
+  //  - compound modifier should be a member funcion.
+  //  - The equiv. binary should be external.
+  // 3. Generally, binary operators can be members, then a forwarding external function
+  //    can be implemented to allow the reverse argument types.
+  //    e.g. UInt32, BitVector instead of BitVector, UInt32.
+  // 4. When the external (PartSelect, BitVector) functions are implemented,
+  //    the function must be a friend of the BitVector class.
+  // 5. Finally, when implementing the (PartSelect, PartSelect) method, it should
+  //    be done in the PartSelect class by creating a BitVector from the LHS PartSelect,
+  //    then forwarding it to the (BitVector, PartSelect) method.
+  // 6. Additionally (later on), we can add cases for (PartSelect, *) calls.
+  //    These should be in the PartSelect class and forwarded to the (BitVector, *) methods.
+  //
+  // So steps are:
+  // 1. Write BitVector class method for LHS being BV, RHS being *.
+  // 2. Write external methods for LHS being *, RHS being BV.
+  // 3. Write PartSelect class method for LHS being PartSelect, RHS being PartSelect.
+  // 4. Write PartSelect class method for LHS being PartSelect, RHS being *.
   public:
   BitVector & operator= (UInt32 iRhs);
   BitVector & operator= (UInt64 iRhs);
@@ -259,7 +280,6 @@ class BitVector {
 
   friend BitVector operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
   friend BitVector operator+ (const BitVector::PartSelect & iLhs, const BitVector & iRhs);
-
 
   BitVector & operator-= (UInt32 iRhs);
   BitVector & operator-= (UInt64 iRhs);
@@ -300,11 +320,7 @@ class BitVector {
   //================
   // TBD operators:
   //================
-  // TBD - Create copy constructor.
-  // Binary arithmetic operators should return a copy, not a reference to the first operand.
-  // Move the binary operators outside and base them on the compound operators (+=, etc).
   // Implement both sides of binary operators.
-  // operator!=
   // operator!
   // operator&&
   // operator||
