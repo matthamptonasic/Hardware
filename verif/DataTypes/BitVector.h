@@ -151,6 +151,7 @@ class BitVector {
     void    setUInt64(UInt64 iVal);
     void    add(UInt32 iVal, UInt32 iWordNb = 0);
     void    subtract(UInt32 iVal, UInt32 iWordNb = 0);
+    bool    equals(UInt32 iVal, UInt32 iWordNb = 0) const;
 
   protected:
   class PartSelect
@@ -226,6 +227,8 @@ class BitVector {
     public:
     PartSelect & operator= (UInt32 iRhs);
     PartSelect & operator= (Int32 iRhs) { return *this = (UInt32)iRhs; }
+
+    friend bool operator== (const PartSelect & iLhs,  const PartSelect & iRhs);
   };
 
   // BitVector Operators
@@ -271,6 +274,18 @@ class BitVector {
 
   friend BitVector operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs);
 
+  bool operator== (UInt32 iRhs) const;
+  bool operator== (UInt64 iRhs) const;
+  bool operator== (const BitVector & iRhs) const;
+  bool operator== (const PartSelect & iRhs) const;
+  bool operator== (long long unsigned int iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt64)iRhs; };
+  bool operator== (long long int iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt64)iRhs; };
+  bool operator== (Int64 iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt64)iRhs; };
+  bool operator== (int iRhs) const { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this == (UInt32)iRhs; };
+
+  friend bool operator== (const PartSelect & iLhs,  const BitVector & iRhs);
+  friend bool operator== (const PartSelect & iLhs,  const PartSelect & iRhs);
+
   //================
   // TBD operators:
   //================
@@ -278,8 +293,6 @@ class BitVector {
   // Binary arithmetic operators should return a copy, not a reference to the first operand.
   // Move the binary operators outside and base them on the compound operators (+=, etc).
   // Implement both sides of binary operators.
-  // operator--
-  // operator==
   // operator!=
   // operator!
   // operator&&
@@ -301,7 +314,7 @@ class BitVector {
   // operator^=
   // operator, (concatination)
   // operator bool
-  // operator UInt32
+  // operator UInt32 (make explicit if there are operator ambiguity problems)
   // operator UInt64
   // operator Int32
   // operator Int64
@@ -329,6 +342,15 @@ BitVector operator- (const BitVector & iLhs, long long unsigned int iRhs);
 BitVector operator- (const BitVector & iLhs, long long int iRhs);
 BitVector operator- (const BitVector & iLhs, Int64 iRhs);
 BitVector operator- (const BitVector & iLhs, int iRhs);
+
+bool operator== (UInt32 iLhs,                         const BitVector & iRhs);
+bool operator== (UInt64 iLhs,                         const BitVector & iRhs);
+bool operator== (const BitVector::PartSelect & iLhs,  const BitVector & iRhs);
+bool operator== (long long unsigned int iLhs,         const BitVector & iRhs);
+bool operator== (long long int iLhs,                  const BitVector & iRhs);
+bool operator== (Int64 iLhs,                          const BitVector & iRhs);
+bool operator== (int iLhs,                            const BitVector & iRhs);
+bool operator== (const BitVector::PartSelect & iLhs,  const BitVector::PartSelect & iRhs);
 
 #endif /* BITVECTOR_H */
 
