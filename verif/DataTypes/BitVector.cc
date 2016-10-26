@@ -338,7 +338,7 @@ void BitVector::setUInt32(UInt32 iVal)
   // Wipe bits if the BV is < 32 wide.
   if(m_size < 32)
   {
-    iVal &= ~getMask(m_size);
+    iVal &= getMask(m_size - 1);
   }
   m_aval->at(0) = iVal;
   // Wipe anything above 32 bits if BV is > 32 wide.
@@ -855,6 +855,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
     this->m_parent->m_aval->at(l_dstLowerWord + ii) = l_transferWord;
     l_nbSrcBitsCopied += l_nbSrcBits;
   }
+  m_parent->applyMask();
 }
 void BitVector::PartSelect::getParentBits(BitVector & oBV) const
 {
@@ -893,9 +894,18 @@ void BitVector::PartSelect::getParentBits(BitVector & oBV) const
 // =============================
 BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
 {
-  BitVector l_bv("BitVector::PartSelect::operator=", 32);
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator=", l_sz);
   l_bv = iRhs;
   setParentBits(l_bv(31,0));
+  return *this;
+}
+BitVector::PartSelect & BitVector::PartSelect::operator= (UInt64 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator=", l_sz);
+  l_bv = iRhs;
+  setParentBits(l_bv(63,0));
   return *this;
 }
 bool BitVector::PartSelect::operator== (const BitVector::PartSelect & iRhs) const
