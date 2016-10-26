@@ -893,6 +893,13 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
   setParentBits(l_bv(31,0));
   return *this;
 }
+bool BitVector::PartSelect::operator== (const BitVector::PartSelect & iRhs) const
+{
+  BitVector bv("operator==_PartSelect_PartSelect", 1, m_parent->m_nbStates);
+  getParentBits(bv);
+  bool l_retVal = (bv == iRhs);
+  return l_retVal;
+}
 
 // ================================
 // ===** Non-Member Operators **===
@@ -1012,11 +1019,4 @@ bool operator== (Int64 iLhs, const BitVector & iRhs)
 bool operator== (int iLhs, const BitVector & iRhs)
 {
   return iRhs == iLhs;
-}
-bool operator== (const BitVector::PartSelect & iLhs, const BitVector::PartSelect & iRhs)
-{
-  BitVector bv("operator==_PartSelect_PartSelect", 1, iLhs.m_parent->m_nbStates);
-  iLhs.getParentBits(bv);
-  bool l_retVal = (bv == iRhs);
-  return l_retVal;
 }

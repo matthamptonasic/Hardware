@@ -228,7 +228,8 @@ class BitVector {
     PartSelect & operator= (UInt32 iRhs);
     PartSelect & operator= (Int32 iRhs) { return *this = (UInt32)iRhs; }
 
-    friend bool operator== (const PartSelect & iLhs,  const PartSelect & iRhs);
+    //friend bool operator== (const PartSelect & iLhs,  const PartSelect & iRhs);
+    bool operator== (const PartSelect & iRhs) const;
   };
 
   // BitVector Operators
@@ -284,7 +285,6 @@ class BitVector {
   bool operator== (int iRhs) const { return *this == (UInt32)iRhs; };
 
   friend bool operator== (const PartSelect & iLhs,  const BitVector & iRhs);
-  friend bool operator== (const PartSelect & iLhs,  const PartSelect & iRhs);
 
   //================
   // TBD operators:
@@ -350,7 +350,6 @@ bool operator== (long long unsigned int iLhs,         const BitVector & iRhs);
 bool operator== (long long int iLhs,                  const BitVector & iRhs);
 bool operator== (Int64 iLhs,                          const BitVector & iRhs);
 bool operator== (int iLhs,                            const BitVector & iRhs);
-bool operator== (const BitVector::PartSelect & iLhs,  const BitVector::PartSelect & iRhs);
 
 #endif /* BITVECTOR_H */
 
