@@ -878,7 +878,12 @@ void BitVector::PartSelect::getParentBits(BitVector & oBV) const
   for(UInt32 ii=0; ii<l_wordCnt; ii++)
   {
     (*oBV.m_aval)[ii] = (*m_parent->m_aval)[l_srcLowerWord + ii] >> l_shift;
-    (*oBV.m_aval)[ii] |= (*m_parent->m_aval)[l_srcLowerWord + ii + 1] << (32 - l_shift);
+    // Check if there is another word to pull from.
+    if(((l_srcLowerWord + ii + 1) < m_parent->m_aval->size()) && (l_shift != 0))
+    {
+      UInt32 l_orVal = (*m_parent->m_aval)[l_srcLowerWord + ii + 1] << (32 - l_shift);
+      (*oBV.m_aval)[ii] |= l_orVal;
+    }
   }
   oBV.applyMask();
 }
@@ -1019,4 +1024,32 @@ bool operator== (Int64 iLhs, const BitVector & iRhs)
 bool operator== (int iLhs, const BitVector & iRhs)
 {
   return iRhs == iLhs;
+}
+bool operator!= (UInt32 iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (UInt64 iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (const BitVector::PartSelect & iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (long long unsigned int iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (long long int iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (Int64 iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (int iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
 }
