@@ -228,7 +228,6 @@ class BitVector {
     PartSelect & operator= (UInt32 iRhs);
     PartSelect & operator= (Int32 iRhs) { return *this = (UInt32)iRhs; }
 
-    //friend bool operator== (const PartSelect & iLhs,  const PartSelect & iRhs);
     bool operator== (const PartSelect & iRhs) const;
   };
 
