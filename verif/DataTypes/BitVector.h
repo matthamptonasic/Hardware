@@ -229,6 +229,7 @@ class BitVector {
     PartSelect & operator= (Int32 iRhs) { return *this = (UInt32)iRhs; }
 
     bool operator== (const PartSelect & iRhs) const;
+    bool operator!= (const PartSelect & iRhs) const { return !(*this == iRhs); };
   };
 
   // BitVector Operators
@@ -285,6 +286,17 @@ class BitVector {
 
   friend bool operator== (const PartSelect & iLhs,  const BitVector & iRhs);
 
+  bool operator!= (UInt32 iRhs) const { return !(*this == iRhs); };
+  bool operator!= (UInt64 iRhs) const { return !(*this == iRhs); };
+  bool operator!= (const BitVector & iRhs) const { return !(*this == iRhs); };
+  bool operator!= (const PartSelect & iRhs) const { return !(*this == iRhs); };
+  bool operator!= (long long unsigned int iRhs) const { return !(*this == iRhs); };
+  bool operator!= (long long int iRhs) const { return !(*this == iRhs); };
+  bool operator!= (Int64 iRhs) const { return !(*this == iRhs); };
+  bool operator!= (int iRhs) const { return !(*this == iRhs); };
+
+  friend bool operator!= (const PartSelect & iLhs,  const BitVector & iRhs);
+
   //================
   // TBD operators:
   //================
@@ -317,6 +329,7 @@ class BitVector {
   // operator UInt64
   // operator Int32
   // operator Int64
+  // Add corresponding overloads for PartSelect so we can do things like BV0 = BV1(11,0) + BV2(3,0);
 
   // TBD - Add operators for interacting with strings for 4-state values.
 
@@ -349,6 +362,14 @@ bool operator== (long long unsigned int iLhs,         const BitVector & iRhs);
 bool operator== (long long int iLhs,                  const BitVector & iRhs);
 bool operator== (Int64 iLhs,                          const BitVector & iRhs);
 bool operator== (int iLhs,                            const BitVector & iRhs);
+
+bool operator!= (UInt32 iLhs,                         const BitVector & iRhs);
+bool operator!= (UInt64 iLhs,                         const BitVector & iRhs);
+bool operator!= (const BitVector::PartSelect & iLhs,  const BitVector & iRhs);
+bool operator!= (long long unsigned int iLhs,         const BitVector & iRhs);
+bool operator!= (long long int iLhs,                  const BitVector & iRhs);
+bool operator!= (Int64 iLhs,                          const BitVector & iRhs);
+bool operator!= (int iLhs,                            const BitVector & iRhs);
 
 #endif /* BITVECTOR_H */
 
