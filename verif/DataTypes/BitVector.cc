@@ -597,6 +597,76 @@ BitVector & BitVector::operator-- (int iDummy)
   *this -= 1;
   return *this;
 }
+bool BitVector::operator== (UInt32 iRhs) const
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  bool l_retVal = equals(iRhs, 0);
+  return l_retVal;
+}
+bool BitVector::operator== (UInt64 iRhs) const
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  UInt32 l_lo = (UInt32)iRhs;
+  UInt32 l_hi = iRhs >> 32;
+  bool l_retVal = equals(l_hi, 1);
+  l_retVal &= equals(l_lo, 0);
+  return l_retVal;
+}
+bool BitVector::operator== (const BitVector & iRhs) const
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  UInt32 l_lhsSize = m_aval->size();
+  UInt32 l_rhsSize = iRhs.m_aval->size();
+  if((l_lhsSize == 0) || (l_rhsSize == 0))
+  {
+    return false;
+  }
+  UInt32 l_nbWords = max(l_lhsSize, l_rhsSize);
+  for(Int32 ii=l_nbWords-1; ii >= 0; ii--)
+  {
+    // If the RHS BitVector is smaller, then we 0-extend it.
+    // This check below only compares RHS values that exist.
+    // If the LHS is larger, the l_cmpVal stays 0 and we compare LHS[ii] to that.
+    UInt32 l_cmpVal = 0;
+    if(ii < l_rhsSize)
+    {
+      l_cmpVal = (*iRhs.m_aval)[ii];
+    }
+    if(!equals(l_cmpVal, ii))
+    {
+      return false;
+    }
+  }
+  return true;
+}
+bool BitVector::operator== (const PartSelect & iRhs) const
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  BitVector bv("BitVector::operator==_PartSelect", 1, m_nbStates);
+  iRhs.getParentBits(bv);
+  bool l_retVal = (*this == bv);
+  return l_retVal;
+}
+bool BitVector::equals(UInt32 iVal, UInt32 iWordNb) const
+{
+  // This function assumes that our last a_val value is already masked.
+  // Meaning we don't have to mask it again before comparing.
+  if((m_aval == NULL) || (m_aval->size() < (iWordNb + 1)))
+  {
+    return false;
+  }
+  if((m_aval->size() < (iWordNb + 1)) && (iVal == 0))
+  {
+    // If the selected word is beyond our size
+    // AND the value to compare is 0, we return true (0 extend the vector).
+    return true;
+  }
+  if((*m_aval)[iWordNb] == iVal)
+  {
+    return true;
+  }
+  return false;
+}
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -918,4 +988,47 @@ BitVector operator- (const BitVector & iLhs, Int64 iRhs)
 BitVector operator- (const BitVector & iLhs, int iRhs)
 {
   return iLhs - (UInt32)iRhs;
+}
+bool operator== (UInt32 iLhs, const BitVector & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return iRhs == iLhs;
+}
+bool operator== (UInt64 iLhs, const BitVector & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return iRhs == iLhs;
+}
+bool operator== (const BitVector::PartSelect & iLhs, const BitVector & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return iRhs == iLhs;
+}
+bool operator== (long long unsigned int iLhs, const BitVector & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return iRhs == iLhs;
+}
+bool operator== (long long int iLhs, const BitVector & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return iRhs == iLhs;
+}
+bool operator== (Int64 iLhs, const BitVector & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return iRhs == iLhs;
+}
+bool operator== (int iLhs, const BitVector & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return iRhs == iLhs;
+}
+bool operator== (const BitVector::PartSelect & iLhs, const BitVector::PartSelect & iRhs)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  BitVector bv("operator==_PartSelect_PartSelect", 1, iLhs.m_parent->m_nbStates);
+  iLhs.getParentBits(bv);
+  bool l_retVal = (bv == iRhs);
+  return l_retVal;
 }
