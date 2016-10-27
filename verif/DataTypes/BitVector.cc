@@ -858,7 +858,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
     if(ii == (l_dstWordCnt - 1))
     {
       UInt32 msk = this->m_parent->getMask(l_dstUpperShift - 1);
-      l_transferWord |= (this->m_parent->m_aval->at(l_dstUpperWord) & msk);
+      l_transferWord |= (this->m_parent->m_aval->at(l_dstUpperWord) & ~msk);
     }
     this->m_parent->m_aval->at(l_dstLowerWord + ii) = l_transferWord;
     l_nbSrcBitsCopied += l_nbSrcBits;
@@ -929,10 +929,19 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (const PartSelect & iRh
 }
 bool BitVector::PartSelect::operator== (const BitVector::PartSelect & iRhs) const
 {
-  BitVector bv("operator==_PartSelect_PartSelect", 1, m_parent->m_nbStates);
-  getParentBits(bv);
-  bool l_retVal = (bv == iRhs);
+  BitVector l_bv("operator==_PartSelect_PartSelect", 1, m_parent->m_nbStates);
+  getParentBits(l_bv);
+  bool l_retVal = (l_bv == iRhs);
   return l_retVal;
+}
+BitVector::PartSelect & BitVector::PartSelect::operator+= (UInt32 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+=", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return *this;
 }
 
 // ================================
