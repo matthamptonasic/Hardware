@@ -305,12 +305,14 @@ UInt32 BitVector::getBits(UInt32 iUpperIndex, UInt32 iLowerIndex) const
   UInt32 l_selSize = iUpperIndex - iLowerIndex + 1;
   if(l_selSize > 32)
   {
-    // TBD - Log error.
+    LOG_ERR_ENV << "Selection size (" << iUpperIndex << "," << iLowerIndex << ") is > 32." << endl;
     return 0;
   }
   if(iUpperIndex > m_size)
   {
-    // TBD - Log warning.
+    LOG_WRN_ENV << "Selection (" << iUpperIndex << "," << iLowerIndex 
+                << ") is beyond the BitVector size (" << m_size 
+                << "). Shrinking the selection to fit." << endl;
     iUpperIndex = m_size;
     l_selSize = iUpperIndex - iLowerIndex + 1;
   }
@@ -328,9 +330,10 @@ UInt32 BitVector::getBits(UInt32 iUpperIndex, UInt32 iLowerIndex) const
   if(l_loWdNb != l_hiWdNb)
   {
     UInt32 l_hiWd = (*m_aval)[l_loWdNb+1];
-    l_hiWd &= getMask(iUpperIndex);
     l_retVal |= (l_hiWd << (32 - l_shift));
   }
+  UInt32 msk = getMask(l_selSize-1);
+  l_retVal &= msk;
   return l_retVal;
 }
 void BitVector::setUInt32(UInt32 iVal)
@@ -471,15 +474,14 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
     LOG_WRN_ENV << "Size of '" << this->m_name << "' is 0." << endl;
     this->Resize(iRhs.m_size);
   }
-  bool l_imBigger = false;
   // He's 48 bits, im 64, use his #wds and mask.
   // He's 48 bits, im 16, use my #wds and mask.
   // Hes  8 bits, im 96, use his #wds and mask, but clear my upper words.
   UInt32 l_upperWord = this->m_aval->size() < iRhs.m_aval->size() ? this->m_aval->size() - 1 : iRhs.m_aval->size() - 1;
 
-  for(UInt32 ii=0; ii<this->m_aval->size(); ii++)
+    for(UInt32 ii=0; ii<this->m_aval->size(); ii++)
   {
-    if(ii <= l_upperWord)
+      if(ii <= l_upperWord)
     {
       this->m_aval->at(ii) = iRhs.m_aval->at(ii);
     }
@@ -488,7 +490,7 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
       this->m_aval->at(ii) = 0;
     }
   }
-
+  
   applyMask();
   return *this;
 }
@@ -683,7 +685,7 @@ void BitVector::PartSelect::init(BitVector * iBV, UInt32 iUpperIndex, UInt32 iLo
 {
   if(iBV == NULL)
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "iBV was NULL." << endl;
     return;
   }
   m_parent = iBV;
@@ -793,14 +795,20 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
   UInt32 l_dstSize = this->m_upperIndex - this->m_lowerIndex + 1;
   if(l_srcSize > l_dstSize)
   {
-    // TBD - log warning.
+    LOG_WRN_ENV << "Destination(" << this->m_upperIndex << "," 
+                << this->m_lowerIndex << ") and Source(" 
+                << l_srcUpperIdx << "," << l_srcLowerIdx
+                << ") Part Selects differ in size." << endl;
     // ex: bv_a[15:0] = bv_b[31:8]; => bv_a[15:0] = bv_b[23:8];
     l_srcUpperIdx = l_srcLowerIdx + l_dstSize - 1;
     l_srcSize = l_dstSize;
   }
   else if(l_srcSize < l_dstSize)
   {
-    // TBD - log warning.
+    LOG_WRN_ENV << "Destination(" << this->m_upperIndex << "," 
+                << this->m_lowerIndex << ") and Source(" 
+                << l_srcUpperIdx << "," << l_srcLowerIdx
+                << ") Part Selects differ in size." << endl;
     // ex: bv_a[23:0] = bv_b[23:8]; => bv_a[15:0] = bv_b[23:8];
     this->m_upperIndex = this->m_lowerIndex + l_srcSize - 1;
     l_dstSize = l_srcSize;
@@ -849,8 +857,8 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
     }
     if(ii == (l_dstWordCnt - 1))
     {
-      UInt32 msk = this->m_parent->getMask(l_dstUpperShift);
-      l_transferWord |= this->m_parent->m_aval->at(l_dstUpperWord) & msk;
+      UInt32 msk = this->m_parent->getMask(l_dstUpperShift - 1);
+      l_transferWord |= (this->m_parent->m_aval->at(l_dstUpperWord) & msk);
     }
     this->m_parent->m_aval->at(l_dstLowerWord + ii) = l_transferWord;
     l_nbSrcBitsCopied += l_nbSrcBits;
@@ -897,7 +905,7 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
   UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
   BitVector l_bv("BitVector::PartSelect::operator=", l_sz);
   l_bv = iRhs;
-  setParentBits(l_bv(31,0));
+  setParentBits(l_bv(l_sz - 1,0));
   return *this;
 }
 BitVector::PartSelect & BitVector::PartSelect::operator= (UInt64 iRhs)
@@ -905,7 +913,18 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt64 iRhs)
   UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
   BitVector l_bv("BitVector::PartSelect::operator=", l_sz);
   l_bv = iRhs;
-  setParentBits(l_bv(63,0));
+  setParentBits(l_bv(l_sz - 1,0));
+  return *this;
+}
+BitVector::PartSelect & BitVector::PartSelect::operator= (BitVector & iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  setParentBits(iRhs(l_sz - 1, 0));
+  return *this;
+}
+BitVector::PartSelect & BitVector::PartSelect::operator= (const PartSelect & iRhs)
+{
+  setParentBits(iRhs);
   return *this;
 }
 bool BitVector::PartSelect::operator== (const BitVector::PartSelect & iRhs) const
