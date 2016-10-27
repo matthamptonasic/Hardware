@@ -227,14 +227,17 @@ class BitVector {
     public:
     PartSelect & operator= (UInt32 iRhs);
     PartSelect & operator= (UInt64 iRhs);
-    // Cannot be const because it's address is used in a new temp PS.
-    // To make it const, we would need to change the implementation of setParentBits.
+    // Cannot be const because it's address is used in a new temporary PartSelect.
+    // To make it const, we would need to change the implementation of setParentBits
+    // such that it takes a const BitVector & instead of a PartSelect (overload method).
     PartSelect & operator= (BitVector & iRhs);
     PartSelect & operator= (const PartSelect & iRhs);
     PartSelect & operator= (long long unsigned int iRhs) { return *this = (UInt64)iRhs; }
     PartSelect & operator= (long long int iRhs) { return *this = (UInt64)iRhs; }
     PartSelect & operator= (Int64 iRhs) { return *this = (UInt64)iRhs; }
     PartSelect & operator= (int iRhs) { return *this = (UInt32)iRhs; }
+
+    PartSelect & operator+= (UInt32 iRhs);
 
     bool operator== (const PartSelect & iRhs) const;
     bool operator!= (const PartSelect & iRhs) const { return !(*this == iRhs); };
