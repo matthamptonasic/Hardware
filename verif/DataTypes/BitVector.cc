@@ -970,6 +970,42 @@ BitVector::PartSelect & BitVector::PartSelect::operator+= (const PartSelect & iR
   setParentBits(l_bv(l_sz - 1,0));
   return *this;
 }
+BitVector::PartSelect & BitVector::PartSelect::operator-= (UInt32 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_UInt32", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return *this;
+}
+BitVector::PartSelect & BitVector::PartSelect::operator-= (UInt64 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_UInt64", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return *this;
+}
+BitVector::PartSelect & BitVector::PartSelect::operator-= (const BitVector & iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_BitVector", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return *this;
+}
+BitVector::PartSelect & BitVector::PartSelect::operator-= (const PartSelect & iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_PartSelect", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return *this;
+}
 
 // ================================
 // ===** Non-Member Operators **===
