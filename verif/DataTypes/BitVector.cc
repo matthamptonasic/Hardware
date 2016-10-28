@@ -57,6 +57,7 @@ BitVector::BitVector(const BitVector & iSource)
   m_size = iSource.m_size;
   m_mask = iSource.m_mask;
   m_name = iSource.m_name;
+  m_name += "_Copy";
   LOG_DEBUG << "Copy constructor (" << m_name << ")." << endl;
 
   m_aval = new vector<UInt32>(*iSource.m_aval);
@@ -442,6 +443,26 @@ void BitVector::subtract(UInt32 iVal, UInt32 iWordNb)
     applyMask();
   }
 }
+bool BitVector::equals(UInt32 iVal, UInt32 iWordNb) const
+{
+  // This function assumes that our last a_val value is already masked.
+  // Meaning we don't have to mask it again before comparing.
+  if(m_aval == NULL)
+  {
+    return false;
+  }
+  if((m_aval->size() < (iWordNb + 1)) && (iVal == 0))
+  {
+    // If the selected word is beyond our size
+    // AND the value to compare is 0, we return true (0 extend the vector).
+    return true;
+  }
+  if((*m_aval)[iWordNb] == iVal)
+  {
+    return true;
+  }
+  return false;
+}
 
 // =============================
 // ===**     Operators     **===
@@ -492,6 +513,14 @@ BitVector & BitVector::operator= (const BitVector & iRhs)
   }
   
   applyMask();
+  return *this;
+}
+BitVector & BitVector::operator= (const BitVector::PartSelect & iRhs)
+{
+  UInt32 l_sz = iRhs.m_upperIndex - iRhs.m_lowerIndex + 1;
+  BitVector l_bv("BitVector::operator=_PartSelect", l_sz);
+  iRhs.getParentBits(l_bv);
+  *this = l_bv;
   return *this;
 }
 BitVector & BitVector::operator= (BitVector && iRhs)
@@ -547,6 +576,46 @@ BitVector & BitVector::operator+= (const PartSelect & iRhs)
   *this += bv;
   return *this;
 }
+BitVector BitVector::operator+ (UInt32 iRhs) const
+{
+  BitVector retVal(*this);
+  retVal += iRhs;
+  return retVal;
+}
+BitVector BitVector::operator+ (UInt64 iRhs) const
+{
+  BitVector retVal(*this);
+  retVal += iRhs;
+  return retVal;
+}
+BitVector BitVector::operator+ (const BitVector & iRhs) const
+{
+  BitVector retVal(*this);
+  retVal += iRhs;
+  return retVal;
+}
+BitVector BitVector::operator+ (const BitVector::PartSelect & iRhs) const
+{
+  BitVector retVal(*this);
+  retVal += iRhs;
+  return retVal;
+}
+BitVector BitVector::operator+ (long long unsigned int iRhs) const
+{
+  return *this + (UInt64)iRhs;
+}
+BitVector BitVector::operator+ (long long int iRhs) const
+{
+  return *this + (UInt64)iRhs;
+}
+BitVector BitVector::operator+ (Int64 iRhs) const
+{
+  return *this + (UInt64)iRhs;
+}
+BitVector BitVector::operator+ (int iRhs) const
+{
+  return *this + (UInt32)iRhs;
+}
 BitVector & BitVector::operator++ ()
 {
   *this += 1;
@@ -575,6 +644,7 @@ BitVector & BitVector::operator-= (UInt64 iRhs)
 }
 BitVector & BitVector::operator-= (const BitVector & iRhs)
 {
+  // TBD - If the LHS is smaller, shouldn't we 0-extend it?
   UInt32 l_smaller = min(iRhs.m_aval->size(), m_aval->size());
   for(UInt32 ii=0; ii<l_smaller; ii++)
   {
@@ -588,6 +658,30 @@ BitVector & BitVector::operator-= (const PartSelect & iRhs)
   iRhs.getParentBits(bv);
   *this -= bv;
   return *this;
+}
+BitVector BitVector::operator- (UInt32 iRhs) const
+{
+  BitVector retVal(*this);
+  retVal -= iRhs;
+  return retVal;
+}
+BitVector BitVector::operator- (UInt64 iRhs) const
+{
+  BitVector retVal(*this);
+  retVal -= iRhs;
+  return retVal;
+}
+BitVector BitVector::operator- (const BitVector & iRhs) const
+{
+  BitVector retVal(*this);
+  retVal -= iRhs;
+  return retVal;
+}
+BitVector BitVector::operator- (const BitVector::PartSelect & iRhs) const
+{
+  BitVector retVal(*this);
+  retVal -= iRhs;
+  return retVal;
 }
 BitVector & BitVector::operator-- ()
 {
@@ -644,26 +738,6 @@ bool BitVector::operator== (const PartSelect & iRhs) const
   iRhs.getParentBits(bv);
   bool l_retVal = (*this == bv);
   return l_retVal;
-}
-bool BitVector::equals(UInt32 iVal, UInt32 iWordNb) const
-{
-  // This function assumes that our last a_val value is already masked.
-  // Meaning we don't have to mask it again before comparing.
-  if((m_aval == NULL) || (m_aval->size() < (iWordNb + 1)))
-  {
-    return false;
-  }
-  if((m_aval->size() < (iWordNb + 1)) && (iVal == 0))
-  {
-    // If the selected word is beyond our size
-    // AND the value to compare is 0, we return true (0 extend the vector).
-    return true;
-  }
-  if((*m_aval)[iWordNb] == iVal)
-  {
-    return true;
-  }
-  return false;
 }
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
@@ -927,6 +1001,170 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (const PartSelect & iRh
   setParentBits(iRhs);
   return *this;
 }
+BitVector BitVector::PartSelect::operator+= (UInt32 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+=_UInt32", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator+= (UInt64 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+=_UInt64", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator+= (const BitVector & iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+=_BitVector", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator+= (const PartSelect & iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+=_PartSelect", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator+ (UInt32 iRhs) const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+_UInt32", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator+ (UInt64 iRhs) const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+_UInt32", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator+ (const PartSelect & iRhs) const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator+_UInt32", l_sz);
+  getParentBits(l_bv);
+  l_bv += iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator++ ()
+{
+  return *this += 1;
+}
+BitVector BitVector::PartSelect::operator++ (int iDummy)
+{
+  return *this += 1;
+}
+BitVector BitVector::PartSelect::operator-= (UInt32 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_UInt32", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator-= (UInt64 iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_UInt64", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator-= (const BitVector & iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_BitVector", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator-= (const PartSelect & iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-=_PartSelect", l_sz);
+  getParentBits(l_bv);
+  l_bv -= iRhs;
+  setParentBits(l_bv(l_sz - 1,0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator- (UInt32 iRhs) const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-_UInt32", l_sz);
+  getParentBits(l_bv);
+  l_bv = *this - iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator- (UInt64 iRhs) const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-_UInt64", l_sz);
+  getParentBits(l_bv);
+  l_bv = *this - iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator- (const BitVector & iRhs) const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-_BitVector", l_sz);
+  getParentBits(l_bv);
+  l_bv = *this - iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator- (const BitVector::PartSelect & iRhs) const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator-_PartSelect", l_sz);
+  getParentBits(l_bv);
+  l_bv = *this - iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator-- ()
+{
+  return *this -= 1;
+}
+BitVector BitVector::PartSelect::operator-- (int iDummy)
+{
+  return *this -= 1;
+}
+bool BitVector::PartSelect::operator== (UInt32 iRhs) const
+{
+  BitVector l_bv("operator==_PartSelect_UInt32", 1, m_parent->m_nbStates);
+  getParentBits(l_bv);
+  bool l_retVal = (l_bv == iRhs);
+  return l_retVal;
+}
+bool BitVector::PartSelect::operator== (UInt64 iRhs) const
+{
+  BitVector l_bv("operator==_PartSelect_UInt64", 1, m_parent->m_nbStates);
+  getParentBits(l_bv);
+  bool l_retVal = (l_bv == iRhs);
+  return l_retVal;
+}
+bool BitVector::PartSelect::operator== (const BitVector & iRhs) const
+{
+  // Reverse is already implemented in BitVector.
+  bool l_retVal = (iRhs == *this);
+  return l_retVal;
+}
 bool BitVector::PartSelect::operator== (const BitVector::PartSelect & iRhs) const
 {
   BitVector l_bv("operator==_PartSelect_PartSelect", 1, m_parent->m_nbStates);
@@ -934,179 +1172,131 @@ bool BitVector::PartSelect::operator== (const BitVector::PartSelect & iRhs) cons
   bool l_retVal = (l_bv == iRhs);
   return l_retVal;
 }
-BitVector::PartSelect & BitVector::PartSelect::operator+= (UInt32 iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator+=_UInt32", l_sz);
-  getParentBits(l_bv);
-  l_bv += iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
-BitVector::PartSelect & BitVector::PartSelect::operator+= (UInt64 iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator+=_UInt64", l_sz);
-  getParentBits(l_bv);
-  l_bv += iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
-BitVector::PartSelect & BitVector::PartSelect::operator+= (const BitVector & iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator+=_BitVector", l_sz);
-  getParentBits(l_bv);
-  l_bv += iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
-BitVector::PartSelect & BitVector::PartSelect::operator+= (const PartSelect & iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator+=_PartSelect", l_sz);
-  getParentBits(l_bv);
-  l_bv += iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
-BitVector::PartSelect & BitVector::PartSelect::operator-= (UInt32 iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator-=_UInt32", l_sz);
-  getParentBits(l_bv);
-  l_bv -= iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
-BitVector::PartSelect & BitVector::PartSelect::operator-= (UInt64 iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator-=_UInt64", l_sz);
-  getParentBits(l_bv);
-  l_bv -= iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
-BitVector::PartSelect & BitVector::PartSelect::operator-= (const BitVector & iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator-=_BitVector", l_sz);
-  getParentBits(l_bv);
-  l_bv -= iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
-BitVector::PartSelect & BitVector::PartSelect::operator-= (const PartSelect & iRhs)
-{
-  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
-  BitVector l_bv("BitVector::PartSelect::operator-=_PartSelect", l_sz);
-  getParentBits(l_bv);
-  l_bv -= iRhs;
-  setParentBits(l_bv(l_sz - 1,0));
-  return *this;
-}
 
 // ================================
 // ===** Non-Member Operators **===
 // ================================
-BitVector operator+ (const BitVector & iLhs, UInt32 iRhs)
+BitVector operator+ (UInt32 iLhs, const BitVector & iRhs)
 {
-  BitVector retVal(iLhs);
-  retVal += iRhs;
-  return retVal;
-}
-BitVector operator+ (const BitVector & iLhs, UInt64 iRhs)
-{
-  BitVector retVal(iLhs);
-  retVal += iRhs;
-  return retVal;
-}
-BitVector operator+ (const BitVector & iLhs, const BitVector & iRhs)
-{
-  BitVector retVal(iLhs);
-  retVal += iRhs;
-  return retVal;
-}
-BitVector operator+ (const BitVector & iLhs, const BitVector::PartSelect & iRhs)
-{
-  BitVector retVal(iLhs);
-  retVal += iRhs;
-  return retVal;
+  return iRhs + iLhs;
 }
 BitVector operator+ (UInt64 iLhs, const BitVector & iRhs)
 {
   return iRhs + iLhs;
 }
-BitVector operator+ (const BitVector::PartSelect & iLhs, const BitVector & iRhs)
+BitVector operator+ (long long unsigned int iLhs, const BitVector & iRhs)
 {
   return iRhs + iLhs;
 }
-BitVector operator+ (const BitVector & iLhs, long long unsigned int iRhs)
+BitVector operator+ (long long int iLhs, const BitVector & iRhs)
 {
-  return iLhs + (UInt64)iRhs;
+  return iRhs + iLhs;
 }
-BitVector operator+ (const BitVector & iLhs, long long int iRhs)
+BitVector operator+ (Int64 iLhs, const BitVector & iRhs)
 {
-  return iLhs + (UInt64)iRhs;
+  return iRhs + iLhs;
 }
-BitVector operator+ (const BitVector & iLhs, Int64 iRhs)
+BitVector operator+ (int iLhs, const BitVector & iRhs)
 {
-  return iLhs + (UInt64)iRhs;
+  return iRhs + iLhs;
 }
-BitVector operator+ (const BitVector & iLhs, int iRhs)
+BitVector operator+ (UInt32 iLhs, const BitVector::PartSelect & iRhs)
 {
-  return iLhs + (UInt32)iRhs;
+  return iRhs + iLhs;
 }
-BitVector operator- (const BitVector & iLhs, UInt32 iRhs)
+BitVector operator+ (UInt64 iLhs, const BitVector::PartSelect & iRhs)
 {
-  BitVector retVal(iLhs);
-  retVal -= iRhs;
-  return retVal;
+  return iRhs + iLhs;
 }
-BitVector operator- (const BitVector & iLhs, UInt64 iRhs)
+BitVector operator+ (long long unsigned int iLhs, const BitVector::PartSelect & iRhs)
 {
-  BitVector retVal(iLhs);
-  retVal -= iRhs;
-  return retVal;
+  return iRhs + iLhs;
 }
-BitVector operator- (const BitVector & iLhs, const BitVector & iRhs)
+BitVector operator+ (long long int iLhs, const BitVector::PartSelect & iRhs)
 {
-  BitVector retVal(iLhs);
-  retVal -= iRhs;
-  return retVal;
+  return iRhs + iLhs;
 }
-BitVector operator- (const BitVector & iLhs, const BitVector::PartSelect & iRhs)
+BitVector operator+ (Int64 iLhs, const BitVector::PartSelect & iRhs)
 {
-  BitVector retVal(iLhs);
-  retVal -= iRhs;
-  return retVal;
+  return iRhs + iLhs;
 }
-BitVector operator- (const BitVector & iLhs, long long unsigned int iRhs)
+BitVector operator+ (int iLhs, const BitVector::PartSelect & iRhs)
 {
-  return iLhs - (UInt64)iRhs;
+  return iRhs + iLhs;
 }
-BitVector operator- (const BitVector & iLhs, long long int iRhs)
+BitVector operator- (UInt32 iLhs, const BitVector & iRhs)
 {
-  return iLhs - (UInt64)iRhs;
+  UInt32 l_sz = max(32U, iRhs.Size_get());
+  BitVector l_lhs("operator-_UInt32_BitVector", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  BitVector l_retVal(l_lhs);
+  l_retVal -= iRhs;
+  return l_retVal;
 }
-BitVector operator- (const BitVector & iLhs, Int64 iRhs)
+BitVector operator- (UInt64 iLhs, const BitVector & iRhs)
 {
-  return iLhs - (UInt64)iRhs;
+  UInt32 l_sz = max(64U, iRhs.Size_get());
+  BitVector l_lhs("operator-_UInt64_BitVector", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  BitVector l_retVal(l_lhs);
+  l_retVal -= iRhs;
+  return l_retVal;
 }
-BitVector operator- (const BitVector & iLhs, int iRhs)
+BitVector operator- (long long unsigned int iLhs, const BitVector & iRhs)
 {
-  return iLhs - (UInt32)iRhs;
+  return (UInt64)iLhs - iRhs;
+}
+BitVector operator- (long long int iLhs, const BitVector & iRhs)
+{
+  return (UInt64)iLhs - iRhs;
+}
+BitVector operator- (Int64 iLhs, const BitVector & iRhs)
+{
+  return (UInt64)iLhs - iRhs;
+}
+BitVector operator- (int iLhs, const BitVector & iRhs)
+{
+  return (UInt32)iLhs - iRhs;
+}
+BitVector operator- (UInt32 iLhs, const BitVector::PartSelect & iRhs)
+{
+  UInt32 l_sz = max(32U, iRhs.UpperIndex_get() - iRhs.LowerIndex_get() + 1);
+  BitVector l_lhs("operator-_UInt32_PartSelect_LHS", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  BitVector l_retVal(l_lhs);
+  l_retVal -= iRhs;
+  return l_retVal;
+}
+BitVector operator- (UInt64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  UInt32 l_sz = max(64U, iRhs.UpperIndex_get() - iRhs.LowerIndex_get() + 1);
+  BitVector l_lhs("operator-_UInt64_PartSelect_LHS", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  BitVector l_retVal(l_lhs);
+  l_retVal -= iRhs;
+  return l_retVal;
+}
+BitVector operator- (long long unsigned int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt64)iLhs - iRhs;
+}
+BitVector operator- (long long int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt64)iLhs - iRhs;
+}
+BitVector operator- (Int64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt64)iLhs - iRhs;
+}
+BitVector operator- (int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt32)iLhs - iRhs;
 }
 bool operator== (UInt32 iLhs, const BitVector & iRhs)
 {
   return iRhs == iLhs;
 }
 bool operator== (UInt64 iLhs, const BitVector & iRhs)
-{
-  return iRhs == iLhs;
-}
-bool operator== (const BitVector::PartSelect & iLhs, const BitVector & iRhs)
 {
   return iRhs == iLhs;
 }
@@ -1126,15 +1316,35 @@ bool operator== (int iLhs, const BitVector & iRhs)
 {
   return iRhs == iLhs;
 }
+bool operator== (UInt32 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs == iLhs;
+}
+bool operator== (UInt64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs == iLhs;
+}
+bool operator== (long long unsigned int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs == iLhs;
+}
+bool operator== (long long int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs == iLhs;
+}
+bool operator== (Int64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs == iLhs;
+}
+bool operator== (int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs == iLhs;
+}
 bool operator!= (UInt32 iLhs, const BitVector & iRhs)
 {
   return iRhs != iLhs;
 }
 bool operator!= (UInt64 iLhs, const BitVector & iRhs)
-{
-  return iRhs != iLhs;
-}
-bool operator!= (const BitVector::PartSelect & iLhs, const BitVector & iRhs)
 {
   return iRhs != iLhs;
 }
@@ -1151,6 +1361,30 @@ bool operator!= (Int64 iLhs, const BitVector & iRhs)
   return iRhs != iLhs;
 }
 bool operator!= (int iLhs, const BitVector & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (UInt32 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (UInt64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (long long unsigned int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (long long int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (Int64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs != iLhs;
+}
+bool operator!= (int iLhs, const BitVector::PartSelect & iRhs)
 {
   return iRhs != iLhs;
 }
