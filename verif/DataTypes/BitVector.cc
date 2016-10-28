@@ -463,6 +463,69 @@ bool BitVector::equals(UInt32 iVal, UInt32 iWordNb) const
   }
   return false;
 }
+bool BitVector::ltet(UInt32 iVal, UInt32 iWordNb, bool & oEqual) const
+{
+  // This function assumes that our last a_val value is already masked.
+  // Meaning we don't have to mask it again before comparing.
+  if(m_aval == NULL)
+  {
+    LOG_WRN_ENV << "Trying to compare to a NULL BitVector." << endl;
+    if(iVal == 0)
+    {
+      oEqual = true;
+      return true;
+    }
+  }
+  // lhs = 00000000_0000ffff_00000000
+  // rhs =          0000ffff_00000000
+  // word 2 => 0 <= na  returns true (equal)
+  // word 1 => ffff <= ffff returns true (equal)
+  // word 0 => 0 <= 0 returns true (equal)
+  // Also need to know if we're comparing 0 against 0.
+  // Also need to know (ltet or gtet) if comparison is ==.
+  //  In these cases we'll keep comparing until not equal or word 0.
+  if((m_aval->size() < (iWordNb + 1)) && (iVal == 0))
+  {
+    // If the selected word is beyond our size
+    // AND the value to compare is 0, they're equal, we return true (0 extend the vector).
+    oEqual = true;
+    return true;
+  }
+  if((*m_aval)[iWordNb] <= iVal)
+  {
+    oEqual = ((*m_aval)[iWordNb] == iVal);
+    return true;
+  }
+  oEqual = false;
+  return false;
+}
+bool BitVector::lt(UInt32 iVal, UInt32 iWordNb, bool & oEqual) const
+{
+  // TBD
+  return false;
+}
+bool BitVector::gtet(UInt32 iVal, UInt32 iWordNb, bool & oEqual) const
+{
+  // TBD
+  return false;
+}
+bool BitVector::gt(UInt32 iVal, UInt32 iWordNb, bool & oEqual) const
+{
+  // TBD
+  return false;
+}
+bool BitVector::allZero (UInt32 iLowerWordNb) const
+{
+  // Checks if all word above and including iLowerWordNb are 0.
+  for(Int32 ii=m_aval->size() - 1; ii >= iLowerWordNb; ii--)
+  {
+    if((*m_aval)[ii] != 0)
+    {
+      return false;
+    }
+  }
+  return true;
+}
 
 // =============================
 // ===**     Operators     **===
@@ -707,11 +770,21 @@ BitVector::operator bool() const
 }
 bool BitVector::operator== (UInt32 iRhs) const
 {
+  if(!allZero(1))
+  {
+    // At least 1 bit above bit 31 is set.
+    return false;
+  }
   bool l_retVal = equals(iRhs, 0);
   return l_retVal;
 }
 bool BitVector::operator== (UInt64 iRhs) const
 {
+  if(!allZero(2))
+  {
+    // At least 1 bit above bit 63 is set.
+    return false;
+  }
   UInt32 l_lo = (UInt32)iRhs;
   UInt32 l_hi = iRhs >> 32;
   bool l_retVal = equals(l_hi, 1);
@@ -749,6 +822,85 @@ bool BitVector::operator== (const PartSelect & iRhs) const
   BitVector bv("BitVector::operator==_PartSelect", 1, m_nbStates);
   iRhs.getParentBits(bv);
   bool l_retVal = (*this == bv);
+  return l_retVal;
+}
+bool BitVector::operator<= (UInt32 iRhs) const
+{
+  if(m_aval->size() == 0)
+  {
+    LOG_WRN_ENV << "Comparing an empty BitVector." << endl;
+    return true;
+  }
+  if(!allZero(1))
+  {
+    // At least 1 bit above bit 31 is set.
+    return false;
+  }
+  bool l_equal;
+  return ltet(iRhs, 0, l_equal);
+}
+bool BitVector::operator<= (UInt64 iRhs) const
+{
+  if(m_aval->size() == 0)
+  {
+    LOG_WRN_ENV << "Comparing an empty BitVector." << endl;
+    return true;
+  }
+  if(!allZero(2))
+  {
+    // At least 1 bit above bit 63 is set.
+    return false;
+  }
+  UInt32 l_lo = (UInt32)iRhs;
+  UInt32 l_hi = iRhs >> 32;
+  bool l_equal;
+  bool l_retVal = ltet(l_hi, 1, l_equal);
+  if(!l_retVal || !l_equal)
+  {
+    return l_retVal;
+  }
+  l_retVal &= ltet(l_lo, 0, l_equal); 
+  return l_retVal;
+}
+bool BitVector::operator<= (const BitVector & iRhs) const
+{
+  UInt32 l_lhsSize = m_aval->size();
+  UInt32 l_rhsSize = iRhs.m_aval->size();
+  if((l_lhsSize == 0) || (l_rhsSize == 0))
+  {
+    LOG_WRN_ENV << "Comparing an empty BitVector." << endl;
+    if(l_lhsSize == 0)
+    {
+      return true;
+    }
+    return false;
+  }
+  bool l_retVal = false;
+  UInt32 l_nbWords = max(l_lhsSize, l_rhsSize);
+  for(Int32 ii=l_nbWords-1; ii >= 0; ii--)
+  {
+    // If the RHS BitVector is smaller, then we 0-extend it.
+    // This check below only compares RHS values that exist.
+    // If the LHS is larger, the l_cmpVal stays 0 and we compare LHS[ii] to that.
+    UInt32 l_cmpVal = 0;
+    if(ii < l_rhsSize)
+    {
+      l_cmpVal = (*iRhs.m_aval)[ii];
+    }
+    bool l_equal = false;
+    l_retVal = ltet(l_cmpVal, ii, l_equal);
+    if(!l_retVal || !l_equal)
+    {
+      return l_retVal;
+    }
+  }
+  return l_retVal;
+}
+bool BitVector::operator<= (const PartSelect & iRhs) const
+{
+  BitVector bv("BitVector::operator<=_PartSelect", 1, m_nbStates);
+  iRhs.getParentBits(bv);
+  bool l_retVal = (*this <= bv);
   return l_retVal;
 }
 
@@ -1191,6 +1343,34 @@ bool BitVector::PartSelect::operator== (const BitVector::PartSelect & iRhs) cons
   bool l_retVal = (l_bv == iRhs);
   return l_retVal;
 }
+bool BitVector::PartSelect::operator<= (UInt32 iRhs) const
+{
+  BitVector l_bv("PartSelect::operator<=_UInt32", 1, m_parent->m_nbStates);
+  getParentBits(l_bv);
+  bool l_retVal = (l_bv <= iRhs);
+  return l_retVal;
+}
+bool BitVector::PartSelect::operator<= (UInt64 iRhs) const
+{
+  BitVector l_bv("PartSelect::operator<=_UInt64", 1, m_parent->m_nbStates);
+  getParentBits(l_bv);
+  bool l_retVal = (l_bv <= iRhs);
+  return l_retVal;
+}
+bool BitVector::PartSelect::operator<= (const BitVector & iRhs) const
+{
+  BitVector l_bv("PartSelect::operator<=_BitVector", 1, m_parent->m_nbStates);
+  getParentBits(l_bv);
+  bool l_retVal = (l_bv <= iRhs);
+  return l_retVal;
+}
+bool BitVector::PartSelect::operator<= (const BitVector::PartSelect & iRhs) const
+{
+  BitVector l_bv("PartSelect::operator<=_PartSelect", 1, m_parent->m_nbStates);
+  getParentBits(l_bv);
+  bool l_retVal = (l_bv <= iRhs);
+  return l_retVal;
+}
 
 // ================================
 // ===** Non-Member Operators **===
@@ -1406,4 +1586,68 @@ bool operator!= (Int64 iLhs, const BitVector::PartSelect & iRhs)
 bool operator!= (int iLhs, const BitVector::PartSelect & iRhs)
 {
   return iRhs != iLhs;
+}
+bool operator<= (UInt32 iLhs, const BitVector & iRhs)
+{
+  UInt32 l_sz = max(32U, iRhs.Size_get());
+  BitVector l_lhs("operator<=_UInt32_BitVector", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  bool l_retVal = (l_lhs <= iRhs);
+  return l_retVal;
+}
+bool operator<= (UInt64 iLhs, const BitVector & iRhs)
+{
+  UInt32 l_sz = max(64U, iRhs.Size_get());
+  BitVector l_lhs("operator<=_UInt64_BitVector", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  bool l_retVal = (l_lhs <= iRhs);
+  return l_retVal;
+}
+bool operator<= (long long unsigned int iLhs, const BitVector & iRhs)
+{
+  return (UInt64)iLhs <= iRhs;
+}
+bool operator<= (long long int iLhs, const BitVector & iRhs)
+{
+  return (UInt64)iLhs <= iRhs;
+}
+bool operator<= (Int64 iLhs, const BitVector & iRhs)
+{
+  return (UInt64)iLhs <= iRhs;
+}
+bool operator<= (int iLhs, const BitVector & iRhs)
+{
+  return (UInt32)iLhs <= iRhs;
+}
+bool operator<= (UInt32 iLhs, const BitVector::PartSelect & iRhs)
+{
+  UInt32 l_sz = max(32U, iRhs.UpperIndex_get() - iRhs.LowerIndex_get() + 1);
+  BitVector l_lhs("operator<=_UInt32_PartSelect", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  bool l_retVal = (l_lhs <= iRhs);
+  return l_retVal;
+}
+bool operator<= (UInt64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  UInt32 l_sz = max(64U, iRhs.UpperIndex_get() - iRhs.LowerIndex_get() + 1);
+  BitVector l_lhs("operator<=_UInt64_PartSelect", l_sz, iRhs.NbStates_get());
+  l_lhs = iLhs;
+  bool l_retVal = (l_lhs <= iRhs);
+  return l_retVal;
+}
+bool operator<= (long long unsigned int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt64)iLhs <= iRhs;
+}
+bool operator<= (long long int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt64)iLhs <= iRhs;
+}
+bool operator<= (Int64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt64)iLhs <= iRhs;
+}
+bool operator<= (int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return (UInt32)iLhs <= iRhs;
 }
