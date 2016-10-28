@@ -693,6 +693,18 @@ BitVector & BitVector::operator-- (int iDummy)
   *this -= 1;
   return *this;
 }
+BitVector::operator bool() const
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  for(UInt32 ii=0; ii<m_aval->size(); ii++)
+  {
+    if((*m_aval)[ii] != 0)
+    {
+      return true;
+    }
+  }
+  return false;
+}
 bool BitVector::operator== (UInt32 iRhs) const
 {
   bool l_retVal = equals(iRhs, 0);
@@ -1144,6 +1156,13 @@ BitVector BitVector::PartSelect::operator-- ()
 BitVector BitVector::PartSelect::operator-- (int iDummy)
 {
   return *this -= 1;
+}
+BitVector::PartSelect::operator bool() const
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  BitVector l_bv("BitVector::PartSelect::operator_bool", l_sz);
+  getParentBits(l_bv);
+  return (bool)l_bv;
 }
 bool BitVector::PartSelect::operator== (UInt32 iRhs) const
 {

@@ -288,6 +288,8 @@ class BitVector {
     BitVector operator-- ();
     BitVector operator-- (int iDummy);
 
+    operator bool() const;
+
     bool operator== (UInt32 iRhs) const;
     bool operator== (UInt64 iRhs) const;
     bool operator== (const BitVector & iRhs) const;
@@ -386,6 +388,8 @@ class BitVector {
   BitVector & operator-- ();
   BitVector & operator-- (int iDummy);
 
+  operator bool() const;
+
   bool operator== (UInt32 iRhs) const;
   bool operator== (UInt64 iRhs) const;
   bool operator== (const BitVector & iRhs) const;
@@ -436,8 +440,6 @@ class BitVector {
   //================
   // TBD operators:
   //================
-  // Implement both sides of binary operators.
-  // operator!
   // operator&&
   // operator||
   // operator<=
@@ -456,7 +458,6 @@ class BitVector {
   // operator^
   // operator^=
   // operator, (concatination)
-  // operator bool
   // operator UInt32 (make explicit if there are operator ambiguity problems)
   // operator UInt64
   // operator Int32
