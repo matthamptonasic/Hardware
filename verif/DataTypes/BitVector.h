@@ -150,9 +150,14 @@ class BitVector {
     UInt32  getBits(UInt32 iUpperIndex, UInt32 iLowerIndex) const;
     void    setUInt32(UInt32 iVal);
     void    setUInt64(UInt64 iVal);
-    void    add(UInt32 iVal, UInt32 iWordNb = 0);
-    void    subtract(UInt32 iVal, UInt32 iWordNb = 0);
-    bool    equals(UInt32 iVal, UInt32 iWordNb = 0) const;
+    void    add     (UInt32 iVal, UInt32 iWordNb);
+    void    subtract(UInt32 iVal, UInt32 iWordNb);
+    bool    equals  (UInt32 iVal, UInt32 iWordNb) const;
+    bool    ltet    (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    lt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    gtet    (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    gt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    allZero (UInt32 iLowerWordNb = 0) const;
 
   protected:
   class PartSelect
@@ -307,6 +312,15 @@ class BitVector {
     bool operator!= (long long int iRhs) const          { return  (*this != (UInt64)iRhs); };
     bool operator!= (Int64 iRhs) const                  { return  (*this != (UInt64)iRhs); };
     bool operator!= (int iRhs) const                    { return  (*this != (UInt32)iRhs); };
+
+    bool operator<= (UInt32 iRhs) const;
+    bool operator<= (UInt64 iRhs) const;
+    bool operator<= (const BitVector & iRhs) const;
+    bool operator<= (const PartSelect & iRhs) const;
+    bool operator<= (long long unsigned int iRhs) const { return  (*this <= (UInt64)iRhs); };
+    bool operator<= (long long int iRhs) const          { return  (*this <= (UInt64)iRhs); };
+    bool operator<= (Int64 iRhs) const                  { return  (*this <= (UInt64)iRhs); };
+    bool operator<= (int iRhs) const                    { return  (*this <= (UInt32)iRhs); };
   };
 
   // BitVector Operators
@@ -408,6 +422,15 @@ class BitVector {
   bool operator!= (Int64 iRhs) const                  { return  (*this != (UInt64)iRhs); };
   bool operator!= (int iRhs) const                    { return  (*this != (UInt32)iRhs); };
 
+  bool operator<= (UInt32 iRhs) const;
+  bool operator<= (UInt64 iRhs) const;
+  bool operator<= (const BitVector & iRhs) const;
+  bool operator<= (const PartSelect & iRhs) const;
+  bool operator<= (long long unsigned int iRhs) const { return  (*this <= (UInt64)iRhs); };
+  bool operator<= (long long int iRhs) const          { return  (*this <= (UInt64)iRhs); };
+  bool operator<= (Int64 iRhs) const                  { return  (*this <= (UInt64)iRhs); };
+  bool operator<= (int iRhs) const                    { return  (*this <= (UInt32)iRhs); };
+
   // Part Select friend operators
   friend BitVector operator+ (UInt32 iLhs,                 const BitVector::PartSelect & iRhs);
   friend BitVector operator+ (UInt64 iLhs,                 const BitVector::PartSelect & iRhs);
@@ -437,16 +460,20 @@ class BitVector {
   friend bool operator!= (Int64 iLhs,                          const BitVector::PartSelect & iRhs);
   friend bool operator!= (int iLhs,                            const BitVector::PartSelect & iRhs);
 
+  friend bool operator<= (UInt32 iLhs,                         const BitVector::PartSelect & iRhs);
+  friend bool operator<= (UInt64 iLhs,                         const BitVector::PartSelect & iRhs);
+  friend bool operator<= (long long unsigned int iLhs,         const BitVector::PartSelect & iRhs);
+  friend bool operator<= (long long int iLhs,                  const BitVector::PartSelect & iRhs);
+  friend bool operator<= (Int64 iLhs,                          const BitVector::PartSelect & iRhs);
+  friend bool operator<= (int iLhs,                            const BitVector::PartSelect & iRhs);
+
   //================
   // TBD operators:
   //================
-  // operator&&
-  // operator||
-  // operator<=
   // operator>=
   // operator<
   // operator>
-  // operator<<
+  // operator<<  : Include ostream overload.
   // operator<<=
   // operator>>
   // operator>>=
@@ -493,31 +520,44 @@ BitVector operator- (long long int iLhs,          const BitVector::PartSelect & 
 BitVector operator- (Int64 iLhs,                  const BitVector::PartSelect & iRhs);
 BitVector operator- (int iLhs,                    const BitVector::PartSelect & iRhs);
 
-bool operator== (UInt32 iLhs,                         const BitVector & iRhs);
-bool operator== (UInt64 iLhs,                         const BitVector & iRhs);
-bool operator== (long long unsigned int iLhs,         const BitVector & iRhs);
-bool operator== (long long int iLhs,                  const BitVector & iRhs);
-bool operator== (Int64 iLhs,                          const BitVector & iRhs);
-bool operator== (int iLhs,                            const BitVector & iRhs);
-bool operator== (UInt32 iLhs,                         const BitVector::PartSelect & iRhs);
-bool operator== (UInt64 iLhs,                         const BitVector::PartSelect & iRhs);
-bool operator== (long long unsigned int iLhs,         const BitVector::PartSelect & iRhs);
-bool operator== (long long int iLhs,                  const BitVector::PartSelect & iRhs);
-bool operator== (Int64 iLhs,                          const BitVector::PartSelect & iRhs);
-bool operator== (int iLhs,                            const BitVector::PartSelect & iRhs);
+bool operator== (UInt32 iLhs,                     const BitVector & iRhs);
+bool operator== (UInt64 iLhs,                     const BitVector & iRhs);
+bool operator== (long long unsigned int iLhs,     const BitVector & iRhs);
+bool operator== (long long int iLhs,              const BitVector & iRhs);
+bool operator== (Int64 iLhs,                      const BitVector & iRhs);
+bool operator== (int iLhs,                        const BitVector & iRhs);
+bool operator== (UInt32 iLhs,                     const BitVector::PartSelect & iRhs);
+bool operator== (UInt64 iLhs,                     const BitVector::PartSelect & iRhs);
+bool operator== (long long unsigned int iLhs,     const BitVector::PartSelect & iRhs);
+bool operator== (long long int iLhs,              const BitVector::PartSelect & iRhs);
+bool operator== (Int64 iLhs,                      const BitVector::PartSelect & iRhs);
+bool operator== (int iLhs,                        const BitVector::PartSelect & iRhs);
 
-bool operator!= (UInt32 iLhs,                         const BitVector & iRhs);
-bool operator!= (UInt64 iLhs,                         const BitVector & iRhs);
-bool operator!= (long long unsigned int iLhs,         const BitVector & iRhs);
-bool operator!= (long long int iLhs,                  const BitVector & iRhs);
-bool operator!= (Int64 iLhs,                          const BitVector & iRhs);
-bool operator!= (int iLhs,                            const BitVector & iRhs);
-bool operator!= (UInt32 iLhs,                         const BitVector::PartSelect & iRhs);
-bool operator!= (UInt64 iLhs,                         const BitVector::PartSelect & iRhs);
-bool operator!= (long long unsigned int iLhs,         const BitVector::PartSelect & iRhs);
-bool operator!= (long long int iLhs,                  const BitVector::PartSelect & iRhs);
-bool operator!= (Int64 iLhs,                          const BitVector::PartSelect & iRhs);
-bool operator!= (int iLhs,                            const BitVector::PartSelect & iRhs);
+bool operator!= (UInt32 iLhs,                     const BitVector & iRhs);
+bool operator!= (UInt64 iLhs,                     const BitVector & iRhs);
+bool operator!= (long long unsigned int iLhs,     const BitVector & iRhs);
+bool operator!= (long long int iLhs,              const BitVector & iRhs);
+bool operator!= (Int64 iLhs,                      const BitVector & iRhs);
+bool operator!= (int iLhs,                        const BitVector & iRhs);
+bool operator!= (UInt32 iLhs,                     const BitVector::PartSelect & iRhs);
+bool operator!= (UInt64 iLhs,                     const BitVector::PartSelect & iRhs);
+bool operator!= (long long unsigned int iLhs,     const BitVector::PartSelect & iRhs);
+bool operator!= (long long int iLhs,              const BitVector::PartSelect & iRhs);
+bool operator!= (Int64 iLhs,                      const BitVector::PartSelect & iRhs);
+bool operator!= (int iLhs,                        const BitVector::PartSelect & iRhs);
+
+bool operator<= (UInt32 iLhs,                     const BitVector & iRhs);
+bool operator<= (UInt64 iLhs,                     const BitVector & iRhs);
+bool operator<= (long long unsigned int iLhs,     const BitVector & iRhs);
+bool operator<= (long long int iLhs,              const BitVector & iRhs);
+bool operator<= (Int64 iLhs,                      const BitVector & iRhs);
+bool operator<= (int iLhs,                        const BitVector & iRhs);
+bool operator<= (UInt32 iLhs,                     const BitVector::PartSelect & iRhs);
+bool operator<= (UInt64 iLhs,                     const BitVector::PartSelect & iRhs);
+bool operator<= (long long unsigned int iLhs,     const BitVector::PartSelect & iRhs);
+bool operator<= (long long int iLhs,              const BitVector::PartSelect & iRhs);
+bool operator<= (Int64 iLhs,                      const BitVector::PartSelect & iRhs);
+bool operator<= (int iLhs,                        const BitVector::PartSelect & iRhs);
 
 #endif /* BITVECTOR_H */
 
