@@ -95,6 +95,13 @@ BitVector::BitVector(BitVector && iSource)
   m_printPrependZeros = iSource.m_printPrependZeros;
   m_printHexWordDivider = iSource.m_printHexWordDivider;
 }
+BitVector::BitVector(const BitVector::PartSelect & iSource)
+{
+  UInt32 l_sz = iSource.m_upperIndex - iSource.m_lowerIndex + 1;
+  string l_name = iSource.m_parent->m_name + "(" + to_string(iSource.m_upperIndex) + "," + to_string(iSource.m_lowerIndex) + ")";
+  init(l_name, l_sz, iSource.m_parent->m_nbStates);
+  iSource.getParentBits(*this);
+}
 BitVector::~BitVector()
 {
   delete m_aval;

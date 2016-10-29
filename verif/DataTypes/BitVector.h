@@ -61,104 +61,7 @@ class BitVector {
     HEX = 1
   };
 
-  // Static Members
-  private:
-    static NB_STATES      s_nbStates;
-    static bool           s_useGlobalStates;
-    static const string   s_default_name;
-    static const UInt32   s_default_size;
-    static bool           s_useGlobalPrintSettings;
-    static PRINT_FMT      s_printFmt;
-    static bool           s_printBasePrefix;    // For hex only.
-    static bool           s_printPrependZeros;  // For hex only.
-    static bool           s_printHexWordDivider;// Underscore between words.
-
-  // Static Properties
-  public:
-    static NB_STATES s_NbStates_get() { return s_nbStates; }
-    static void      s_NbStates_set(NB_STATES iStates) { s_nbStates = iStates; }
-    static bool      s_UseGlobalStates_get() { return s_useGlobalStates; }
-    static void      s_UseGlobalStates_set(bool iUseGlobal ) { s_useGlobalStates = iUseGlobal; }
-    static bool      s_UseGlobalPrintSettings_get() { return s_useGlobalPrintSettings; }
-    static void      s_UseGlobalPrintSettings_set(bool iUseGlobal ) { s_useGlobalPrintSettings = iUseGlobal; }
-    static PRINT_FMT s_PrintFmt_get() { return s_printFmt; }
-    static void      s_PrintFmt_set(PRINT_FMT iFmt) { s_printFmt = iFmt; }
-    static bool      s_PrintBasePrefix_get() { return s_printBasePrefix; }
-    static void      s_PrintBasePrefix_set(bool iUsePrefix) { s_printBasePrefix = iUsePrefix; } 
-    static bool      s_PrintPrependZeros_get() { return s_printPrependZeros; }
-    static void      s_PrintPrependZeros_set(bool iPrependZeros) { s_printPrependZeros = iPrependZeros; }
-
-  // Private Members
-  private:
-    UInt32 m_size;
-    UInt32 m_mask;
-    string m_name;
-    vector<UInt32> * m_aval;
-    vector<UInt32> * m_bval;
-    NB_STATES m_nbStates;
-    PRINT_FMT m_printFmt;
-    bool m_printBasePrefix;
-    bool m_printPrependZeros;
-    bool m_printHexWordDivider;
-
-  // Public Properties
-  public:
-    NB_STATES NbStates_get() const { return m_nbStates; }
-    void      NbStates_set(const NB_STATES iStates) { m_nbStates = iStates; }
-    UInt32    Size_get() const { return m_size; };
-    PRINT_FMT PrintFmt_get() const { return m_printFmt; }
-    void      PrintFmt_set(const PRINT_FMT iFmt) { m_printFmt = iFmt; }
-    bool      PrintBasePrefix_get() { return m_printBasePrefix; }
-    void      PrintBasePrefix_set(bool iUseBase) { m_printBasePrefix = iUseBase; }
-    bool      PrintPrependZeros_get() { return m_printPrependZeros; }
-    void      PrintPrependZeros_set(bool iPrepend) { m_printPrependZeros = iPrepend; }
-    bool      PrintHexWordDivider_get() { return m_printHexWordDivider; }
-    void      PrintHexWordDivider_set(bool iUseDivider) { m_printHexWordDivider = iUseDivider; }
-
-  // Constructors
-  public:
-    BitVector(string iName = s_default_name);
-    BitVector(string iName, UInt32 iSize, NB_STATES iStates = s_nbStates);
-    BitVector(UInt32 iSize = s_default_size);
-    BitVector(const BitVector & iSource);
-    BitVector(BitVector && iSource);
-    ~BitVector();
-
-  // Inits
-  private:
-    void init(string iName, UInt32 iSize, NB_STATES iStates);
-
-  // Public Methods
-  public:
-    void    Resize(UInt32 iNewSize);
-    UInt32  GetUInt32() const;
-    UInt32  GetUInt32(UInt32 iWordNb) const;
-    UInt64  GetUInt64() const;
-    UInt64  GetUInt64(UInt32 iLowerWordNb) const;
-    string  ToString() const;
-    void    Print() const;
-
-  // Private Methods
-  private:
-    void    checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex) const;
-    UInt32  getWordNb(UInt32 iBitPos) const;
-    Byte    getShift(UInt32 iBitPos) const;
-    UInt32  getMask(UInt32 iUpperIndex, bool iReverse = false) const;
-    void    setMask();
-    void    applyMask();
-    //Must be 32-bits or less.
-    UInt32  getBits(UInt32 iUpperIndex, UInt32 iLowerIndex) const;
-    void    setUInt32(UInt32 iVal);
-    void    setUInt64(UInt64 iVal);
-    void    add     (UInt32 iVal, UInt32 iWordNb);
-    void    subtract(UInt32 iVal, UInt32 iWordNb);
-    bool    equals  (UInt32 iVal, UInt32 iWordNb) const;
-    bool    ltet    (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
-    bool    lt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
-    bool    gtet    (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
-    bool    gt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
-    bool    allZero (UInt32 iLowerWordNb = 0) const;
-
+  // Nested Classes
   protected:
   class PartSelect
   {
@@ -331,6 +234,105 @@ class BitVector {
     bool operator>= (Int64 iRhs) const                  { return  (*this >= (UInt64)iRhs); };
     bool operator>= (int iRhs) const                    { return  (*this >= (UInt32)iRhs); };
   };
+
+  // Static Members
+  private:
+    static NB_STATES      s_nbStates;
+    static bool           s_useGlobalStates;
+    static const string   s_default_name;
+    static const UInt32   s_default_size;
+    static bool           s_useGlobalPrintSettings;
+    static PRINT_FMT      s_printFmt;
+    static bool           s_printBasePrefix;    // For hex only.
+    static bool           s_printPrependZeros;  // For hex only.
+    static bool           s_printHexWordDivider;// Underscore between words.
+
+  // Static Properties
+  public:
+    static NB_STATES s_NbStates_get() { return s_nbStates; }
+    static void      s_NbStates_set(NB_STATES iStates) { s_nbStates = iStates; }
+    static bool      s_UseGlobalStates_get() { return s_useGlobalStates; }
+    static void      s_UseGlobalStates_set(bool iUseGlobal ) { s_useGlobalStates = iUseGlobal; }
+    static bool      s_UseGlobalPrintSettings_get() { return s_useGlobalPrintSettings; }
+    static void      s_UseGlobalPrintSettings_set(bool iUseGlobal ) { s_useGlobalPrintSettings = iUseGlobal; }
+    static PRINT_FMT s_PrintFmt_get() { return s_printFmt; }
+    static void      s_PrintFmt_set(PRINT_FMT iFmt) { s_printFmt = iFmt; }
+    static bool      s_PrintBasePrefix_get() { return s_printBasePrefix; }
+    static void      s_PrintBasePrefix_set(bool iUsePrefix) { s_printBasePrefix = iUsePrefix; } 
+    static bool      s_PrintPrependZeros_get() { return s_printPrependZeros; }
+    static void      s_PrintPrependZeros_set(bool iPrependZeros) { s_printPrependZeros = iPrependZeros; }
+
+  // Private Members
+  private:
+    UInt32 m_size;
+    UInt32 m_mask;
+    string m_name;
+    vector<UInt32> * m_aval;
+    vector<UInt32> * m_bval;
+    NB_STATES m_nbStates;
+    PRINT_FMT m_printFmt;
+    bool m_printBasePrefix;
+    bool m_printPrependZeros;
+    bool m_printHexWordDivider;
+
+  // Public Properties
+  public:
+    NB_STATES NbStates_get() const { return m_nbStates; }
+    void      NbStates_set(const NB_STATES iStates) { m_nbStates = iStates; }
+    UInt32    Size_get() const { return m_size; };
+    PRINT_FMT PrintFmt_get() const { return m_printFmt; }
+    void      PrintFmt_set(const PRINT_FMT iFmt) { m_printFmt = iFmt; }
+    bool      PrintBasePrefix_get() { return m_printBasePrefix; }
+    void      PrintBasePrefix_set(bool iUseBase) { m_printBasePrefix = iUseBase; }
+    bool      PrintPrependZeros_get() { return m_printPrependZeros; }
+    void      PrintPrependZeros_set(bool iPrepend) { m_printPrependZeros = iPrepend; }
+    bool      PrintHexWordDivider_get() { return m_printHexWordDivider; }
+    void      PrintHexWordDivider_set(bool iUseDivider) { m_printHexWordDivider = iUseDivider; }
+
+  // Constructors
+  public:
+    BitVector(string iName = s_default_name);
+    BitVector(string iName, UInt32 iSize, NB_STATES iStates = s_nbStates);
+    BitVector(UInt32 iSize = s_default_size);
+    BitVector(const BitVector & iSource);
+    BitVector(BitVector && iSource);
+    explicit BitVector(const PartSelect & iSource);
+    ~BitVector();
+
+  // Inits
+  private:
+    void init(string iName, UInt32 iSize, NB_STATES iStates);
+
+  // Public Methods
+  public:
+    void    Resize(UInt32 iNewSize);
+    UInt32  GetUInt32() const;
+    UInt32  GetUInt32(UInt32 iWordNb) const;
+    UInt64  GetUInt64() const;
+    UInt64  GetUInt64(UInt32 iLowerWordNb) const;
+    string  ToString() const;
+    void    Print() const;
+
+  // Private Methods
+  private:
+    void    checkIndices(UInt32 & iUpperIndex, UInt32 & iLowerIndex) const;
+    UInt32  getWordNb(UInt32 iBitPos) const;
+    Byte    getShift(UInt32 iBitPos) const;
+    UInt32  getMask(UInt32 iUpperIndex, bool iReverse = false) const;
+    void    setMask();
+    void    applyMask();
+    //Must be 32-bits or less.
+    UInt32  getBits(UInt32 iUpperIndex, UInt32 iLowerIndex) const;
+    void    setUInt32(UInt32 iVal);
+    void    setUInt64(UInt64 iVal);
+    void    add     (UInt32 iVal, UInt32 iWordNb);
+    void    subtract(UInt32 iVal, UInt32 iWordNb);
+    bool    equals  (UInt32 iVal, UInt32 iWordNb) const;
+    bool    ltet    (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    lt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    gtet    (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    gt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
+    bool    allZero (UInt32 iLowerWordNb = 0) const;
 
   // BitVector Operators
   // 1. Unary modifiers must be members (++, --).
