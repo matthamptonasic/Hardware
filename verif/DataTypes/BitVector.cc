@@ -2004,3 +2004,23 @@ bool operator> (int iLhs, const BitVector::PartSelect & iRhs)
 {
   return (UInt32)iLhs > iRhs;
 }
+ostream & operator<< (ostream & iStream, const BitVector & iBv)
+{
+  iStream << iBv.ToString();
+  return iStream;
+}
+Logger & operator<< (Logger & iLogger, const BitVector & iBv)
+{
+  iLogger << iBv.ToString();
+  return iLogger;
+}
+ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs)
+{
+  iStream << ((BitVector)iPs).ToString();
+  return iStream;
+}
+Logger & operator<< (Logger & iLogger, const BitVector::PartSelect & iPs)
+{
+  iLogger << ((BitVector)iPs).ToString();
+  return iLogger;
+}
