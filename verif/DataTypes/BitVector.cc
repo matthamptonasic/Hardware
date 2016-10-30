@@ -692,6 +692,39 @@ BitVector::PartSelect BitVector::operator() (UInt32 iUpperIndex, UInt32 iLowerIn
   PartSelect l_retVal(this, iUpperIndex, iLowerIndex);
   return l_retVal;
 }
+UInt32 BitVector::operator[] (UInt32 iWordIndex)
+{
+  if(m_aval == nullptr)
+  {
+    LOG_WRN_ENV << "Trying to index (" << iWordIndex 
+                << ") an empty BitVector '" << m_name << "'" << endl;
+    return 0;
+  }
+  if(m_aval->size() <= iWordIndex)
+  {
+    LOG_WRN_ENV << "Index (" << iWordIndex << ") out of bounds ("
+                << (m_aval->size() - 1) << ")." << endl;
+    return 0;
+  }
+  return (*m_aval)[iWordIndex];
+}
+BitVector::operator bool() const
+{
+  // Just to make sure we don't get this showing up unplanned.
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  if(m_aval == nullptr)
+  {
+    return false;
+  }
+  for(UInt32 ii=0; ii<m_aval->size(); ii++)
+  {
+    if((*m_aval)[ii] != 0)
+    {
+      return true;
+    }
+  }
+  return false;
+}
 BitVector & BitVector::operator+= (UInt32 iRhs)
 {
   add(iRhs, 0);
@@ -778,23 +811,6 @@ BitVector BitVector::operator- (const BitVector & iRhs) const
   BitVector l_retVal(*this);
   l_retVal -= iRhs;
   return l_retVal;
-}
-BitVector::operator bool() const
-{
-  // Just to make sure we don't get this showing up unplanned.
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
-  if(m_aval == nullptr)
-  {
-    return false;
-  }
-  for(UInt32 ii=0; ii<m_aval->size(); ii++)
-  {
-    if((*m_aval)[ii] != 0)
-    {
-      return true;
-    }
-  }
-  return false;
 }
 bool BitVector::operator== (UInt32 iRhs) const
 {
@@ -1379,6 +1395,15 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (const PartSelect & iRh
   setParentBits(iRhs);
   return *this;
 }
+BitVector::PartSelect::operator bool() const
+{
+  BitVector l_bv(*this);
+  return (bool)l_bv;
+}
+UInt32 BitVector::PartSelect::operator[] (UInt32 iWordIndex)
+{
+  return ((BitVector)*this)[iWordIndex];
+}
 BitVector BitVector::PartSelect::operator+= (UInt32 iRhs)
 {
   // BV0 = BV1(3,0) += 0xffffULL;
@@ -1478,11 +1503,6 @@ BitVector BitVector::PartSelect::operator-- ()
 BitVector BitVector::PartSelect::operator-- (int iDummy)
 {
   return *this -= 1;
-}
-BitVector::PartSelect::operator bool() const
-{
-  BitVector l_bv(*this);
-  return (bool)l_bv;
 }
 bool BitVector::PartSelect::operator== (UInt32 iRhs) const
 {

@@ -149,6 +149,9 @@ class BitVector {
     PartSelect & operator= (Int64 iRhs) { return *this = (UInt64)iRhs; }
     PartSelect & operator= (int iRhs) { return *this = (UInt32)iRhs; }
 
+    explicit operator bool() const;
+    UInt32 operator[] (UInt32 iWordIndex);
+    
     // PartSelect operators that return a BitVector return a new BV that is
     // the selected bits of the parent BV (modified as directed).
     // The size of the returned BV will be the size of the PartSelect.
@@ -195,8 +198,6 @@ class BitVector {
 
     BitVector operator-- ();
     BitVector operator-- (int iDummy);
-
-    operator bool() const;
 
     bool operator== (UInt32 iRhs) const;
     bool operator== (UInt64 iRhs) const;
@@ -393,6 +394,8 @@ class BitVector {
   BitVector & operator=  (int iRhs)                           { return *this = (UInt32)iRhs; }
 
   PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
+  UInt32 operator[] (UInt32 iWordIndex);
+  explicit operator bool() const;
 
   BitVector & operator+= (UInt32 iRhs);
   BitVector & operator+= (UInt64 iRhs);
@@ -435,8 +438,6 @@ class BitVector {
 
   BitVector & operator-- ()                                   { return *this -= 1; }
   BitVector & operator-- (int iDummy)                         { return *this -= 1; }
-
-  explicit operator bool() const;
 
   bool operator== (UInt32 iRhs) const;
   bool operator== (UInt64 iRhs) const;
@@ -492,7 +493,21 @@ class BitVector {
   bool operator<  (Int64 iRhs) const                  { return  (*this < (UInt64)iRhs); }
   bool operator<  (int iRhs) const                    { return  (*this < (UInt32)iRhs); }
 
+  /*
+  BitVector   operator<< (UInt32 iRhs) const;
+  BitVector   operator<< (UInt64 iRhs) const;
+  BitVector   operator<< (const BitVector & iRhs) const;
+  BitVector   operator<< (const PartSelect & iRhs) const     { return  (*this << (BitVector)iRhs); }
+  BitVector   operator<< (long long unsigned int iRhs) const { return  (*this << (UInt64)iRhs); }
+  BitVector   operator<< (long long int iRhs) const          { return  (*this << (UInt64)iRhs); }
+  BitVector   operator<< (Int64 iRhs) const                  { return  (*this << (UInt64)iRhs); }
+  BitVector   operator<< (int iRhs) const                    { return  (*this << (UInt32)iRhs); }
+  */
+
   // Part Select friend operators
+  friend ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs);
+  friend Logger  & operator<< (Logger  & iLogger, const BitVector::PartSelect & iPs);
+
   friend BitVector operator+ (UInt32 iLhs,                 const BitVector::PartSelect & iRhs);
   friend BitVector operator+ (UInt64 iLhs,                 const BitVector::PartSelect & iRhs);
   friend BitVector operator+ (long long unsigned int iLhs, const BitVector::PartSelect & iRhs);
@@ -549,13 +564,10 @@ class BitVector {
   friend bool operator>  (Int64 iLhs,                          const BitVector::PartSelect & iRhs);
   friend bool operator>  (int iLhs,                            const BitVector::PartSelect & iRhs);
 
-  friend ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs);
-  friend Logger & operator<< (Logger & iLogger, const BitVector::PartSelect & iPs);
-
   //================
   // TBD operators:
   //================
-  // operator<<  : Include ostream overload.
+  // operator<<
   // operator<<=
   // operator>>
   // operator>>=
@@ -567,14 +579,19 @@ class BitVector {
   // operator^
   // operator^=
   // operator, (concatination)
-  // operator UInt32 (make explicit if there are operator ambiguity problems)
-  // operator UInt64
-  // operator Int32
-  // operator Int64
+  // explicit operator UInt32
+  // explicit operator UInt64
+  // explicit operator Int32
+  // explicit operator Int64
 
   // TBD - Add operators for interacting with strings for 4-state values.
 
 };
+
+ostream & operator<< (ostream & iStream, const BitVector & iBv);
+Logger  & operator<< (Logger &  iLogger, const BitVector & iBv);
+ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs);
+Logger  & operator<< (Logger &  iLogger, const BitVector::PartSelect & iPs);
 
 BitVector operator+ (UInt32 iLhs,                 const BitVector & iRhs);
 BitVector operator+ (UInt64 iLhs,                 const BitVector & iRhs);
@@ -679,11 +696,6 @@ bool operator>  (long long unsigned int iLhs,     const BitVector::PartSelect & 
 bool operator>  (long long int iLhs,              const BitVector::PartSelect & iRhs);
 bool operator>  (Int64 iLhs,                      const BitVector::PartSelect & iRhs);
 bool operator>  (int iLhs,                        const BitVector::PartSelect & iRhs);
-
-ostream & operator<< (ostream & iStream, const BitVector & iBv);
-Logger & operator<< (Logger & iLogger, const BitVector & iBv);
-ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs);
-Logger & operator<< (Logger & iLogger, const BitVector::PartSelect & iPs);
 
 #endif /* BITVECTOR_H */
 
