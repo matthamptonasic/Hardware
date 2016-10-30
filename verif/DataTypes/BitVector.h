@@ -143,6 +143,7 @@ class BitVector {
     // To make it const, we would need to change the implementation of setParentBits
     // such that it takes a const BitVector & instead of a PartSelect (overload method).
     PartSelect & operator= (BitVector & iRhs);
+    PartSelect & operator= (BitVector && iRhs);
     PartSelect & operator= (const PartSelect & iRhs);
     PartSelect & operator= (long long unsigned int iRhs) { return *this = (UInt64)iRhs; }
     PartSelect & operator= (long long int iRhs) { return *this = (UInt64)iRhs; }
@@ -150,7 +151,7 @@ class BitVector {
     PartSelect & operator= (int iRhs) { return *this = (UInt32)iRhs; }
 
     explicit operator bool() const;
-    UInt32 operator[] (UInt32 iWordIndex);
+    UInt32 operator[] (UInt32 iWordIndex) const;
     
     // PartSelect operators that return a BitVector return a new BV that is
     // the selected bits of the parent BV (modified as directed).
@@ -169,11 +170,11 @@ class BitVector {
     BitVector operator+  (UInt32 iRhs) const;
     BitVector operator+  (UInt64 iRhs) const;
     BitVector operator+  (const BitVector & iRhs) const       { return iRhs + *this; }; // BV implements.
-    BitVector operator+  (const PartSelect & iRhs) const      { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this + (BitVector)iRhs; }
+    BitVector operator+  (const PartSelect & iRhs) const      { return *this + (BitVector)iRhs; }
     BitVector operator+  (long long unsigned int iRhs) const  { return *this + (UInt64)iRhs; }
     BitVector operator+  (long long int iRhs) const           { return *this + (UInt64)iRhs; }
     BitVector operator+  (Int64 iRhs) const                   { return *this + (UInt64)iRhs; }
-    BitVector operator+  (int iRhs) const                     { LOG_DEBUG << __PRETTY_FUNCTION__ << endl;return *this + (UInt32)iRhs; }
+    BitVector operator+  (int iRhs) const                     { return *this + (UInt32)iRhs; }
 
     BitVector operator++ ();
     BitVector operator++ (int iDummy);
@@ -252,6 +253,11 @@ class BitVector {
     bool operator>  (long long int iRhs) const          { return  (*this > (UInt64)iRhs); }
     bool operator>  (Int64 iRhs) const                  { return  (*this > (UInt64)iRhs); }
     bool operator>  (int iRhs) const                    { return  (*this > (UInt32)iRhs); }
+
+    BitVector   operator<< (UInt32 iRhs) const;
+    BitVector   operator<< (const BitVector & iRhs) const   { return  *this << iRhs[0]; }
+    BitVector   operator<< (const PartSelect & iRhs) const  { return  *this << ((BitVector)iRhs)[0]; }
+    BitVector   operator<< (int iRhs) const                 { return  *this << (UInt32)iRhs; }
   };
 
   // Static Members
@@ -394,7 +400,7 @@ class BitVector {
   BitVector & operator=  (int iRhs)                           { return *this = (UInt32)iRhs; }
 
   PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
-  UInt32 operator[] (UInt32 iWordIndex);
+  UInt32 operator[] (UInt32 iWordIndex) const;
   explicit operator bool() const;
 
   BitVector & operator+= (UInt32 iRhs);
@@ -493,16 +499,10 @@ class BitVector {
   bool operator<  (Int64 iRhs) const                  { return  (*this < (UInt64)iRhs); }
   bool operator<  (int iRhs) const                    { return  (*this < (UInt32)iRhs); }
 
-  /*
   BitVector   operator<< (UInt32 iRhs) const;
-  BitVector   operator<< (UInt64 iRhs) const;
-  BitVector   operator<< (const BitVector & iRhs) const;
-  BitVector   operator<< (const PartSelect & iRhs) const     { return  (*this << (BitVector)iRhs); }
-  BitVector   operator<< (long long unsigned int iRhs) const { return  (*this << (UInt64)iRhs); }
-  BitVector   operator<< (long long int iRhs) const          { return  (*this << (UInt64)iRhs); }
-  BitVector   operator<< (Int64 iRhs) const                  { return  (*this << (UInt64)iRhs); }
-  BitVector   operator<< (int iRhs) const                    { return  (*this << (UInt32)iRhs); }
-  */
+  BitVector   operator<< (const BitVector & iRhs) const      { return  *this << iRhs[0]; }
+  BitVector   operator<< (const PartSelect & iRhs) const     { return  *this << ((BitVector)iRhs)[0]; }
+  BitVector   operator<< (int iRhs) const                    { return  *this << (UInt32)iRhs; }
 
   // Part Select friend operators
   friend ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs);
