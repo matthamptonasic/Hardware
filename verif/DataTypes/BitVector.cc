@@ -132,7 +132,7 @@ void BitVector::initCopy(const BitVector & iSource, UInt32 iSize)
 
   if(iSize != iSource.m_size)
   {
-    setMask();
+    Resize(iSize);
   }
 }
 void BitVector::initMove(BitVector & iSource, UInt32 iSize)
@@ -147,7 +147,7 @@ void BitVector::initMove(BitVector & iSource, UInt32 iSize)
 
   if(iSize != iSource.m_size)
   {
-    setMask();
+    Resize(iSize);
   }
 }
 void BitVector::initFields(const BitVector & iSource, UInt32 iSize)
@@ -433,7 +433,7 @@ void BitVector::add(UInt32 iVal, UInt32 iWordNb)
       return;
     }
   }
-
+  
   // Apply the mask if we're on the last word.
   if(iWordNb == (l_nbWords - 1))
   {
@@ -692,7 +692,7 @@ BitVector::PartSelect BitVector::operator() (UInt32 iUpperIndex, UInt32 iLowerIn
   PartSelect l_retVal(this, iUpperIndex, iLowerIndex);
   return l_retVal;
 }
-UInt32 BitVector::operator[] (UInt32 iWordIndex)
+UInt32 BitVector::operator[] (UInt32 iWordIndex) const
 {
   if(m_aval == nullptr)
   {
@@ -1133,6 +1133,24 @@ bool BitVector::operator> (const BitVector & iRhs) const
   }
   return l_retVal;
 }
+BitVector BitVector::operator<< (UInt32 iRhs) const
+{
+  UInt32 l_newSz = m_size + iRhs;
+  BitVector l_retVal("BitVector::operator<<_UInt32", l_newSz, m_nbStates);
+
+  Int32  l_wordDiff = l_retVal.m_aval->size() - m_aval->size();
+  UInt32 l_maskHi = ~getMask(iRhs-1);
+  for(Int32 ii=l_retVal.m_aval->size()-1; ii >= l_wordDiff - 1; ii--)
+  {
+    if((ii - l_wordDiff) >= 0)
+    {
+      (*l_retVal.m_aval)[ii] =  ((*m_aval)[ii - l_wordDiff] >> (32 - (iRhs % 32)));
+    }
+    (*l_retVal.m_aval)[ii] |= ((*m_aval)[ii - l_wordDiff + 1] << (iRhs % 32)) & l_maskHi;
+    LOG_MSG << l_retVal << endl;
+  }
+  return l_retVal;
+}
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -1390,6 +1408,12 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (BitVector & iRhs)
   setParentBits(iRhs(l_sz - 1, 0));
   return *this;
 }
+BitVector::PartSelect & BitVector::PartSelect::operator= (BitVector && iRhs)
+{
+  UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
+  setParentBits(iRhs(l_sz - 1, 0));
+  return *this;
+}
 BitVector::PartSelect & BitVector::PartSelect::operator= (const PartSelect & iRhs)
 {
   setParentBits(iRhs);
@@ -1400,7 +1424,7 @@ BitVector::PartSelect::operator bool() const
   BitVector l_bv(*this);
   return (bool)l_bv;
 }
-UInt32 BitVector::PartSelect::operator[] (UInt32 iWordIndex)
+UInt32 BitVector::PartSelect::operator[] (UInt32 iWordIndex) const
 {
   return ((BitVector)*this)[iWordIndex];
 }
@@ -1593,6 +1617,11 @@ bool BitVector::PartSelect::operator> (const BitVector & iRhs) const
   BitVector l_bv(*this);
   bool l_retVal = (l_bv > iRhs);
   return l_retVal;
+}
+BitVector BitVector::PartSelect::operator<< (UInt32 iRhs) const
+{
+  BitVector l_bv(*this);
+  return l_bv << iRhs;
 }
 
 // ================================
