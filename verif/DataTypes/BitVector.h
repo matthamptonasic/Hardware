@@ -273,6 +273,8 @@ class BitVector {
     BitVector operator>> (const BitVector & iRhs) const   { return  *this >> iRhs[0]; }
     BitVector operator>> (const PartSelect & iRhs) const  { return  *this >> ((BitVector)iRhs)[0]; }
     BitVector operator>> (int iRhs) const                 { return  *this >> (UInt32)iRhs; }
+
+    BitVector operator~  () const;
   };
 
   // Static Members
@@ -534,6 +536,8 @@ class BitVector {
   BitVector   operator>> (const PartSelect & iRhs) const     { return  *this >> ((BitVector)iRhs)[0]; }
   BitVector   operator>> (int iRhs) const                    { return  *this >> (UInt32)iRhs; }
 
+  BitVector   operator~  () const;
+
   // Part Select friend operators
   friend ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs);
   friend Logger  & operator<< (Logger  & iLogger, const BitVector::PartSelect & iPs);
@@ -597,7 +601,6 @@ class BitVector {
   //================
   // TBD operators:
   //================
-  // operator~
   // operator&
   // operator&=
   // operator|

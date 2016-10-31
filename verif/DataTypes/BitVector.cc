@@ -1191,10 +1191,19 @@ BitVector BitVector::operator<< (UInt32 iRhs) const
 }
 BitVector BitVector::operator>> (UInt32 iRhs) const
 {
-  UInt32 l_newSz = m_size + iRhs;
-  BitVector l_retVal(*this, l_newSz);
+  BitVector l_retVal(*this);
 
   l_retVal >>= iRhs;
+  return l_retVal;
+}
+BitVector BitVector::operator~  () const
+{
+  BitVector l_retVal(*this);
+  for(UInt32 ii=0; ii<m_aval->size(); ii++)
+  {
+    (*l_retVal.m_aval)[ii] = ~(*l_retVal.m_aval)[ii];
+  }
+  l_retVal.applyMask();
   return l_retVal;
 }
 
@@ -1687,6 +1696,11 @@ BitVector BitVector::PartSelect::operator>> (UInt32 iRhs) const
 {
   BitVector l_bv(*this);
   return l_bv >> iRhs;
+}
+BitVector BitVector::PartSelect::operator~ () const
+{
+  BitVector l_bv(*this);
+  return ~l_bv;
 }
 
 // ================================
