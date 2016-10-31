@@ -1137,21 +1137,36 @@ BitVector & BitVector::operator<<= (UInt32 iRhs)
 {
   Int32 l_wordShift = (iRhs - 1) / 32 + 1;
   Int32 l_bitShift =  iRhs % 32;
-  UInt32 l_maskHi = ~getMask(l_bitShift-1);
   for(Int32 ii=m_aval->size()-1; ii >= 0; ii--)
   {
     UInt32 l_xferWord = 0;
-    if(((ii - l_wordShift + 1) >= 0) && ((ii - l_wordShift + 1) < m_aval->size()))
+    if(((ii - l_wordShift + 1) >= 0) && ((ii - l_wordShift + 1) < m_aval->size()) && (l_bitShift != 0))
     {
-      l_xferWord = ((*m_aval)[ii - l_wordShift + 1] << l_bitShift) & l_maskHi;
+      l_xferWord = ((*m_aval)[ii - l_wordShift + 1] << l_bitShift);
     }
     if((ii - l_wordShift) >= 0)
     {
       l_xferWord |=  ((*m_aval)[ii - l_wordShift] >> (32 - l_bitShift));
     }
-    else if((ii - l_wordShift) == 0)
+    (*m_aval)[ii] = l_xferWord;
+  }
+  applyMask();
+  return *this;
+}
+BitVector & BitVector::operator>>= (UInt32 iRhs)
+{
+  Int32 l_wordShift = (iRhs - 1) / 32 + 1;
+  Int32 l_bitShift =  iRhs % 32;
+  for(Int32 ii=0; ii < m_aval->size(); ii++)
+  {
+    UInt32 l_xferWord = 0;
+    if((ii + l_wordShift) < m_aval->size())
     {
-      l_xferWord &= l_maskHi;
+      l_xferWord =  ((*m_aval)[ii + l_wordShift] << (32 - l_bitShift));
+    }
+    if(((ii + l_wordShift - 1) >= 0) && ((ii + l_wordShift - 1) < m_aval->size()) && (l_bitShift != 0))
+    {
+      l_xferWord |= ((*m_aval)[ii + l_wordShift - 1] >> l_bitShift);
     }
     (*m_aval)[ii] = l_xferWord;
   }
@@ -1635,19 +1650,24 @@ bool BitVector::PartSelect::operator> (const BitVector & iRhs) const
   bool l_retVal = (l_bv > iRhs);
   return l_retVal;
 }
+BitVector BitVector::PartSelect::operator<<= (UInt32 iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv <<= iRhs;
+  setParentBits(l_bv(m_upperIndex, m_lowerIndex));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator>>= (UInt32 iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv >>= iRhs;
+  setParentBits(l_bv(m_upperIndex, m_lowerIndex));
+  return l_bv;
+}
 BitVector BitVector::PartSelect::operator<< (UInt32 iRhs) const
 {
   BitVector l_bv(*this);
   return l_bv << iRhs;
-}
-BitVector BitVector::PartSelect::operator<<= (UInt32 iRhs)
-{
-  BitVector l_bv(*this);
-  LOG_DEBUG << "l_bv: " << l_bv << endl;
-  l_bv <<= iRhs;
-  setParentBits(l_bv(m_upperIndex, m_lowerIndex));
-  LOG_DEBUG << "l_bv: " << l_bv << endl;
-  return l_bv;
 }
 
 // ================================
