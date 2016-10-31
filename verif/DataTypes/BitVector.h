@@ -275,6 +275,16 @@ class BitVector {
     BitVector operator>> (int iRhs) const                 { return  *this >> (UInt32)iRhs; }
 
     BitVector operator~  () const;
+
+    BitVector   operator&= (UInt32 iRhs);
+    BitVector   operator&= (UInt64 iRhs);
+    BitVector   operator&= (const BitVector & iRhs);
+    BitVector   operator&= (const PartSelect & iRhs)           { return  *this &= ((BitVector)iRhs); }
+    BitVector   operator&= (long long unsigned int iRhs)       { return  *this &= (UInt64)iRhs; }
+    BitVector   operator&= (long long int iRhs)                { return  *this &= (UInt64)iRhs; }
+    BitVector   operator&= (Int64 iRhs)                        { return  *this &= (UInt64)iRhs; }
+    BitVector   operator&= (int iRhs)                          { return  *this &= (UInt32)iRhs; }
+
   };
 
   // Static Members
@@ -538,6 +548,15 @@ class BitVector {
 
   BitVector   operator~  () const;
 
+  BitVector & operator&= (UInt32 iRhs);
+  BitVector & operator&= (UInt64 iRhs);
+  BitVector & operator&= (const BitVector & iRhs);
+  BitVector & operator&= (const PartSelect & iRhs)           { return  *this &= ((BitVector)iRhs); }
+  BitVector & operator&= (long long unsigned int iRhs)       { return  *this &= (UInt64)iRhs; }
+  BitVector & operator&= (long long int iRhs)                { return  *this &= (UInt64)iRhs; }
+  BitVector & operator&= (Int64 iRhs)                        { return  *this &= (UInt64)iRhs; }
+  BitVector & operator&= (int iRhs)                          { return  *this &= (UInt32)iRhs; }
+
   // Part Select friend operators
   friend ostream & operator<< (ostream & iStream, const BitVector::PartSelect & iPs);
   friend Logger  & operator<< (Logger  & iLogger, const BitVector::PartSelect & iPs);
@@ -602,11 +621,10 @@ class BitVector {
   // TBD operators:
   //================
   // operator&
-  // operator&=
-  // operator|
   // operator|=
-  // operator^
+  // operator|
   // operator^=
+  // operator^
   // operator, (concatination)
   // explicit operator UInt32
   // explicit operator UInt64

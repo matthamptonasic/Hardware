@@ -1206,6 +1206,40 @@ BitVector BitVector::operator~  () const
   l_retVal.applyMask();
   return l_retVal;
 }
+BitVector & BitVector::operator&= (UInt32 iRhs)
+{
+  for(Int32 ii=m_aval->size() - 1; ii >= 1; ii--)
+  {
+    (*m_aval)[ii] = 0;
+  }
+  (*m_aval)[0] &= iRhs;
+  return *this;
+}
+BitVector & BitVector::operator&= (UInt64 iRhs)
+{
+  for(Int32 ii=m_aval->size() - 1; ii >= 2; ii--)
+  {
+    (*m_aval)[ii] = 0;
+  }
+  (*m_aval)[1] &= (iRhs >> 32);
+  (*m_aval)[0] &= (UInt32)iRhs;
+  return *this;
+}
+BitVector & BitVector::operator&= (const BitVector & iRhs)
+{
+  UInt32 l_szRhs = iRhs.m_aval->size();
+  UInt32 l_szLhs = m_aval->size();
+  // If RHS is smaller, wipe out any words larger than it contains.
+  for(Int32 ii=l_szLhs-1; ii>l_szRhs-1; ii--)
+  {
+    (*m_aval)[ii] = 0;
+  }
+  for(Int32 kk=0; kk<l_szRhs; kk++)
+  {
+    (*m_aval)[kk] &= (*iRhs.m_aval)[kk];
+  }
+  return *this;
+}
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -1701,6 +1735,27 @@ BitVector BitVector::PartSelect::operator~ () const
 {
   BitVector l_bv(*this);
   return ~l_bv;
+}
+BitVector BitVector::PartSelect::operator&= (UInt32 iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv &= iRhs;
+  setParentBits(l_bv(l_bv.m_size-1, 0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator&= (UInt64 iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv &= iRhs;
+  setParentBits(l_bv(l_bv.m_size-1, 0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator&= (const BitVector & iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv &= iRhs;
+  setParentBits(l_bv(l_bv.m_size-1, 0));
+  return l_bv;
 }
 
 // ================================
