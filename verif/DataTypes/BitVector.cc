@@ -1258,6 +1258,32 @@ BitVector BitVector::operator& (const BitVector & iRhs) const
   l_retVal &= iRhs;
   return l_retVal;
 }
+BitVector & BitVector::operator|= (UInt32 iRhs)
+{
+  (*m_aval)[0] |= iRhs;
+  applyMask();
+  return *this;
+}
+BitVector & BitVector::operator|= (UInt64 iRhs)
+{
+  (*m_aval)[1] |= (iRhs >> 32);
+  (*m_aval)[0] |= (UInt32)iRhs;
+  applyMask();
+  return *this;
+}
+BitVector & BitVector::operator|= (const BitVector & iRhs)
+{
+  UInt32 l_szRhs = iRhs.m_aval->size();
+  UInt32 l_szLhs = m_aval->size();
+  UInt32 l_szMin = min(l_szLhs, l_szRhs);
+  for(Int32 ii=0; ii<l_szMin; ii++)
+  {
+    LOG_DEBUG << "mark " << ii << endl;
+    (*m_aval)[ii] |= (*iRhs.m_aval)[ii];
+  }
+  applyMask();
+  return *this;
+}
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -1789,6 +1815,27 @@ BitVector BitVector::PartSelect::operator& (const BitVector & iRhs) const
 {
   BitVector l_bv(*this);
   return l_bv & iRhs;
+}
+BitVector BitVector::PartSelect::operator|= (UInt32 iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv |= iRhs;
+  setParentBits(l_bv(l_bv.m_size-1, 0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator|= (UInt64 iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv |= iRhs;
+  setParentBits(l_bv(l_bv.m_size-1, 0));
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator|= (const BitVector & iRhs)
+{
+  BitVector l_bv(*this);
+  l_bv |= iRhs;
+  setParentBits(l_bv(l_bv.m_size-1, 0));
+  return l_bv;
 }
 
 // ================================
