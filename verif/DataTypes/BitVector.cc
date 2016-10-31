@@ -1135,6 +1135,10 @@ bool BitVector::operator> (const BitVector & iRhs) const
 }
 BitVector & BitVector::operator<<= (UInt32 iRhs)
 {
+  if(iRhs == 0)
+  {
+    return *this;
+  }
   Int32 l_wordShift = (iRhs - 1) / 32 + 1;
   Int32 l_bitShift =  iRhs % 32;
   for(Int32 ii=m_aval->size()-1; ii >= 0; ii--)
@@ -1155,6 +1159,10 @@ BitVector & BitVector::operator<<= (UInt32 iRhs)
 }
 BitVector & BitVector::operator>>= (UInt32 iRhs)
 {
+  if(iRhs == 0)
+  {
+    return *this;
+  }
   Int32 l_wordShift = (iRhs - 1) / 32 + 1;
   Int32 l_bitShift =  iRhs % 32;
   for(Int32 ii=0; ii < m_aval->size(); ii++)
@@ -1177,10 +1185,16 @@ BitVector BitVector::operator<< (UInt32 iRhs) const
 {
   UInt32 l_newSz = m_size + iRhs;
   BitVector l_retVal(*this, l_newSz);
-  LOG_MSG << "l_retVal: " << l_retVal << endl;
 
   l_retVal <<= iRhs;
-  LOG_MSG << "l_retVal: " << l_retVal << endl;
+  return l_retVal;
+}
+BitVector BitVector::operator>> (UInt32 iRhs) const
+{
+  UInt32 l_newSz = m_size + iRhs;
+  BitVector l_retVal(*this, l_newSz);
+
+  l_retVal >>= iRhs;
   return l_retVal;
 }
 
@@ -1668,6 +1682,11 @@ BitVector BitVector::PartSelect::operator<< (UInt32 iRhs) const
 {
   BitVector l_bv(*this);
   return l_bv << iRhs;
+}
+BitVector BitVector::PartSelect::operator>> (UInt32 iRhs) const
+{
+  BitVector l_bv(*this);
+  return l_bv >> iRhs;
 }
 
 // ================================
