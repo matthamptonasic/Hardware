@@ -1133,22 +1133,39 @@ bool BitVector::operator> (const BitVector & iRhs) const
   }
   return l_retVal;
 }
+BitVector & BitVector::operator<<= (UInt32 iRhs)
+{
+  Int32 l_wordShift = (iRhs - 1) / 32 + 1;
+  Int32 l_bitShift =  iRhs % 32;
+  UInt32 l_maskHi = ~getMask(l_bitShift-1);
+  for(Int32 ii=m_aval->size()-1; ii >= 0; ii--)
+  {
+    UInt32 l_xferWord = 0;
+    if(((ii - l_wordShift + 1) >= 0) && ((ii - l_wordShift + 1) < m_aval->size()))
+    {
+      l_xferWord = ((*m_aval)[ii - l_wordShift + 1] << l_bitShift) & l_maskHi;
+    }
+    if((ii - l_wordShift) >= 0)
+    {
+      l_xferWord |=  ((*m_aval)[ii - l_wordShift] >> (32 - l_bitShift));
+    }
+    else if((ii - l_wordShift) == 0)
+    {
+      l_xferWord &= l_maskHi;
+    }
+    (*m_aval)[ii] = l_xferWord;
+  }
+  applyMask();
+  return *this;
+}
 BitVector BitVector::operator<< (UInt32 iRhs) const
 {
   UInt32 l_newSz = m_size + iRhs;
-  BitVector l_retVal("BitVector::operator<<_UInt32", l_newSz, m_nbStates);
+  BitVector l_retVal(*this, l_newSz);
+  LOG_MSG << "l_retVal: " << l_retVal << endl;
 
-  Int32  l_wordDiff = l_retVal.m_aval->size() - m_aval->size();
-  UInt32 l_maskHi = ~getMask(iRhs-1);
-  for(Int32 ii=l_retVal.m_aval->size()-1; ii >= l_wordDiff - 1; ii--)
-  {
-    if((ii - l_wordDiff) >= 0)
-    {
-      (*l_retVal.m_aval)[ii] =  ((*m_aval)[ii - l_wordDiff] >> (32 - (iRhs % 32)));
-    }
-    (*l_retVal.m_aval)[ii] |= ((*m_aval)[ii - l_wordDiff + 1] << (iRhs % 32)) & l_maskHi;
-    LOG_MSG << l_retVal << endl;
-  }
+  l_retVal <<= iRhs;
+  LOG_MSG << "l_retVal: " << l_retVal << endl;
   return l_retVal;
 }
 
@@ -1622,6 +1639,15 @@ BitVector BitVector::PartSelect::operator<< (UInt32 iRhs) const
 {
   BitVector l_bv(*this);
   return l_bv << iRhs;
+}
+BitVector BitVector::PartSelect::operator<<= (UInt32 iRhs)
+{
+  BitVector l_bv(*this);
+  LOG_DEBUG << "l_bv: " << l_bv << endl;
+  l_bv <<= iRhs;
+  setParentBits(l_bv(m_upperIndex, m_lowerIndex));
+  LOG_DEBUG << "l_bv: " << l_bv << endl;
+  return l_bv;
 }
 
 // ================================
