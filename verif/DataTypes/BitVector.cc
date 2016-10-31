@@ -1240,6 +1240,24 @@ BitVector & BitVector::operator&= (const BitVector & iRhs)
   }
   return *this;
 }
+BitVector BitVector::operator& (UInt32 iRhs) const
+{
+  BitVector l_retVal(*this);
+  l_retVal &= iRhs;
+  return l_retVal;
+}
+BitVector BitVector::operator& (UInt64 iRhs) const
+{
+  BitVector l_retVal(*this);
+  l_retVal &= iRhs;
+  return l_retVal;
+}
+BitVector BitVector::operator& (const BitVector & iRhs) const
+{
+  BitVector l_retVal(*this);
+  l_retVal &= iRhs;
+  return l_retVal;
+}
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -1756,6 +1774,21 @@ BitVector BitVector::PartSelect::operator&= (const BitVector & iRhs)
   l_bv &= iRhs;
   setParentBits(l_bv(l_bv.m_size-1, 0));
   return l_bv;
+}
+BitVector BitVector::PartSelect::operator& (UInt32 iRhs) const
+{
+  BitVector l_bv(*this);
+  return l_bv & iRhs;
+}
+BitVector BitVector::PartSelect::operator& (UInt64 iRhs) const
+{
+  BitVector l_bv(*this);
+  return l_bv & iRhs;
+}
+BitVector BitVector::PartSelect::operator& (const BitVector & iRhs) const
+{
+  BitVector l_bv(*this);
+  return l_bv & iRhs;
 }
 
 // ================================
