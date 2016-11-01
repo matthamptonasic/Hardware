@@ -1326,6 +1326,24 @@ BitVector & BitVector::operator^= (const BitVector & iRhs)
   applyMask();
   return *this;
 }
+BitVector BitVector::operator^ (UInt32 iRhs) const
+{
+  BitVector l_retVal(*this);
+  l_retVal ^= iRhs;
+  return l_retVal;
+}
+BitVector BitVector::operator^ (UInt64 iRhs) const
+{
+  BitVector l_retVal(*this);
+  l_retVal ^= iRhs;
+  return l_retVal;
+}
+BitVector BitVector::operator^ (const BitVector & iRhs) const
+{
+  BitVector l_retVal(*this);
+  l_retVal ^= iRhs;
+  return l_retVal;
+}
 
 // *==*==*==*==*==*==*==*==*==*==*==*==*
 // ===**     Part Select Class    **===
@@ -1918,6 +1936,24 @@ BitVector BitVector::PartSelect::operator^= (const BitVector & iRhs)
   setParentBits(l_bv(l_bv.m_size-1, 0));
   return l_bv;
 }
+BitVector BitVector::PartSelect::operator^ (UInt32 iRhs) const
+{
+  BitVector l_bv(*this);
+  l_bv ^= iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator^ (UInt64 iRhs) const
+{
+  BitVector l_bv(*this);
+  l_bv ^= iRhs;
+  return l_bv;
+}
+BitVector BitVector::PartSelect::operator^ (const BitVector & iRhs) const
+{
+  BitVector l_bv(*this);
+  l_bv ^= iRhs;
+  return l_bv;
+}
 
 // ================================
 // ===** Non-Member Operators **===
@@ -2463,4 +2499,52 @@ BitVector operator| (Int64 iLhs, const BitVector::PartSelect & iRhs)
 BitVector operator| (int iLhs, const BitVector::PartSelect & iRhs)
 {
   return iRhs | iLhs;
+}
+BitVector operator^ (UInt32 iLhs, const BitVector & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (UInt64 iLhs, const BitVector & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (long long unsigned int iLhs, const BitVector & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (long long int iLhs, const BitVector & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (Int64 iLhs, const BitVector & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (int iLhs, const BitVector & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (UInt32 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (UInt64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (long long unsigned int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (long long int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (Int64 iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs ^ iLhs;
+}
+BitVector operator^ (int iLhs, const BitVector::PartSelect & iRhs)
+{
+  return iRhs ^ iLhs;
 }
