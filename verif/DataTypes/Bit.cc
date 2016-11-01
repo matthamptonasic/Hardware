@@ -38,10 +38,41 @@ Bit::Bit(string iFullName)
   setSize();
   createBV();
   getRtlValue();
-  LOG_DEBUG << "Bit::Bit: Initial value: " << Bv_get().ToString() << endl;
-  Bv_get() = (UInt64)0x0123456789abcdef;
+  //LOG_DEBUG << "Bit::Bit: Initial value:     " << Bv_get().ToString() << endl;
+  //Bv_get() += 0xffffULL;
+  //LOG_DEBUG << "Bit::Bit: Incremental value: " << Bv_get().ToString() << endl;
+  
+  BitVector test1("testBV1", 96);
+  BitVector test2("testBV2", 256);
+  test1 = 0x2222222233333333;
+  test1(95,64) = 0x11111111;
+  test2 = test1;
+  test1 (63,0) = 0xcccccccccccccccc;
+
+  test2(159,64) |= test1(63,0) << 64;
+
+  if(0xff >= 1)
+  {
+    LOG_DEBUG << "=============== true ===============" << endl;
+  }
+  else
+  {
+    LOG_DEBUG << "=============== false ===============" << endl;
+  }
+  LOG_DEBUG << "test1 is          " << test1 << endl;
+  LOG_DEBUG << "test2 is " << test2 << endl;
+  /*
+  Bv_get() = 0x0123456789abcdefULL;
+  //Bv_get() = Bv_get() + (UInt64)0xffffffffffffffULL;
+  //Bv_get() = 0x89abcdef;
   setRtlValue();
   LOG_DEBUG << "Bit::Bit: After setting to 0x01...ef: " << Bv_get().ToString() << endl;
+  BitVector rhs("Bit_temp", 56, NB_STATES::TWO_STATE);
+  rhs = 0xffffffffffffffULL;
+  LOG_DEBUG << "New BV value is " << rhs.ToString() << endl;
+  Bv_get() = Bv_get() + rhs(11,0);
+  LOG_DEBUG << "Bit::Bit: After BV addition: " << Bv_get().ToString() << endl;
+  */
 }
 
 // =============================
