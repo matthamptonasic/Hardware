@@ -150,8 +150,10 @@ class BitVector {
     PartSelect & operator= (Int64 iRhs) { return *this = (UInt64)iRhs; }
     PartSelect & operator= (int iRhs) { return *this = (UInt32)iRhs; }
 
-    explicit operator bool() const;
     UInt32 operator[] (UInt32 iWordIndex) const;
+    explicit operator bool() const;
+    explicit operator UInt32() const;
+    explicit operator UInt64() const;
     
     // PartSelect operators that return a BitVector return a new BV that is
     // the selected bits of the parent BV (modified as directed).
@@ -483,6 +485,8 @@ class BitVector {
   PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
   UInt32 operator[] (UInt32 iWordIndex) const;
   explicit operator bool() const;
+  explicit operator UInt32() const;
+  explicit operator UInt64() const;
 
   BitVector & operator+= (UInt32 iRhs);
   BitVector & operator+= (UInt64 iRhs);
@@ -756,12 +760,7 @@ class BitVector {
   //================
   // TBD operators:
   //================
-  // explicit operator UInt32
-  // explicit operator UInt64
-  // explicit operator Int32
-  // explicit operator Int64
-
-  // TBD - Add operators for interacting with strings for 4-state values.
+  // Add operators for interacting with strings for 4-state values.
 
 };
 

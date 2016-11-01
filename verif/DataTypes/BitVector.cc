@@ -710,8 +710,6 @@ UInt32 BitVector::operator[] (UInt32 iWordIndex) const
 }
 BitVector::operator bool() const
 {
-  // Just to make sure we don't get this showing up unplanned.
-  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
   if(m_aval == nullptr)
   {
     return false;
@@ -724,6 +722,27 @@ BitVector::operator bool() const
     }
   }
   return false;
+}
+BitVector::operator UInt32() const
+{
+  if(m_aval == nullptr)
+  {
+    return 0;
+  }
+  return (*this)[0];
+}
+BitVector::operator UInt64() const
+{
+  if(m_aval == nullptr)
+  {
+    return 0;
+  }
+  UInt64 l_retVal = (*this)[0];
+  if(m_size > 32)
+  {
+    l_retVal |= ((UInt64)(*this)[1] << 32);
+  }
+  return l_retVal;
 }
 BitVector & BitVector::operator+= (UInt32 iRhs)
 {
@@ -1640,6 +1659,21 @@ BitVector::PartSelect::operator bool() const
 {
   BitVector l_bv(*this);
   return (bool)l_bv;
+}
+BitVector::PartSelect::operator UInt32() const
+{
+  BitVector l_bv(*this);
+  return (*this)[0];
+}
+BitVector::PartSelect::operator UInt64() const
+{
+  BitVector l_bv(*this);
+  UInt64 l_retVal = l_bv[0];
+  if(l_bv.m_size > 32)
+  {
+    l_retVal |= ((UInt64)l_bv[1] << 32);
+  }
+  return l_retVal;
 }
 UInt32 BitVector::PartSelect::operator[] (UInt32 iWordIndex) const
 {
