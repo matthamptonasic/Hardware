@@ -16,7 +16,6 @@
 
 #include <utility>
 
-#include "BitVector.h"
 #include "Logger.h"
 #include "pli.h"
 
