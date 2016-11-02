@@ -78,11 +78,10 @@ bool TypeBase::init(string iFullName, NB_STATES iValue)
 // =============================
 // ===**  Public Methods   **===
 // =============================
-UInt32 TypeBase::Get_Value()
+BitVector TypeBase::Get_Value()
 {
-  UInt32 retVal = 0xffffffff;
-
-  return retVal;
+  get_RtlValue();
+  return *m_bv;
 }
 
 // =============================

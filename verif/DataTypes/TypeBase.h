@@ -73,7 +73,7 @@ class TypeBase
 
   // Public Methods
   public:
-    UInt32 Get_Value();
+    BitVector Get_Value();
 
   // Private Methods
   private:
@@ -89,7 +89,7 @@ class TypeBase
 
   // Operators
   public:
-    
+
 };
 
 #endif /* TYPEBASE_H */
