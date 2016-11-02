@@ -18,6 +18,7 @@
 
 #include <string>
 
+#include "BitVector.h"
 #include "Common.h"
 #include "vpi.h"
 
@@ -27,14 +28,6 @@ using namespace std;
 // Make a 2-state and 4-state abstract base as well.
 // 2-state child will only have the 'bit' class.
 // 4-state children will be logic, (typedef reg to be same as logic), & integer (32-bit BV).
-
-class BitVector;
-
-enum class NB_STATES : Byte
-{
-  TWO_STATE = 0,
-  FOUR_STATE = 1
-};
 
 class TypeBase 
 {
@@ -89,6 +82,7 @@ class TypeBase
 
   // Operators
   public:
+    //BitVector::PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
 
 };
 

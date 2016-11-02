@@ -137,4 +137,10 @@ void TypeBase::set_RtlValue()
 // =============================
 // ===**     Operators     **===
 // =============================
-
+/*
+BitVector::PartSelect TypeBase::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex)
+{
+  LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
+  return (*m_bv)(iUpperIndex, iLowerIndex);
+}
+*/

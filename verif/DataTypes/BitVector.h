@@ -45,9 +45,16 @@
 
 #include "Common.h"
 #include "Logger.h"
-#include "TypeBase.h"
 
 using namespace std;
+
+enum class NB_STATES : Byte
+{
+  TWO_STATE = 0,
+  FOUR_STATE = 1
+};
+
+class TypeBase;
 
 class BitVector {
   friend class TypeBase;
@@ -66,6 +73,7 @@ class BitVector {
   class PartSelect
   {
     friend class BitVector;
+    friend class TypeBase;
     // ===== Part Select Class =====
     // Why?
     // Example #1:
@@ -423,6 +431,7 @@ class BitVector {
     UInt32  GetUInt32(UInt32 iWordNb) const;
     UInt64  GetUInt64() const;
     UInt64  GetUInt64(UInt32 iLowerWordNb) const;
+    string  GetName() const { return m_name; }
     string  ToString() const;
     void    Print() const;
 
@@ -756,6 +765,8 @@ class BitVector {
   friend BitVector operator, (long long int iLhs,           const BitVector::PartSelect & iRhs);
   friend BitVector operator, (Int64 iLhs,                   const BitVector::PartSelect & iRhs);
   friend BitVector operator, (int iLhs,                     const BitVector::PartSelect & iRhs);
+
+  //friend BitVector::PartSelect TypeBase::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
 
   //================
   // TBD operators:
