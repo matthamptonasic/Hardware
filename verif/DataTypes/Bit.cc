@@ -14,6 +14,8 @@
 ###############################################################################
 */
 
+#include <utility>
+
 #include "BitVector.h"
 #include "Logger.h"
 #include "pli.h"
@@ -70,3 +72,27 @@ void Bit::set_Size()
 // =============================
 // ===**     Operators     **===
 // =============================
+Bit & Bit::operator=  (UInt32 iRhs)
+{
+  get_BitVector() = iRhs;
+  set_RtlValue();
+  return *this;
+}
+Bit & Bit::operator=  (UInt64 iRhs)
+{
+  get_BitVector() = iRhs;
+  set_RtlValue();
+  return *this;
+}
+Bit & Bit::operator=  (const BitVector & iRhs)
+{
+  get_BitVector() = iRhs;
+  set_RtlValue();
+  return *this;
+}
+Bit & Bit::operator=  (BitVector && iRhs)
+{
+  get_BitVector() = move(iRhs);
+  set_RtlValue();
+  return *this;
+}

@@ -23,7 +23,7 @@
 
 using namespace std;
 
-class Bit : TypeBase
+class Bit : public TypeBase
 {
   // Enums
   public:
@@ -53,7 +53,16 @@ class Bit : TypeBase
   
   // Operators
   public:
-
+    Bit & operator=  (UInt32 iRhs);
+    Bit & operator=  (UInt64 iRhs);
+    Bit & operator=  (const BitVector & iRhs);
+    Bit & operator=  (BitVector && iRhs);
+    Bit & operator=  (const Bit & iRhs);
+    //Bit & operator=  (const BitVector::PartSelect & iRhs) { return *this = (BitVector)iRhs; }
+    Bit & operator=  (long long unsigned int iRhs)        { return *this = (UInt64)iRhs; }
+    Bit & operator=  (long long int iRhs)                 { return *this = (UInt64)iRhs; }
+    Bit & operator=  (Int64 iRhs)                         { return *this = (UInt64)iRhs; }
+    Bit & operator=  (int iRhs)                           { return *this = (UInt32)iRhs; }
 };
 
 #endif /* BIT_H */
