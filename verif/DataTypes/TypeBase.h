@@ -53,15 +53,15 @@ class TypeBase
 
   // Protected Properties
   protected:
-    string      Name_get() const      { return m_name; }
-    string      NameFull_get() const  { return m_nameFull; }
-    vpiHandle   SigHandle_get() const { return m_sigHandle; }
-    UInt32      Size_get() const      { return m_size; }
-    void        Size_set(UInt32 iSize) { m_size = iSize; }
-    BitVector & Bv_get() const        { return *m_bv; };
+    vpiHandle   get_SigHandle() const { return m_sigHandle; }
+    BitVector & get_BitVector() const        { return *m_bv; };
+    void        set_Size(UInt32 iSize) { m_size = iSize; }
 
   // Public Properties
   public:
+    string      Get_Name() const      { return m_name; }
+    string      Get_NameFull() const  { return m_nameFull; }
+    UInt32      Get_Size() const      { return m_size; }
 
   // Constructors
   public:
@@ -73,7 +73,7 @@ class TypeBase
 
   // Public Methods
   public:
-    UInt32 GetValue();
+    UInt32 Get_Value();
 
   // Private Methods
   private:
@@ -81,15 +81,15 @@ class TypeBase
 
   // Protected Methods
   protected:
-    virtual void setSize() = 0;
-    bool setHandle();
+    virtual void set_Size() = 0;
+    bool set_Handle();
     void createBV();
-    void getRtlValue();
-    void setRtlValue();
+    void get_RtlValue();
+    void set_RtlValue();
 
   // Operators
   public:
-
+    
 };
 
 #endif /* TYPEBASE_H */

@@ -49,7 +49,7 @@ class Bit : TypeBase
 
   // Protected Methods
   protected:
-    void setSize();
+    void set_Size();
   
   // Operators
   public:

@@ -68,7 +68,7 @@ bool TypeBase::init(string iFullName, NB_STATES iValue)
     m_name = m_nameFull;
   }
 
-  if(!setHandle())
+  if(!set_Handle())
   {
     return false;
   }
@@ -78,7 +78,7 @@ bool TypeBase::init(string iFullName, NB_STATES iValue)
 // =============================
 // ===**  Public Methods   **===
 // =============================
-UInt32 TypeBase::GetValue()
+UInt32 TypeBase::Get_Value()
 {
   UInt32 retVal = 0xffffffff;
 
@@ -92,7 +92,7 @@ UInt32 TypeBase::GetValue()
 // =============================
 // ===** Protected Methods **===
 // =============================
-bool TypeBase::setHandle()
+bool TypeBase::set_Handle()
 {
 
   LOG_DEBUG << "Looking for signal '" << m_nameFull << "'" << endl;
@@ -112,26 +112,26 @@ void TypeBase::createBV()
 {
   m_bv = new BitVector(m_nameFull, m_size, m_nbStates);
 }
-void TypeBase::getRtlValue()
+void TypeBase::get_RtlValue()
 {
   if(m_nbStates == NB_STATES::TWO_STATE)
   {
-    Pli::GetVector(SigHandle_get(), m_bv->m_aval);
+    Pli::GetVector(get_SigHandle(), m_bv->m_aval);
   }
   else
   {
-    Pli::GetVector(SigHandle_get(), m_bv->m_aval, m_bv->m_bval);
+    Pli::GetVector(get_SigHandle(), m_bv->m_aval, m_bv->m_bval);
   }
 }
-void TypeBase::setRtlValue()
+void TypeBase::set_RtlValue()
 {
   if(m_nbStates == NB_STATES::TWO_STATE)
   {
-    Pli::SetVector(SigHandle_get(), m_bv->m_aval);
+    Pli::SetVector(get_SigHandle(), m_bv->m_aval);
   }
   else
   {
-    Pli::SetVector(SigHandle_get(), m_bv->m_aval, m_bv->m_bval);
+    Pli::SetVector(get_SigHandle(), m_bv->m_aval, m_bv->m_bval);
   }
 }
 

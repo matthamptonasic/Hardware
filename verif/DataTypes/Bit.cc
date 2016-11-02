@@ -35,13 +35,9 @@ Bit::Bit(string iFullName)
   : TypeBase(iFullName, NB_STATES::TWO_STATE)
 {
   // Set the bitvector size based on the type and/or size of the verilog object.
-  setSize();
+  set_Size();
   createBV();
-  getRtlValue();
-  LOG_DEBUG << "Bit::Bit: Initial value: " << Bv_get().ToString() << endl;
-  Bv_get() = (UInt64)0x0123456789abcdef;
-  setRtlValue();
-  LOG_DEBUG << "Bit::Bit: After setting to 0x01...ef: " << Bv_get().ToString() << endl;
+  get_RtlValue();
 }
 
 // =============================
@@ -59,16 +55,16 @@ Bit::Bit(string iFullName)
 // =============================
 // ===** Protected Methods **===
 // =============================
-void Bit::setSize()
+void Bit::set_Size()
 {
   // TBD - Get the size based on the verilog object.
-  Vpi::OBJECT l_type = Pli::GetType(SigHandle_get());
+  Vpi::OBJECT l_type = Pli::GetType(get_SigHandle());
   if(l_type != Vpi::OBJECT::BIT)
   {
-    LOG_WRN_ENV << "Object " << NameFull_get() << " type (" << (Int32)l_type
+    LOG_WRN_ENV << "Object " << Get_NameFull() << " type (" << (Int32)l_type
                 << ") was not the expected type for a bit object." << endl;
   }
-  Size_set(Pli::GetSize(SigHandle_get()));
+  TypeBase::set_Size(Pli::GetSize(get_SigHandle()));
 }
 
 // =============================
