@@ -95,3 +95,9 @@ Bit & Bit::operator=  (BitVector && iRhs)
   set_RtlValue();
   return *this;
 }
+Bit & Bit::operator=  (const Bit & iRhs)
+{
+  get_BitVector() = iRhs.get_BitVector();
+  set_RtlValue();
+  return *this;
+}
