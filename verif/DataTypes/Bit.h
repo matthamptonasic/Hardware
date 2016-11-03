@@ -58,7 +58,7 @@ class Bit : public TypeBase
     Bit & operator=  (const BitVector & iRhs);
     Bit & operator=  (BitVector && iRhs);
     Bit & operator=  (const Bit & iRhs);
-    //Bit & operator=  (const BitVector::PartSelect & iRhs) { return *this = (BitVector)iRhs; }
+    Bit & operator=  (const BitVector::PartSelect & iRhs) { return *this = (BitVector)iRhs; }
     Bit & operator=  (long long unsigned int iRhs)        { return *this = (UInt64)iRhs; }
     Bit & operator=  (long long int iRhs)                 { return *this = (UInt64)iRhs; }
     Bit & operator=  (Int64 iRhs)                         { return *this = (UInt64)iRhs; }
