@@ -58,10 +58,10 @@ class TypeBase;
 
 class BitVector {
   friend class TypeBase;
+  friend class Bit;
 
   // Enums
   public:
-
   enum class PRINT_FMT : Byte
   {
     DEC = 0,
