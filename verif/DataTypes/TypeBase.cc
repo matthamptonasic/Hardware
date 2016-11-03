@@ -144,12 +144,24 @@ TypeBase::PartSelect TypeBase::operator() (UInt32 iUpperIndex, UInt32 iLowerInde
   return l_retVal;
 }
 
+
+// *==*==*==*==*==*==*==*==*==*==*==*==*
+// ===**     Part Select Class    **===
+// *==*==*==*==*==*==*==*==*==*==*==*==*
+
+// =============================
+// ===**   Constructors    **===
+// =============================
 TypeBase::PartSelect::PartSelect(TypeBase * iTB, UInt32 iUpperIndex, UInt32 iLowerIndex)
 {
   m_parent = iTB;
   m_upperIndex = iUpperIndex;
   m_lowerIndex = iLowerIndex;
 }
+
+// =============================
+// ===**     Operators     **===
+// =============================
 TypeBase::PartSelect & TypeBase::PartSelect::operator= (UInt32 iRhs)
 {
   (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) = iRhs;

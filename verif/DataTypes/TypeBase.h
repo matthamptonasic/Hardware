@@ -327,15 +327,15 @@ class TypeBase
     explicit operator UInt32() const              { return (UInt32)(*m_bv); }
     explicit operator UInt64() const              { return (UInt64)(*m_bv); }
 
-    TypeBase & operator+= (UInt32 iRhs) { (*m_bv) += iRhs; set_RtlValue(); return *this; }
-    TypeBase & operator+= (UInt64 iRhs) { (*m_bv) += iRhs; set_RtlValue(); return *this; }
-    TypeBase & operator+= (const BitVector & iRhs) { (*m_bv) += iRhs; set_RtlValue(); return *this; }
-    TypeBase & operator+= (const TypeBase & iRhs) { (*m_bv) += (*iRhs.m_bv); set_RtlValue(); return *this; }
-    TypeBase & operator+= (const BitVector::PartSelect & iRhs) { return *this += (BitVector)iRhs; }
-    TypeBase & operator+= (long long unsigned int iRhs)        { return *this += (UInt64)iRhs; }
-    TypeBase & operator+= (long long int iRhs)                 { return *this += (UInt64)iRhs; }
-    TypeBase & operator+= (Int64 iRhs)                         { return *this += (UInt64)iRhs; }
-    TypeBase & operator+= (int iRhs)                           { return *this += (UInt32)iRhs; }
+    TypeBase & operator+= (UInt32 iRhs)                         { (*m_bv) += iRhs; set_RtlValue(); return *this; }
+    TypeBase & operator+= (UInt64 iRhs)                         { (*m_bv) += iRhs; set_RtlValue(); return *this; }
+    TypeBase & operator+= (const BitVector & iRhs)              { (*m_bv) += iRhs; set_RtlValue(); return *this; }
+    TypeBase & operator+= (const TypeBase & iRhs)               { (*m_bv) += (*iRhs.m_bv); set_RtlValue(); return *this; }
+    TypeBase & operator+= (const BitVector::PartSelect & iRhs)  { return *this += (BitVector)iRhs; }
+    TypeBase & operator+= (long long unsigned int iRhs)         { return *this += (UInt64)iRhs; }
+    TypeBase & operator+= (long long int iRhs)                  { return *this += (UInt64)iRhs; }
+    TypeBase & operator+= (Int64 iRhs)                          { return *this += (UInt64)iRhs; }
+    TypeBase & operator+= (int iRhs)                            { return *this += (UInt32)iRhs; }
 
     /*
   BitVector   operator+  (UInt32 iRhs) const;
