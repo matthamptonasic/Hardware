@@ -141,6 +141,10 @@ void Pli::SetVector(vpiHandle iHndl, vector<UInt32> * iAval, vector<UInt32> * iB
     {
       l_data->value.vector[ii].bval = (*iBval)[ii];
     }
+    else
+    {
+      l_data->value.vector[ii].bval = 0;
+    }
   }
 
   setVectorData(iHndl, l_data);
