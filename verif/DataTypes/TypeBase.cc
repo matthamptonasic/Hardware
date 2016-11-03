@@ -137,10 +137,46 @@ void TypeBase::set_RtlValue()
 // =============================
 // ===**     Operators     **===
 // =============================
-/*
-BitVector::PartSelect TypeBase::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex)
+TypeBase::PartSelect TypeBase::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex)
 {
   LOG_DEBUG << __PRETTY_FUNCTION__ << endl;
-  return (*m_bv)(iUpperIndex, iLowerIndex);
+  TypeBase::PartSelect l_retVal(this, iUpperIndex, iLowerIndex);
+  return l_retVal;
 }
-*/
+
+TypeBase::PartSelect::PartSelect(TypeBase * iTB, UInt32 iUpperIndex, UInt32 iLowerIndex)
+{
+  m_parent = iTB;
+  m_upperIndex = iUpperIndex;
+  m_lowerIndex = iLowerIndex;
+}
+TypeBase::PartSelect & TypeBase::PartSelect::operator= (UInt32 iRhs)
+{
+  (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) = iRhs;
+  m_parent->set_RtlValue();
+  return *this;
+}
+TypeBase::PartSelect & TypeBase::PartSelect::operator= (UInt64 iRhs)
+{
+  (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) = iRhs;
+  m_parent->set_RtlValue();
+  return *this;
+}
+TypeBase::PartSelect & TypeBase::PartSelect::operator= (BitVector & iRhs)
+{
+  (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) = iRhs;
+  m_parent->set_RtlValue();
+  return *this;
+}
+TypeBase::PartSelect & TypeBase::PartSelect::operator= (BitVector && iRhs)
+{
+  (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) = move(iRhs);
+  m_parent->set_RtlValue();
+  return *this;
+}
+TypeBase::PartSelect & TypeBase::PartSelect::operator= (const BitVector::PartSelect & iRhs)
+{
+  (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) = iRhs;
+  m_parent->set_RtlValue();
+  return *this;
+}
