@@ -491,13 +491,13 @@ class BitVector {
   BitVector & operator=  (Int64 iRhs)                         { return *this = (UInt64)iRhs; }
   BitVector & operator=  (int iRhs)                           { return *this = (UInt32)iRhs; }
 
-  PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex);
+  PartSelect operator() (UInt32 iUpperIndex, UInt32 iLowerIndex) { PartSelect l_retVal(this, iUpperIndex, iLowerIndex); return l_retVal; }
   UInt32 operator[] (UInt32 iWordIndex) const;
   explicit operator bool() const;
   explicit operator UInt32() const;
   explicit operator UInt64() const;
 
-  BitVector & operator+= (UInt32 iRhs);
+  BitVector & operator+= (UInt32 iRhs)                        { add(iRhs, 0); return *this; };
   BitVector & operator+= (UInt64 iRhs);
   BitVector & operator+= (const BitVector & iRhs);
   BitVector & operator+= (const PartSelect & iRhs)            { return *this += (BitVector)iRhs; }
@@ -506,19 +506,19 @@ class BitVector {
   BitVector & operator+= (Int64 iRhs)                         { return *this += (UInt64)iRhs; }
   BitVector & operator+= (int iRhs)                           { return *this += (UInt32)iRhs; }
 
-  BitVector   operator+  (UInt32 iRhs) const;
-  BitVector   operator+  (UInt64 iRhs) const;
-  BitVector   operator+  (const BitVector & iRhs) const;
-  BitVector   operator+  (const PartSelect & iRhs) const      { return *this + (BitVector)iRhs; }
-  BitVector   operator+  (long long unsigned int iRhs) const  { return *this + (UInt64)iRhs; }
-  BitVector   operator+  (long long int iRhs) const           { return *this + (UInt64)iRhs; }
-  BitVector   operator+  (Int64 iRhs) const                   { return *this + (UInt64)iRhs; }
-  BitVector   operator+  (int iRhs) const                     { return *this + (UInt32)iRhs; }
+  BitVector   operator+  (UInt32 iRhs)                  const;
+  BitVector   operator+  (UInt64 iRhs)                  const;
+  BitVector   operator+  (const BitVector & iRhs)       const;
+  BitVector   operator+  (const PartSelect & iRhs)      const { return *this + (BitVector)iRhs; }
+  BitVector   operator+  (long long unsigned int iRhs)  const { return *this + (UInt64)iRhs; }
+  BitVector   operator+  (long long int iRhs)           const { return *this + (UInt64)iRhs; }
+  BitVector   operator+  (Int64 iRhs)                   const { return *this + (UInt64)iRhs; }
+  BitVector   operator+  (int iRhs)                     const { return *this + (UInt32)iRhs; }
 
   BitVector & operator++ ()                                   { return *this += 1; }
   BitVector & operator++ (int iDummy)                         { return *this += 1; }
 
-  BitVector & operator-= (UInt32 iRhs);
+  BitVector & operator-= (UInt32 iRhs)                        { subtract(iRhs, 0); return *this; }
   BitVector & operator-= (UInt64 iRhs);
   BitVector & operator-= (const BitVector & iRhs);
   BitVector & operator-= (const PartSelect & iRhs)            { return *this -= (BitVector)iRhs; }
@@ -527,71 +527,71 @@ class BitVector {
   BitVector & operator-= (Int64 iRhs)                         { return *this -= (UInt64)iRhs; }
   BitVector & operator-= (int iRhs)                           { return *this -= (UInt32)iRhs; }
 
-  BitVector   operator-  (UInt32 iRhs) const;
-  BitVector   operator-  (UInt64 iRhs) const;
-  BitVector   operator-  (const BitVector & iRhs) const;
-  BitVector   operator-  (const PartSelect & iRhs) const      { return *this - (BitVector)iRhs; }
-  BitVector   operator-  (long long unsigned int iRhs) const  { return *this - (UInt64)iRhs; }
-  BitVector   operator-  (long long int iRhs) const           { return *this - (UInt64)iRhs; }
-  BitVector   operator-  (Int64 iRhs) const                   { return *this - (UInt64)iRhs; }
-  BitVector   operator-  (int iRhs) const                     { return *this - (UInt32)iRhs; }
+  BitVector   operator-  (UInt32 iRhs)                  const;
+  BitVector   operator-  (UInt64 iRhs)                  const;
+  BitVector   operator-  (const BitVector & iRhs)       const;
+  BitVector   operator-  (const PartSelect & iRhs)      const { return *this - (BitVector)iRhs; }
+  BitVector   operator-  (long long unsigned int iRhs)  const { return *this - (UInt64)iRhs; }
+  BitVector   operator-  (long long int iRhs)           const { return *this - (UInt64)iRhs; }
+  BitVector   operator-  (Int64 iRhs)                   const { return *this - (UInt64)iRhs; }
+  BitVector   operator-  (int iRhs)                     const { return *this - (UInt32)iRhs; }
 
   BitVector & operator-- ()                                   { return *this -= 1; }
   BitVector & operator-- (int iDummy)                         { return *this -= 1; }
 
-  bool operator== (UInt32 iRhs) const;
-  bool operator== (UInt64 iRhs) const;
-  bool operator== (const BitVector & iRhs) const;
-  bool operator== (const PartSelect & iRhs) const     { return *this == (BitVector)iRhs; }
-  bool operator== (long long unsigned int iRhs) const { return *this == (UInt64)iRhs; }
-  bool operator== (long long int iRhs) const          { return *this == (UInt64)iRhs; }
-  bool operator== (Int64 iRhs) const                  { return *this == (UInt64)iRhs; }
-  bool operator== (int iRhs) const                    { return *this == (UInt32)iRhs; }
+  bool operator== (UInt32 iRhs)                         const;
+  bool operator== (UInt64 iRhs)                         const;
+  bool operator== (const BitVector & iRhs)              const;
+  bool operator== (const PartSelect & iRhs)             const { return *this == (BitVector)iRhs; }
+  bool operator== (long long unsigned int iRhs)         const { return *this == (UInt64)iRhs; }
+  bool operator== (long long int iRhs)                  const { return *this == (UInt64)iRhs; }
+  bool operator== (Int64 iRhs)                          const { return *this == (UInt64)iRhs; }
+  bool operator== (int iRhs)                            const { return *this == (UInt32)iRhs; }
 
-  bool operator!= (UInt32 iRhs) const                 { return !(*this == iRhs); }
-  bool operator!= (UInt64 iRhs) const                 { return !(*this == iRhs); }
-  bool operator!= (const BitVector & iRhs) const      { return !(*this == iRhs); }
-  bool operator!= (const PartSelect & iRhs) const     { return !(*this == iRhs); }
-  bool operator!= (long long unsigned int iRhs) const { return  (*this != (UInt64)iRhs); }
-  bool operator!= (long long int iRhs) const          { return  (*this != (UInt64)iRhs); }
-  bool operator!= (Int64 iRhs) const                  { return  (*this != (UInt64)iRhs); }
-  bool operator!= (int iRhs) const                    { return  (*this != (UInt32)iRhs); }
+  bool operator!= (UInt32 iRhs)                         const { return !(*this == iRhs); }
+  bool operator!= (UInt64 iRhs)                         const { return !(*this == iRhs); }
+  bool operator!= (const BitVector & iRhs)              const { return !(*this == iRhs); }
+  bool operator!= (const PartSelect & iRhs)             const { return !(*this == iRhs); }
+  bool operator!= (long long unsigned int iRhs)         const { return  (*this != (UInt64)iRhs); }
+  bool operator!= (long long int iRhs)                  const { return  (*this != (UInt64)iRhs); }
+  bool operator!= (Int64 iRhs)                          const { return  (*this != (UInt64)iRhs); }
+  bool operator!= (int iRhs)                            const { return  (*this != (UInt32)iRhs); }
 
-  bool operator<= (UInt32 iRhs) const;
-  bool operator<= (UInt64 iRhs) const;
-  bool operator<= (const BitVector & iRhs) const;
-  bool operator<= (const PartSelect & iRhs) const     { return  (*this <= (BitVector)iRhs); }
-  bool operator<= (long long unsigned int iRhs) const { return  (*this <= (UInt64)iRhs); }
-  bool operator<= (long long int iRhs) const          { return  (*this <= (UInt64)iRhs); }
-  bool operator<= (Int64 iRhs) const                  { return  (*this <= (UInt64)iRhs); }
-  bool operator<= (int iRhs) const                    { return  (*this <= (UInt32)iRhs); }
+  bool operator<= (UInt32 iRhs)                         const;
+  bool operator<= (UInt64 iRhs)                         const;
+  bool operator<= (const BitVector & iRhs)              const;
+  bool operator<= (const PartSelect & iRhs)             const { return  (*this <= (BitVector)iRhs); }
+  bool operator<= (long long unsigned int iRhs)         const { return  (*this <= (UInt64)iRhs); }
+  bool operator<= (long long int iRhs)                  const { return  (*this <= (UInt64)iRhs); }
+  bool operator<= (Int64 iRhs)                          const { return  (*this <= (UInt64)iRhs); }
+  bool operator<= (int iRhs)                            const { return  (*this <= (UInt32)iRhs); }
 
-  bool operator>= (UInt32 iRhs) const;
-  bool operator>= (UInt64 iRhs) const;
-  bool operator>= (const BitVector & iRhs) const;
-  bool operator>= (const PartSelect & iRhs) const     { return  (*this >= (BitVector)iRhs); }
-  bool operator>= (long long unsigned int iRhs) const { return  (*this >= (UInt64)iRhs); }
-  bool operator>= (long long int iRhs) const          { return  (*this >= (UInt64)iRhs); }
-  bool operator>= (Int64 iRhs) const                  { return  (*this >= (UInt64)iRhs); }
-  bool operator>= (int iRhs) const                    { return  (*this >= (UInt32)iRhs); }
+  bool operator>= (UInt32 iRhs)                         const;
+  bool operator>= (UInt64 iRhs)                         const;
+  bool operator>= (const BitVector & iRhs)              const;
+  bool operator>= (const PartSelect & iRhs)             const { return  (*this >= (BitVector)iRhs); }
+  bool operator>= (long long unsigned int iRhs)         const { return  (*this >= (UInt64)iRhs); }
+  bool operator>= (long long int iRhs)                  const { return  (*this >= (UInt64)iRhs); }
+  bool operator>= (Int64 iRhs)                          const { return  (*this >= (UInt64)iRhs); }
+  bool operator>= (int iRhs)                            const { return  (*this >= (UInt32)iRhs); }
 
-  bool operator>  (UInt32 iRhs) const;
-  bool operator>  (UInt64 iRhs) const;
-  bool operator>  (const BitVector & iRhs) const;
-  bool operator>  (const PartSelect & iRhs) const     { return  (*this > (BitVector)iRhs); }
-  bool operator>  (long long unsigned int iRhs) const { return  (*this > (UInt64)iRhs); }
-  bool operator>  (long long int iRhs) const          { return  (*this > (UInt64)iRhs); }
-  bool operator>  (Int64 iRhs) const                  { return  (*this > (UInt64)iRhs); }
-  bool operator>  (int iRhs) const                    { return  (*this > (UInt32)iRhs); }
+  bool operator>  (UInt32 iRhs)                         const;
+  bool operator>  (UInt64 iRhs)                         const;
+  bool operator>  (const BitVector & iRhs)              const;
+  bool operator>  (const PartSelect & iRhs)             const { return  (*this > (BitVector)iRhs); }
+  bool operator>  (long long unsigned int iRhs)         const { return  (*this > (UInt64)iRhs); }
+  bool operator>  (long long int iRhs)                  const { return  (*this > (UInt64)iRhs); }
+  bool operator>  (Int64 iRhs)                          const { return  (*this > (UInt64)iRhs); }
+  bool operator>  (int iRhs)                            const { return  (*this > (UInt32)iRhs); }
 
-  bool operator<  (UInt32 iRhs) const;
-  bool operator<  (UInt64 iRhs) const;
-  bool operator<  (const BitVector & iRhs) const;
-  bool operator<  (const PartSelect & iRhs) const     { return  (*this < (BitVector)iRhs); }
-  bool operator<  (long long unsigned int iRhs) const { return  (*this < (UInt64)iRhs); }
-  bool operator<  (long long int iRhs) const          { return  (*this < (UInt64)iRhs); }
-  bool operator<  (Int64 iRhs) const                  { return  (*this < (UInt64)iRhs); }
-  bool operator<  (int iRhs) const                    { return  (*this < (UInt32)iRhs); }
+  bool operator<  (UInt32 iRhs)                         const;
+  bool operator<  (UInt64 iRhs)                         const;
+  bool operator<  (const BitVector & iRhs)              const;
+  bool operator<  (const PartSelect & iRhs)             const { return  (*this < (BitVector)iRhs); }
+  bool operator<  (long long unsigned int iRhs)         const { return  (*this < (UInt64)iRhs); }
+  bool operator<  (long long int iRhs)                  const { return  (*this < (UInt64)iRhs); }
+  bool operator<  (Int64 iRhs)                          const { return  (*this < (UInt64)iRhs); }
+  bool operator<  (int iRhs)                            const { return  (*this < (UInt32)iRhs); }
 
   BitVector & operator<<= (UInt32 iRhs);
   BitVector & operator<<= (const BitVector & iRhs)            { return  *this <<= iRhs[0]; }
@@ -603,15 +603,15 @@ class BitVector {
   BitVector & operator>>= (const PartSelect & iRhs)           { return  *this >>= ((BitVector)iRhs)[0]; }
   BitVector & operator>>= (int iRhs)                          { return  *this >>= (UInt32)iRhs; }
 
-  BitVector   operator<< (UInt32 iRhs) const;
-  BitVector   operator<< (const BitVector & iRhs) const       { return  *this << iRhs[0]; }
-  BitVector   operator<< (const PartSelect & iRhs) const      { return  *this << ((BitVector)iRhs)[0]; }
-  BitVector   operator<< (int iRhs) const                     { return  *this << (UInt32)iRhs; }
+  BitVector   operator<< (UInt32 iRhs)                  const;
+  BitVector   operator<< (const BitVector & iRhs)       const { return  *this << iRhs[0]; }
+  BitVector   operator<< (const PartSelect & iRhs)      const { return  *this << ((BitVector)iRhs)[0]; }
+  BitVector   operator<< (int iRhs)                     const { return  *this << (UInt32)iRhs; }
 
-  BitVector   operator>> (UInt32 iRhs) const;
-  BitVector   operator>> (const BitVector & iRhs) const       { return  *this >> iRhs[0]; }
-  BitVector   operator>> (const PartSelect & iRhs) const      { return  *this >> ((BitVector)iRhs)[0]; }
-  BitVector   operator>> (int iRhs) const                     { return  *this >> (UInt32)iRhs; }
+  BitVector   operator>> (UInt32 iRhs)                  const;
+  BitVector   operator>> (const BitVector & iRhs)       const { return  *this >> iRhs[0]; }
+  BitVector   operator>> (const PartSelect & iRhs)      const { return  *this >> ((BitVector)iRhs)[0]; }
+  BitVector   operator>> (int iRhs)                     const { return  *this >> (UInt32)iRhs; }
 
   BitVector   operator~  () const;
 
@@ -660,23 +660,23 @@ class BitVector {
   BitVector & operator^= (Int64 iRhs)                         { return  *this ^= (UInt64)iRhs; }
   BitVector & operator^= (int iRhs)                           { return  *this ^= (UInt32)iRhs; }
 
-  BitVector   operator^  (UInt32 iRhs) const;
-  BitVector   operator^  (UInt64 iRhs) const;
-  BitVector   operator^  (const BitVector & iRhs) const;
-  BitVector   operator^  (const PartSelect & iRhs)  const     { return  *this ^ ((BitVector)iRhs); }
-  BitVector   operator^  (long long unsigned int iRhs) const  { return  *this ^ (UInt64)iRhs; }
-  BitVector   operator^  (long long int iRhs)  const          { return  *this ^ (UInt64)iRhs; }
-  BitVector   operator^  (Int64 iRhs)  const                  { return  *this ^ (UInt64)iRhs; }
-  BitVector   operator^  (int iRhs)  const                    { return  *this ^ (UInt32)iRhs; }
+  BitVector   operator^  (UInt32 iRhs)                  const;
+  BitVector   operator^  (UInt64 iRhs)                  const;
+  BitVector   operator^  (const BitVector & iRhs)       const;
+  BitVector   operator^  (const PartSelect & iRhs)      const { return  *this ^ ((BitVector)iRhs); }
+  BitVector   operator^  (long long unsigned int iRhs)  const { return  *this ^ (UInt64)iRhs; }
+  BitVector   operator^  (long long int iRhs)           const { return  *this ^ (UInt64)iRhs; }
+  BitVector   operator^  (Int64 iRhs)                   const { return  *this ^ (UInt64)iRhs; }
+  BitVector   operator^  (int iRhs)                     const { return  *this ^ (UInt32)iRhs; }
 
-  BitVector   operator,  (UInt32 iRhs) const;
-  BitVector   operator,  (UInt64 iRhs) const;
-  BitVector   operator,  (const BitVector & iRhs) const;
-  BitVector   operator,  (const PartSelect & iRhs)  const     { return  (*this , ((BitVector)iRhs)); }
-  BitVector   operator,  (long long unsigned int iRhs) const  { return  (*this , (UInt64)iRhs); }
-  BitVector   operator,  (long long int iRhs)  const          { return  (*this , (UInt64)iRhs); }
-  BitVector   operator,  (Int64 iRhs)  const                  { return  (*this , (UInt64)iRhs); }
-  BitVector   operator,  (int iRhs)  const                    { return  (*this , (UInt32)iRhs); }
+  BitVector   operator,  (UInt32 iRhs)                  const;
+  BitVector   operator,  (UInt64 iRhs)                  const;
+  BitVector   operator,  (const BitVector & iRhs)       const;
+  BitVector   operator,  (const PartSelect & iRhs)      const { return  (*this , ((BitVector)iRhs)); }
+  BitVector   operator,  (long long unsigned int iRhs)  const { return  (*this , (UInt64)iRhs); }
+  BitVector   operator,  (long long int iRhs)           const { return  (*this , (UInt64)iRhs); }
+  BitVector   operator,  (Int64 iRhs)                   const { return  (*this , (UInt64)iRhs); }
+  BitVector   operator,  (int iRhs)                     const { return  (*this , (UInt32)iRhs); }
 
   // Part Select friend operators
   friend ostream & operator<< (ostream & iStream,         const BitVector::PartSelect & iPs);

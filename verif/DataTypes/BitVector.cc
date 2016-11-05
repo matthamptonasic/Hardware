@@ -687,11 +687,6 @@ BitVector & BitVector::operator= (BitVector && iRhs)
   iRhs.m_bval = nullptr;
   return *this;
 }
-BitVector::PartSelect BitVector::operator() (UInt32 iUpperIndex, UInt32 iLowerIndex)
-{
-  PartSelect l_retVal(this, iUpperIndex, iLowerIndex);
-  return l_retVal;
-}
 UInt32 BitVector::operator[] (UInt32 iWordIndex) const
 {
   if(m_aval == nullptr)
@@ -744,11 +739,6 @@ BitVector::operator UInt64() const
   }
   return l_retVal;
 }
-BitVector & BitVector::operator+= (UInt32 iRhs)
-{
-  add(iRhs, 0);
-  return *this;
-}
 BitVector & BitVector::operator+= (UInt64 iRhs)
 {
   UInt32 l_hi = iRhs >> 32;
@@ -786,11 +776,6 @@ BitVector BitVector::operator+ (const BitVector & iRhs) const
   BitVector l_retVal(*this, max(iRhs.m_size, this->m_size) + 1);
   l_retVal += iRhs;
   return l_retVal;
-}
-BitVector & BitVector::operator-= (UInt32 iRhs)
-{
-  subtract(iRhs, 0);
-  return *this;
 }
 BitVector & BitVector::operator-= (UInt64 iRhs)
 {
@@ -1359,7 +1344,7 @@ BitVector BitVector::operator^ (UInt64 iRhs) const
 }
 BitVector BitVector::operator^ (const BitVector & iRhs) const
 {
-  BitVector l_retVal(*this);
+  BitVector l_retVal(*this); 
   l_retVal ^= iRhs;
   return l_retVal;
 }
