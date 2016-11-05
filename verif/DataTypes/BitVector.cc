@@ -2635,22 +2635,6 @@ BitVector operator, (UInt64 iLhs, const BitVector & iRhs)
   l_retVal(l_sz - 1, l_sz - 64) = iLhs;
   return l_retVal;
 }
-BitVector operator, (long long unsigned int iLhs, const BitVector & iRhs)
-{
-  return ((UInt64)iLhs, iRhs);
-}
-BitVector operator, (long long int iLhs, const BitVector & iRhs)
-{
-  return ((UInt64)iLhs, iRhs);
-}
-BitVector operator, (Int64 iLhs, const BitVector & iRhs)
-{
-  return ((UInt64)iLhs, iRhs);
-}
-BitVector operator, (int iLhs, const BitVector & iRhs)
-{
-  return ((UInt32)iLhs, iRhs);
-}
 BitVector operator, (UInt32 iLhs, const BitVector::PartSelect & iRhs)
 {
   UInt32 l_sz = 32 + iRhs.UpperIndex_get() - iRhs.LowerIndex_get() + 1;
@@ -2664,20 +2648,4 @@ BitVector operator, (UInt64 iLhs, const BitVector::PartSelect & iRhs)
   BitVector l_retVal(iRhs, l_sz);
   l_retVal(l_sz - 1, l_sz - 64) = iLhs;
   return l_retVal;
-}
-BitVector operator, (long long unsigned int iLhs, const BitVector::PartSelect & iRhs)
-{
-  return ((UInt64)iLhs, iRhs);
-}
-BitVector operator, (long long int iLhs, const BitVector::PartSelect & iRhs)
-{
-  return ((UInt64)iLhs, iRhs);
-}
-BitVector operator, (Int64 iLhs, const BitVector::PartSelect & iRhs)
-{
-  return ((UInt64)iLhs, iRhs);
-}
-BitVector operator, (int iLhs, const BitVector::PartSelect & iRhs)
-{
-  return ((UInt32)iLhs, iRhs);
 }
