@@ -83,6 +83,14 @@ BitVector TypeBase::Get_Value()
   get_RtlValue();
   return *m_bv;
 }
+string TypeBase::ToString() const
+{
+  return m_bv->ToString();
+}
+void TypeBase::Print() const
+{
+  m_bv->Print();
+}
 
 // =============================
 // ===**  Private Methods  **===
@@ -191,4 +199,22 @@ TypeBase::PartSelect & TypeBase::PartSelect::operator= (const BitVector::PartSel
   (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) = iRhs;
   m_parent->set_RtlValue();
   return *this;
+}
+BitVector TypeBase::PartSelect::operator+= (UInt32 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) += iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator+= (UInt64 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) += iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator+= (const BitVector & iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) += iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
 }
