@@ -139,6 +139,7 @@ void BitVector::initMove(BitVector & iSource, UInt32 iSize)
 {
   initFields(iSource, iSize);
 
+  m_name += "_Moved";
   LOG_DEBUG << "Move constructor (" << m_name << ")." << endl;
   m_aval = iSource.m_aval;
   iSource.m_aval = nullptr;
