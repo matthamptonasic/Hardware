@@ -101,3 +101,9 @@ Bit & Bit::operator=  (const Bit & iRhs)
   set_RtlValue();
   return *this;
 }
+Bit & Bit::operator=  (const TypeBase & iRhs)
+{
+  get_BitVector() = (BitVector)iRhs;
+  set_RtlValue();
+  return *this;
+}
