@@ -205,6 +205,7 @@ BitVector TypeBase::PartSelect::operator+= (UInt32 iRhs)
   BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) += iRhs;
   m_parent->set_RtlValue();
   return move(l_retVal);
+  //return l_retVal;
 }
 BitVector TypeBase::PartSelect::operator+= (UInt64 iRhs)
 {
@@ -215,6 +216,90 @@ BitVector TypeBase::PartSelect::operator+= (UInt64 iRhs)
 BitVector TypeBase::PartSelect::operator+= (const BitVector & iRhs)
 {
   BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) += iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator-= (UInt32 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) -= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator-= (UInt64 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) -= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator-= (const BitVector & iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) -= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator<<= (UInt32 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) <<= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator>>= (UInt32 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) >>= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator&= (UInt32 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) &= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator&= (UInt64 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) &= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator&= (const BitVector & iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) &= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator|= (UInt32 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) |= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator|= (UInt64 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) |= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator|= (const BitVector & iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) |= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator^= (UInt32 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) ^= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator^= (UInt64 iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) ^= iRhs;
+  m_parent->set_RtlValue();
+  return move(l_retVal);
+}
+BitVector TypeBase::PartSelect::operator^= (const BitVector & iRhs)
+{
+  BitVector && l_retVal = (*m_parent->m_bv)(m_upperIndex, m_lowerIndex) ^= iRhs;
   m_parent->set_RtlValue();
   return move(l_retVal);
 }
