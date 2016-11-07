@@ -51,9 +51,6 @@ class TypeBase
 
     // Public Properties (get/set)
     public:
-    //NB_STATES NbStates_get() const { return m_parent->m_nbStates; }
-    //UInt32 UpperIndex_get() const { return m_upperIndex; };
-    //UInt32 LowerIndex_get() const { return m_lowerIndex; };
 
     // Constructors
     public:
@@ -64,13 +61,9 @@ class TypeBase
 
     // Public Methods
     public:
-    //UInt32 getUInt32() const;
-    //UInt64 getUInt64() const;
 
     // Private Methods
     private:
-    //void setParentBits(const PartSelect & iBits);
-    //void getParentBits(BitVector & oBV, bool iNoResize = false) const;
 
     // Operators
     public:
@@ -327,12 +320,14 @@ class TypeBase
     explicit operator bool()                                    const { return   (bool)(*m_bv); }
     explicit operator UInt32()                                  const { return (UInt32)(*m_bv); }
     explicit operator UInt64()                                  const { return (UInt64)(*m_bv); }
+    explicit operator BitVector()                               const { return *m_bv; }
 
     TypeBase & operator+= (UInt32 iRhs)                               { (*m_bv) += iRhs; set_RtlValue(); return *this; }
     TypeBase & operator+= (UInt64 iRhs)                               { (*m_bv) += iRhs; set_RtlValue(); return *this; }
     TypeBase & operator+= (const BitVector & iRhs)                    { (*m_bv) += iRhs; set_RtlValue(); return *this; }
     TypeBase & operator+= (const BitVector::PartSelect & iRhs)        { return *this += (BitVector)iRhs; }
     TypeBase & operator+= (const TypeBase & iRhs)                     { (*m_bv) += (*iRhs.m_bv); set_RtlValue(); return *this; }
+    TypeBase & operator+= (const TypeBase::PartSelect & iRhs)         { return *this += (BitVector)iRhs; }
     TypeBase & operator+= (long long unsigned int iRhs)               { return *this += (UInt64)iRhs; }
     TypeBase & operator+= (long long int iRhs)                        { return *this += (UInt64)iRhs; }
     TypeBase & operator+= (Int64 iRhs)                                { return *this += (UInt64)iRhs; }
@@ -343,6 +338,7 @@ class TypeBase
     BitVector  operator+  (const BitVector & iRhs)              const { return (*m_bv) + iRhs; }
     BitVector  operator+  (const BitVector::PartSelect & iRhs)  const { return *this + (BitVector)iRhs; }
     BitVector  operator+  (const TypeBase & iRhs)               const { return (*m_bv) + (*iRhs.m_bv); }
+    BitVector  operator+  (const TypeBase::PartSelect & iRhs)   const { return *this + (BitVector)iRhs; }
     BitVector  operator+  (long long unsigned int iRhs)         const { return *this + (UInt64)iRhs; }
     BitVector  operator+  (long long int iRhs)                  const { return *this + (UInt64)iRhs; }
     BitVector  operator+  (Int64 iRhs)                          const { return *this + (UInt64)iRhs; }
@@ -356,6 +352,7 @@ class TypeBase
     TypeBase & operator-= (const BitVector & iRhs)                    { (*m_bv) -= iRhs; set_RtlValue(); return *this; }
     TypeBase & operator-= (const BitVector::PartSelect & iRhs)        { return *this -= (BitVector)iRhs; }
     TypeBase & operator-= (const TypeBase & iRhs)                     { (*m_bv) -= (*iRhs.m_bv); set_RtlValue(); return *this; }
+    TypeBase & operator-= (const TypeBase::PartSelect & iRhs)         { return *this -= (BitVector)iRhs; }
     TypeBase & operator-= (long long unsigned int iRhs)               { return *this -= (UInt64)iRhs; }
     TypeBase & operator-= (long long int iRhs)                        { return *this -= (UInt64)iRhs; }
     TypeBase & operator-= (Int64 iRhs)                                { return *this -= (UInt64)iRhs; }
@@ -366,6 +363,7 @@ class TypeBase
     BitVector  operator-  (const BitVector & iRhs)              const { return *m_bv - iRhs; }
     BitVector  operator-  (const BitVector::PartSelect & iRhs)  const { return *this - (BitVector)iRhs; }
     BitVector  operator-  (const TypeBase & iRhs)               const { return *m_bv - *iRhs.m_bv; }
+    BitVector  operator-  (const TypeBase::PartSelect & iRhs)   const { return *this - (BitVector)iRhs; }
     BitVector  operator-  (long long unsigned int iRhs)         const { return *this - (UInt64)iRhs; }
     BitVector  operator-  (long long int iRhs)                  const { return *this - (UInt64)iRhs; }
     BitVector  operator-  (Int64 iRhs)                          const { return *this - (UInt64)iRhs; }
@@ -379,6 +377,7 @@ class TypeBase
     bool operator== (const BitVector & iRhs)                    const { return *m_bv == iRhs; }
     bool operator== (const BitVector::PartSelect & iRhs)        const { return *this == (BitVector)iRhs; }
     bool operator== (const TypeBase & iRhs)                     const { return *m_bv == *iRhs.m_bv; }
+    bool operator== (const TypeBase::PartSelect & iRhs)         const { return *this == (BitVector)iRhs; }
     bool operator== (long long unsigned int iRhs)               const { return *this == (UInt64)iRhs; }
     bool operator== (long long int iRhs)                        const { return *this == (UInt64)iRhs; }
     bool operator== (Int64 iRhs)                                const { return *this == (UInt64)iRhs; }
@@ -389,6 +388,7 @@ class TypeBase
     bool operator!= (const BitVector & iRhs)                    const { return !(*m_bv == iRhs); }
     bool operator!= (const BitVector::PartSelect & iRhs)        const { return  (*this != (BitVector)iRhs); }
     bool operator!= (const TypeBase & iRhs)                     const { return  (*m_bv != *iRhs.m_bv); }
+    bool operator!= (const TypeBase::PartSelect & iRhs)         const { return  (*this != (BitVector)iRhs); }
     bool operator!= (long long unsigned int iRhs)               const { return  (*this != (UInt64)iRhs); }
     bool operator!= (long long int iRhs)                        const { return  (*this != (UInt64)iRhs); }
     bool operator!= (Int64 iRhs)                                const { return  (*this != (UInt64)iRhs); }
@@ -399,6 +399,7 @@ class TypeBase
     bool operator<= (const BitVector & iRhs)                    const { return *m_bv <= iRhs; }
     bool operator<= (const BitVector::PartSelect & iRhs)        const { return *this <= (BitVector)iRhs; }
     bool operator<= (const TypeBase & iRhs)                     const { return *m_bv <= *iRhs.m_bv; }
+    bool operator<= (const TypeBase::PartSelect & iRhs)         const { return *this <= (BitVector)iRhs; }
     bool operator<= (long long unsigned int iRhs)               const { return *this <= (UInt64)iRhs; }
     bool operator<= (long long int iRhs)                        const { return *this <= (UInt64)iRhs; }
     bool operator<= (Int64 iRhs)                                const { return *this <= (UInt64)iRhs; }
@@ -409,6 +410,7 @@ class TypeBase
     bool operator>= (const BitVector & iRhs)                    const { return *m_bv >= iRhs; }
     bool operator>= (const BitVector::PartSelect & iRhs)        const { return *this >= (BitVector)iRhs; }
     bool operator>= (const TypeBase & iRhs)                     const { return *m_bv >= *iRhs.m_bv; }
+    bool operator>= (const TypeBase::PartSelect & iRhs)         const { return *this >= (BitVector)iRhs; }
     bool operator>= (long long unsigned int iRhs)               const { return *this >= (UInt64)iRhs; }
     bool operator>= (long long int iRhs)                        const { return *this >= (UInt64)iRhs; }
     bool operator>= (Int64 iRhs)                                const { return *this >= (UInt64)iRhs; }
@@ -419,6 +421,7 @@ class TypeBase
     bool operator>  (const BitVector & iRhs)                    const { return *m_bv > iRhs; }
     bool operator>  (const BitVector::PartSelect & iRhs)        const { return *this > (BitVector)iRhs; }
     bool operator>  (const TypeBase & iRhs)                     const { return *m_bv > *iRhs.m_bv; }
+    bool operator>  (const TypeBase::PartSelect & iRhs)         const { return *this > (BitVector)iRhs; }
     bool operator>  (long long unsigned int iRhs)               const { return *this > (UInt64)iRhs; }
     bool operator>  (long long int iRhs)                        const { return *this > (UInt64)iRhs; }
     bool operator>  (Int64 iRhs)                                const { return *this > (UInt64)iRhs; }
@@ -429,6 +432,7 @@ class TypeBase
     bool operator<  (const BitVector & iRhs)                    const { return *m_bv < iRhs; }
     bool operator<  (const BitVector::PartSelect & iRhs)        const { return *this < (BitVector)iRhs; }
     bool operator<  (const TypeBase & iRhs)                     const { return *m_bv < *iRhs.m_bv; }
+    bool operator<  (const TypeBase::PartSelect & iRhs)         const { return *this < (BitVector)iRhs; }
     bool operator<  (long long unsigned int iRhs)               const { return *this < (UInt64)iRhs; }
     bool operator<  (long long int iRhs)                        const { return *this < (UInt64)iRhs; }
     bool operator<  (Int64 iRhs)                                const { return *this < (UInt64)iRhs; }
@@ -438,24 +442,28 @@ class TypeBase
     TypeBase & operator<<= (const BitVector & iRhs)                   { *m_bv <<= iRhs[0]; set_RtlValue(); return *this; }
     TypeBase & operator<<= (const BitVector::PartSelect & iRhs)       { *m_bv <<= iRhs; set_RtlValue(); return *this; }
     TypeBase & operator<<= (const TypeBase & iRhs)                    { *m_bv <<= (UInt32)iRhs; set_RtlValue(); return *this; }
+    TypeBase & operator<<= (const TypeBase::PartSelect & iRhs)        { *m_bv <<= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator<<= (int iRhs)                                 { *m_bv <<= (UInt32)iRhs; set_RtlValue(); return *this; }
 
     TypeBase & operator>>= (UInt32 iRhs)                              { *m_bv >>= iRhs; set_RtlValue(); return *this; }
     TypeBase & operator>>= (const BitVector & iRhs)                   { *m_bv >>= iRhs[0]; set_RtlValue(); return *this; }
     TypeBase & operator>>= (const BitVector::PartSelect & iRhs)       { *m_bv >>= iRhs; set_RtlValue(); return *this; }
     TypeBase & operator>>= (const TypeBase & iRhs)                    { *m_bv >>= (UInt32)iRhs; set_RtlValue(); return *this; }
+    TypeBase & operator>>= (const TypeBase::PartSelect & iRhs)        { *m_bv >>= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator>>= (int iRhs)                                 { *m_bv >>= (UInt32)iRhs; set_RtlValue(); return *this; }
 
     BitVector  operator<< (UInt32 iRhs)                         const { return *m_bv << iRhs; }
     BitVector  operator<< (const BitVector & iRhs)              const { return *m_bv << iRhs[0]; }
     BitVector  operator<< (const BitVector::PartSelect & iRhs)  const { return *m_bv << ((BitVector)iRhs)[0]; }
     BitVector  operator<< (const TypeBase & iRhs)               const { return *m_bv << (UInt32)iRhs; }
+    BitVector  operator<< (const TypeBase::PartSelect & iRhs)   const { return *m_bv << ((BitVector)iRhs)[0]; }
     BitVector  operator<< (int iRhs)                            const { return *m_bv << (UInt32)iRhs; }
 
     BitVector  operator>> (UInt32 iRhs)                         const { return *m_bv >> iRhs; }
     BitVector  operator>> (const BitVector & iRhs)              const { return *m_bv >> iRhs[0]; }
     BitVector  operator>> (const BitVector::PartSelect & iRhs)  const { return *m_bv >> ((BitVector)iRhs)[0]; }
     BitVector  operator>> (const TypeBase & iRhs)               const { return *m_bv >> (UInt32)iRhs; }
+    BitVector  operator>> (const TypeBase::PartSelect & iRhs)   const { return *m_bv >> ((BitVector)iRhs)[0]; }
     BitVector  operator>> (int iRhs)                            const { return *m_bv >> (UInt32)iRhs; }
 
     BitVector  operator~  ()                                    const { return ~(*m_bv); }
@@ -465,6 +473,7 @@ class TypeBase
     TypeBase & operator&= (const BitVector & iRhs)                    { *m_bv &= iRhs; set_RtlValue(); return *this; }
     TypeBase & operator&= (const BitVector::PartSelect & iRhs)        { *m_bv &= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator&= (const TypeBase & iRhs)                     { *m_bv &= *iRhs.m_bv; set_RtlValue(); return *this; }
+    TypeBase & operator&= (const TypeBase::PartSelect & iRhs)         { *m_bv &= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator&= (long long unsigned int iRhs)               { *m_bv &= (UInt64)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator&= (long long int iRhs)                        { *m_bv &= (UInt64)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator&= (Int64 iRhs)                                { *m_bv &= (UInt64)iRhs; set_RtlValue(); return *this; }
@@ -475,6 +484,7 @@ class TypeBase
     BitVector  operator&  (const BitVector & iRhs)              const { return *m_bv & iRhs; }
     BitVector  operator&  (const BitVector::PartSelect & iRhs)  const { return *m_bv & ((BitVector)iRhs); }
     BitVector  operator&  (const TypeBase & iRhs)               const { return *m_bv & *iRhs.m_bv; }
+    BitVector  operator&  (const TypeBase::PartSelect & iRhs)   const { return *m_bv & ((BitVector)iRhs); }
     BitVector  operator&  (long long unsigned int iRhs)         const { return *m_bv & (UInt64)iRhs; }
     BitVector  operator&  (long long int iRhs)                  const { return *m_bv & (UInt64)iRhs; }
     BitVector  operator&  (Int64 iRhs)                          const { return *m_bv & (UInt64)iRhs; }
@@ -485,6 +495,7 @@ class TypeBase
     TypeBase & operator|= (const BitVector & iRhs)                    { *m_bv |= iRhs; set_RtlValue(); return *this; }
     TypeBase & operator|= (const BitVector::PartSelect & iRhs)        { *m_bv |= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator|= (const TypeBase & iRhs)                     { *m_bv |= *iRhs.m_bv; set_RtlValue(); return *this; }
+    TypeBase & operator|= (const TypeBase::PartSelect & iRhs)         { *m_bv |= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator|= (long long unsigned int iRhs)               { *m_bv |= (UInt64)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator|= (long long int iRhs)                        { *m_bv |= (UInt64)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator|= (Int64 iRhs)                                { *m_bv |= (UInt64)iRhs; set_RtlValue(); return *this; }
@@ -495,6 +506,7 @@ class TypeBase
     BitVector  operator|  (const BitVector & iRhs)              const { return *m_bv | iRhs; }
     BitVector  operator|  (const BitVector::PartSelect & iRhs)  const { return *m_bv | ((BitVector)iRhs); }
     BitVector  operator|  (const TypeBase & iRhs)               const { return *m_bv | *iRhs.m_bv; }
+    BitVector  operator|  (const TypeBase::PartSelect & iRhs)   const { return *m_bv | ((BitVector)iRhs); }
     BitVector  operator|  (long long unsigned int iRhs)         const { return *m_bv | (UInt64)iRhs; }
     BitVector  operator|  (long long int iRhs)                  const { return *m_bv | (UInt64)iRhs; }
     BitVector  operator|  (Int64 iRhs)                          const { return *m_bv | (UInt64)iRhs; }
@@ -505,6 +517,7 @@ class TypeBase
     TypeBase & operator^= (const BitVector & iRhs)                    { *m_bv ^= iRhs; set_RtlValue(); return *this; }
     TypeBase & operator^= (const BitVector::PartSelect & iRhs)        { *m_bv ^= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator^= (const TypeBase & iRhs)                     { *m_bv ^= *iRhs.m_bv; set_RtlValue(); return *this; }
+    TypeBase & operator^= (const TypeBase::PartSelect & iRhs)         { *m_bv ^= (BitVector)iRhs; set_RtlValue(); return *this; }
     TypeBase & operator^= (long long unsigned int iRhs)               { return *this ^= (UInt64)iRhs; }
     TypeBase & operator^= (long long int iRhs)                        { return *this ^= (UInt64)iRhs; }
     TypeBase & operator^= (Int64 iRhs)                                { return *this ^= (UInt64)iRhs; }
@@ -515,6 +528,7 @@ class TypeBase
     BitVector  operator^  (const BitVector & iRhs)              const { return *m_bv ^ iRhs; }
     BitVector  operator^  (const BitVector::PartSelect & iRhs)  const { return *m_bv ^ ((BitVector)iRhs); }
     BitVector  operator^  (const TypeBase & iRhs)               const { return *m_bv ^ *iRhs.m_bv; }
+    BitVector  operator^  (const TypeBase::PartSelect & iRhs)   const { return *m_bv ^ ((BitVector)iRhs); }
     BitVector  operator^  (long long unsigned int iRhs)         const { return *m_bv ^ (UInt64)iRhs; }
     BitVector  operator^  (long long int iRhs)                  const { return *m_bv ^ (UInt64)iRhs; }
     BitVector  operator^  (Int64 iRhs)                          const { return *m_bv ^ (UInt64)iRhs; }
@@ -525,6 +539,7 @@ class TypeBase
     BitVector  operator,  (const BitVector & iRhs)              const { return (*m_bv , iRhs); }
     BitVector  operator,  (const BitVector::PartSelect & iRhs)  const { return (*this , ((BitVector)iRhs)); }
     BitVector  operator,  (const TypeBase & iRhs)               const { return (*m_bv , *iRhs.m_bv); }
+    BitVector  operator,  (const TypeBase::PartSelect & iRhs)   const { return (*this , ((BitVector)iRhs)); }
     BitVector  operator,  (long long unsigned int iRhs)         const { return (*this , (UInt64)iRhs); }
     BitVector  operator,  (long long int iRhs)                  const { return (*this , (UInt64)iRhs); }
     BitVector  operator,  (Int64 iRhs)                          const { return (*this , (UInt64)iRhs); }
