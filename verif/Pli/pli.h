@@ -38,6 +38,7 @@ class Pli
   static Vpi::OBJECT      GetType(vpiHandle iHndl);
   static UInt32           GetVector(vpiHandle iHndl, UInt32 iWordNb = 0);
   static void             GetVector(vpiHandle iHndl, vector<UInt32> * oAval, vector<UInt32> * oBval = nullptr);
+  static void             ImportVector(Vpi::p_vpi_value iData, Int32 iNbWords, vector<UInt32> * oAval, vector<UInt32> * oBval = nullptr);
   static void             SetVector(vpiHandle iHndl, vector<UInt32> * iAval, vector<UInt32> * iBval = nullptr);
   static UInt32           GetSize(vpiHandle iHndl);
   static vector<string> * GetCommandLineArgs();

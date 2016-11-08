@@ -118,15 +118,19 @@ void Pli::GetVector(vpiHandle iHndl, vector<UInt32> * oAval, vector<UInt32> * oB
     nbWords = oAval->size() + 1;
   }
 
-  for(UInt32 ii=0; ii<nbWords; ii++)
+  ImportVector(data, nbWords, oAval, oBval);
+  delete data;
+}
+void Pli::ImportVector(Vpi::p_vpi_value iData, Int32 iNbWords, vector<UInt32> * oAval, vector<UInt32> * oBval)
+{
+  for(UInt32 ii=0; ii<iNbWords; ii++)
   {
-    oAval->at(ii) = data->value.vector[ii].aval;
+    oAval->at(ii) = iData->value.vector[ii].aval;
     if(oBval != nullptr)
     {
-      oBval->at(ii) = data->value.vector[ii].bval;
+      oBval->at(ii) = iData->value.vector[ii].bval;
     }
   }
-  delete data;
 }
 void Pli::SetVector(vpiHandle iHndl, vector<UInt32> * iAval, vector<UInt32> * iBval)
 {
