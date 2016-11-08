@@ -49,6 +49,10 @@ TypeBase::TypeBase(string iFullName, NB_STATES iStates)
     return;
   }
 }
+TypeBase::~TypeBase()
+{
+  unregisterValChangeCB();
+}
 
 // =============================
 // ===**      Inits        **===
@@ -57,6 +61,7 @@ bool TypeBase::init(string iFullName, NB_STATES iValue)
 {
   m_nameFull = iFullName;
   m_nbStates = iValue;
+  m_maskValChange = false;
   vector<string> l_layers = Manip::Split(iFullName, '.');
   if(l_layers.size() > 0)
   {
@@ -72,6 +77,7 @@ bool TypeBase::init(string iFullName, NB_STATES iValue)
   {
     return false;
   }
+  registerValChangeCB();
   return true;
 }
 
@@ -95,6 +101,50 @@ void TypeBase::Print() const
 // =============================
 // ===**  Private Methods  **===
 // =============================
+void TypeBase::registerValChangeCB()
+{
+  Vpi::t_cb_data l_cb_data;
+  Vpi::t_vpi_time l_vpi_time;
+  Vpi::t_vpi_value l_vpi_value;
+
+  l_vpi_time.type = Vpi::TIME_TYPE::SCALED_REAL_TIME;
+  l_vpi_value.format = Vpi::VALUE_FORMAT::VECTOR;
+
+  l_cb_data.reason = Vpi::CB_REASON::VALUE_CHANGE;
+  l_cb_data.cb_rtn = s_valueChangedCB;
+  l_cb_data.obj = m_sigHandle;
+  l_cb_data.time = &l_vpi_time;
+  l_cb_data.value = &l_vpi_value;
+  l_cb_data.index = 0;
+  l_cb_data.user_data = (char *)this;
+
+  m_callBackHandle = Vpi::vpi_register_cb(&l_cb_data);
+}
+void TypeBase::unregisterValChangeCB()
+{
+  if(!Vpi::vpi_remove_cb(m_callBackHandle))
+  {
+    LOG_WRN_ENV << "vpi_remove_cb should have returned 1 and did not." << endl;
+  }
+}
+Int32 TypeBase::valueChangedCB(Vpi::t_cb_data * iData)
+{
+  if(!m_maskValChange)
+  {
+    Pli::ImportVector(iData->value, m_bv->m_aval->size(), m_bv->m_aval, m_bv->m_bval);
+  }
+  else
+  {
+    m_maskValChange = false;
+  }
+  return 0;
+}
+Int32 TypeBase::s_valueChangedCB(Vpi::t_cb_data * iData)
+{
+  TypeBase* l_inst = (TypeBase*)iData->user_data;
+  l_inst->valueChangedCB(iData);
+  return 0;
+}
 
 // =============================
 // ===** Protected Methods **===
@@ -132,6 +182,13 @@ void TypeBase::get_RtlValue()
 }
 void TypeBase::set_RtlValue()
 {
+  // * This masking is not thread safe. *
+  // Not fixing it now because I can't think of any scenario
+  // where a C thread is actively running in parallel with
+  // the simulator (the scheduler running).
+  // As long as there is no chance the C thread will be interrupted
+  // while the simulator continues, we should be okay.
+  m_maskValChange = true;
   if(m_nbStates == NB_STATES::TWO_STATE)
   {
     Pli::SetVector(get_SigHandle(), m_bv->m_aval);

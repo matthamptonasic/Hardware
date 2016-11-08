@@ -314,8 +314,10 @@ class TypeBase
     string                m_name;
     string                m_nameFull;
     vpiHandle             m_sigHandle;
+    vpiHandle             m_callBackHandle;
     UInt32                m_size;
     BitVector *           m_bv;
+    bool                  m_maskValChange;
 
     NB_STATES             m_nbStates;
 
@@ -334,6 +336,7 @@ class TypeBase
   // Constructors
   public:
     TypeBase(string iFullName, NB_STATES iStates);
+    ~TypeBase();
 
   // Inits
   private:
@@ -347,7 +350,10 @@ class TypeBase
 
   // Private Methods
   private:
-    
+    void          registerValChangeCB();
+    void          unregisterValChangeCB();
+    Int32         valueChangedCB(Vpi::t_cb_data * iData);
+    static  Int32 s_valueChangedCB(Vpi::t_cb_data * iData);
 
   // Protected Methods
   protected:
