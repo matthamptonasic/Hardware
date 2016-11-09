@@ -60,6 +60,7 @@ class BitVector {
   friend class TypeBase;
   friend class Bit;
   friend class Logic;
+  friend class Integer;
 
   // Enums
   public:
