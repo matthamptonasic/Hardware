@@ -58,7 +58,6 @@ Logic::Logic(string iFullName)
 // =============================
 void Logic::set_Size()
 {
-  // TBD - Get the size based on the verilog object.
   Vpi::OBJECT l_type = Pli::GetType(get_SigHandle());
   if(l_type != Vpi::OBJECT::REG)
   {
