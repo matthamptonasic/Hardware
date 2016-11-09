@@ -33,7 +33,7 @@
 // ===**   Constructors    **===
 // =============================
 Logic::Logic(string iFullName)
-  : TypeBase(iFullName, NB_STATES::TWO_STATE)
+  : TypeBase(iFullName, NB_STATES::FOUR_STATE)
 {
   // Set the bitvector size based on the type and/or size of the verilog object.
   set_Size();
