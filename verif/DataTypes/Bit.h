@@ -67,4 +67,6 @@ class Bit : public TypeBase
     Bit & operator=  (int iRhs)                           { return *this = (UInt32)iRhs; }
 };
 
+typedef Bit bit;
+
 #endif /* BIT_H */
