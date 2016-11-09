@@ -69,5 +69,6 @@ class Logic : public TypeBase
 };
 
 typedef Logic logic;
+typedef Logic reg;
 
 #endif /* LOGIC_H */
