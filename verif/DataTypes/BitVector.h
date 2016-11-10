@@ -459,29 +459,14 @@ class BitVector {
     bool    allZero (UInt32 iLowerWordNb = 0) const;
 
   // BitVector Operators
-  // 1. Unary modifiers must be members (++, --).
-  // 2. Binary modifiers with compound equivalents (+ / +=):
-  //  - compound modifier should be a member funcion.
-  //  - The equiv. binary should be external.
-  // 3. Generally, binary operators can be members, then a forwarding external function
-  //    can be implemented to allow the reverse argument types.
-  //    e.g. UInt32, BitVector instead of BitVector, UInt32.
-  // 4. When the external (PartSelect, BitVector) functions are implemented,
-  //    the function must be a friend of the BitVector class.
-  // 5. Finally, when implementing the (PartSelect, PartSelect) method, it should
-  //    be done in the PartSelect class by creating a BitVector from the LHS PartSelect,
-  //    then forwarding it to the (BitVector, PartSelect) method.
-  // 6. Additionally (later on), we can add cases for (PartSelect, *) calls.
-  //    These should be in the PartSelect class and forwarded to the (BitVector, *) methods.
-  //
-  // So steps are:
-  // *** BitVector class implements first if both sides are treated the same (+, ==, ||, etc).
-  //     PartSelect uses the BitVector implementation.
-  // 1. Write BitVector class method for LHS being BV, RHS being *.
-  // 2. Write PartSelect class method for LHS being PartSelect, RHS being *.
-  //    (RHS being BitVector already implemented, just switch the order.)
-  // 3. Write global methods for reverse order arguments (if it makes sense.)
-  // 4. Also write global methods for any that can be implemented with a compound operator (+=/-=).
+  // Generally speaking, the operator overloads are organized as such (in this order):
+  // 1. BitVector class methods when LHS is a BitVector and RHS is * (or unary operators).
+  // 2. PartSelect class methods when LHS is a PartSelect and RHS is *.
+  //    Often, these will simply use the LHS PartSelect as a BitVector and call the corresponding 
+  //    BitVector class method.
+  //    Or, if the operator is commititive (e.g. +, ||, etc), the method will reverse the order
+  //    of the (PartSelect iRHS, BitVector iLHS) which again calls the BitVector class method. 
+  // 3. Write global methods for reverse order arguments (if it makes sense).
   public:
   BitVector & operator=  (UInt32 iRhs);
   BitVector & operator=  (UInt64 iRhs);
