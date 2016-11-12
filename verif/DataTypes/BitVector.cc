@@ -1397,7 +1397,7 @@ BitVector::PartSelect::PartSelect(BitVector * iBV, UInt32 iUpperIndex, UInt32 iL
 // =============================
 void BitVector::PartSelect::init(BitVector * iBV, UInt32 iUpperIndex, UInt32 iLowerIndex)
 {
-  if(iBV == NULL)
+  if(iBV == nullptr)
   {
     LOG_ERR_ENV << "iBV was NULL." << endl;
     return;
@@ -1406,9 +1406,14 @@ void BitVector::PartSelect::init(BitVector * iBV, UInt32 iUpperIndex, UInt32 iLo
   iBV->checkIndices(iUpperIndex, iLowerIndex);
   m_upperIndex = iUpperIndex;
   m_lowerIndex = iLowerIndex;
-  if(m_upperIndex > m_parent->m_size)
+  if((m_upperIndex >= m_parent->m_size) && (m_lowerIndex < m_parent->m_size))
   {
-    m_upperIndex = m_parent->m_size;
+    LOG_MEDIUM  << "PartSelect(" << m_upperIndex << "," << m_lowerIndex 
+                << ") of " << m_parent->m_name 
+                << " is out of bounds (size = " << m_parent->m_size 
+                << "). Reducing upper index to " << m_parent->m_size - 1
+                << "." << endl;
+    m_upperIndex = m_parent->m_size - 1;
   }
 }
 
@@ -1616,6 +1621,14 @@ void BitVector::PartSelect::getParentBits(BitVector & oBV, bool iNoResize) const
 // =============================
 BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
 {
+  if(m_lowerIndex >= m_parent->m_size)
+  {
+    LOG_MEDIUM  << "PartSelect(" << m_upperIndex << "," << m_lowerIndex 
+                << ") of " << m_parent->m_name 
+                << " is out of bounds (size = " << m_parent->m_size 
+                << ")." << endl;
+    return *this;
+  }
   UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
   BitVector l_bv("BitVector::PartSelect::operator=", l_sz);
   l_bv = iRhs;
@@ -1624,6 +1637,10 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt32 iRhs)
 }
 BitVector::PartSelect & BitVector::PartSelect::operator= (UInt64 iRhs)
 {
+  if(m_lowerIndex >= m_parent->m_size)
+  {
+    return *this;
+  }
   UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
   BitVector l_bv("BitVector::PartSelect::operator=", l_sz);
   l_bv = iRhs;
@@ -1632,18 +1649,30 @@ BitVector::PartSelect & BitVector::PartSelect::operator= (UInt64 iRhs)
 }
 BitVector::PartSelect & BitVector::PartSelect::operator= (BitVector & iRhs)
 {
+  if(m_lowerIndex >= m_parent->m_size)
+  {
+    return *this;
+  }
   UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
   setParentBits(iRhs(l_sz - 1, 0));
   return *this;
 }
 BitVector::PartSelect & BitVector::PartSelect::operator= (BitVector && iRhs)
 {
+  if(m_lowerIndex >= m_parent->m_size)
+  {
+    return *this;
+  }
   UInt32 l_sz = m_upperIndex - m_lowerIndex + 1;
   setParentBits(iRhs(l_sz - 1, 0));
   return *this;
 }
 BitVector::PartSelect & BitVector::PartSelect::operator= (const PartSelect & iRhs)
 {
+  if(m_lowerIndex >= m_parent->m_size)
+  {
+    return *this;
+  }
   setParentBits(iRhs);
   return *this;
 }
