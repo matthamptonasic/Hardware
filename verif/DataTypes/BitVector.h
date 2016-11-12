@@ -363,6 +363,7 @@ class BitVector {
     static PRINT_FMT      s_printFmt;
     static bool           s_printBasePrefix;    // For hex only.
     static bool           s_printPrependZeros;  // For hex only.
+    static bool           s_printFullWord;      // Always prints 4 bytes even if they're 0.
     static bool           s_printHexWordDivider;// Underscore between words.
 
   // Static Properties
@@ -379,6 +380,8 @@ class BitVector {
     static void      s_PrintBasePrefix_set(bool iUsePrefix) { s_printBasePrefix = iUsePrefix; } 
     static bool      s_PrintPrependZeros_get() { return s_printPrependZeros; }
     static void      s_PrintPrependZeros_set(bool iPrependZeros) { s_printPrependZeros = iPrependZeros; }
+    static bool      s_PrintFullWord_get() { return s_printFullWord; }
+    static void      s_PrintFullWord_set(bool iPrintFull) { s_printFullWord = iPrintFull; }
 
   // Private Members
   private:
@@ -391,6 +394,7 @@ class BitVector {
     PRINT_FMT m_printFmt;
     bool m_printBasePrefix;
     bool m_printPrependZeros;
+    bool m_printFullWord;
     bool m_printHexWordDivider;
 
   // Public Properties
@@ -404,6 +408,8 @@ class BitVector {
     void      PrintBasePrefix_set(bool iUseBase) { m_printBasePrefix = iUseBase; }
     bool      PrintPrependZeros_get() { return m_printPrependZeros; }
     void      PrintPrependZeros_set(bool iPrepend) { m_printPrependZeros = iPrepend; }
+    bool      PrintFullWord_get() { return m_printFullWord; }
+    void      PrintFullWord_set(bool iPrintFull) { m_printFullWord = iPrintFull; }
     bool      PrintHexWordDivider_get() { return m_printHexWordDivider; }
     void      PrintHexWordDivider_set(bool iUseDivider) { m_printHexWordDivider = iUseDivider; }
 

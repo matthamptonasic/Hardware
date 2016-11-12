@@ -34,6 +34,7 @@ bool BitVector::s_useGlobalPrintSettings = false;
 BitVector::PRINT_FMT BitVector::s_printFmt = BitVector::PRINT_FMT::HEX;
 bool BitVector::s_printBasePrefix = true;
 bool BitVector::s_printPrependZeros = true;
+bool BitVector::s_printFullWord = true;
 bool BitVector::s_printHexWordDivider = true;
 
 // =============================
@@ -112,6 +113,7 @@ void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
   m_printFmt = s_printFmt;
   m_printBasePrefix = s_printBasePrefix;
   m_printPrependZeros = s_printPrependZeros;
+  m_printFullWord = s_printFullWord;
   m_printHexWordDivider = s_printHexWordDivider;
 }
 void BitVector::initCopy(const BitVector & iSource, UInt32 iSize)
@@ -225,10 +227,10 @@ string BitVector::ToString() const
   PRINT_FMT l_printFmt = l_glbl ? s_printFmt : m_printFmt;
   bool      l_printBasePrefix = l_glbl ? s_printBasePrefix : m_printBasePrefix;
   bool      l_printPrependZeros = l_glbl ? s_printPrependZeros : m_printPrependZeros;
+  bool      l_printFullWord = l_glbl ? s_printFullWord : m_printFullWord;
   bool      l_printHexWordDivider = l_glbl ? s_printHexWordDivider : m_printHexWordDivider;
 
   // TBD - Handle decimal for > 32-bits.
-  // TBD - Trim off bits that don't exist (ex. 65-bit BV will print 3 full words).
   stringstream l_ss;
   if(l_printFmt == PRINT_FMT::HEX)
   {
@@ -245,7 +247,12 @@ string BitVector::ToString() const
       if(l_printPrependZeros && (ii == m_aval->size()-1))
       {
         // Prepend to the first word as well as the rest.
-        l_ss << setfill('0') << setw(8);
+        Byte l_nbNibbles = 8;
+        if(!l_printFullWord)
+        {
+          l_nbNibbles = ((m_size - 1) % 32) / 4 + 1;
+        }
+        l_ss << setfill('0') << setw(l_nbNibbles);
       }
     }
     if(ii != m_aval->size()-1)
@@ -791,7 +798,6 @@ BitVector & BitVector::operator-= (UInt64 iRhs)
 }
 BitVector & BitVector::operator-= (const BitVector & iRhs)
 {
-  // TBD - If the LHS is smaller, shouldn't we 0-extend it?
   UInt32 l_smaller = min(iRhs.m_aval->size(), m_aval->size());
   for(UInt32 ii=0; ii<l_smaller; ii++)
   {
@@ -1413,7 +1419,7 @@ UInt32 BitVector::PartSelect::getUInt32() const
 {
   if(m_parent == NULL)
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "Parent was NULL." << endl;
     return 0;
   }
   UInt32 l_selSize = m_upperIndex - m_lowerIndex + 1;
@@ -1439,7 +1445,7 @@ UInt64 BitVector::PartSelect::getUInt64() const
 {
   if(m_parent == NULL)
   {
-    // TBD - log error.
+    LOG_ERR_ENV << "Parent was NULL." << endl;
     return 0;
   }
   UInt32 l_selSize = m_upperIndex - m_lowerIndex + 1;
@@ -1481,7 +1487,7 @@ void BitVector::PartSelect::setParentBits(const PartSelect & iBits)
 {
   if((this->m_parent == NULL) || (iBits.m_parent == NULL))
   {
-    LOG_ERR_ENV << "m_parent was NULL." << endl;
+    LOG_ERR_ENV << "Parent was NULL." << endl;
     return;
   }
   // Note: Assuming that the upper and lower values of each PartSelect
@@ -1577,7 +1583,7 @@ void BitVector::PartSelect::getParentBits(BitVector & oBV, bool iNoResize) const
 {
   if(this->m_parent == NULL)
   {
-    LOG_ERR_ENV << "m_parent was NULL." << endl;
+    LOG_ERR_ENV << "Parent was NULL." << endl;
     return;
   }
 
