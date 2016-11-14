@@ -463,6 +463,8 @@ class BitVector {
     bool    gtet    (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
     bool    gt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
     bool    allZero (UInt32 iLowerWordNb = 0) const;
+    bool    bitSet(UInt32 iIndex) const;
+    vector<Byte> add(const vector<Byte> & iArr0, const vector<Byte> & iArr1) const;
 
   // BitVector Operators
   // Generally speaking, the operator overloads are organized as such (in this order):

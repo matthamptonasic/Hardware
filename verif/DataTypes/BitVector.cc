@@ -221,6 +221,24 @@ UInt64 BitVector::GetUInt64(UInt32 iLowerWordNb) const
   retVal |=  (*m_aval)[iLowerWordNb];
   return retVal;
 }
+bool BitVector::bitSet(UInt32 iIndex) const
+{
+  if(iIndex >= m_size)
+  {
+    return false;
+  }
+  UInt32 l_wdNb = getWordNb(iIndex);
+  Byte l_pos = getShift(iIndex);
+  if((((*m_aval)[l_wdNb] >> l_pos) & 1) == 1)
+  {
+    return true;
+  }
+  return false;
+}
+vector<Byte> BitVector::add(const vector<Byte> & iArr0, const vector<Byte> & iArr1) const
+{
+
+}
 string BitVector::ToString() const
 {
   bool      l_glbl = s_useGlobalPrintSettings;
@@ -231,10 +249,35 @@ string BitVector::ToString() const
   bool      l_printHexWordDivider = l_glbl ? s_printHexWordDivider : m_printHexWordDivider;
 
   // TBD - Handle decimal for > 32-bits.
+  // Create a vector of lists/arrays of digits.
+  // Each list/array contains the decimal value of each binary digit.
+  // So, for a 6-bit wide BV, we'll need 6 list/arrays of values.
+  // Ex: 0x23 = 6'b100011 = 1x2^5 + 0x2^4 ... + 1x2^1 + 1x2^0
+  //     The list values are 32={2,3}, {0}, {0}, {0}, {2}, {1}
+  //     Then the list/array values are added into a result list/array.
+  //     Result[1] = 3
+  //     Result[0] = 2 + 2 + 1 = 5
+  // So the decimal value is 35.
+  // We can prune out any list/array where the bit is 0.
+  //
+  // To create the array for 2^n, we need to create a function
+  // that will add 2 list/arrays and return a resultant list/array.
+  // Ex: array0 = 2^7 = {8, 2, 1}
+  //     array1 = 2^10 = {4, 2, 0, 1}
+  // Return arr = {2, 5, 1, 1}
+  // From this we can create 2^n by using a for loop.
+  // arr = {1};
+  // for(UIn32 ii=0; ii<n; ii++) {
+  //   arr = add(arr, arr);
+  // }
   stringstream l_ss;
   if(l_printFmt == PRINT_FMT::HEX)
   {
     l_ss << hex;
+  }
+  else
+  {
+    l_ss << dec;
   }
   for(Int32 ii=m_aval->size()-1; ii>=0; ii--)
   {
