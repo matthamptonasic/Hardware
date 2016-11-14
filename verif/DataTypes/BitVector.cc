@@ -16,8 +16,10 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <list>
 #include <sstream>
 #include <utility>
+#include <vector>
 
 #include "Logger.h"
 
@@ -36,6 +38,7 @@ bool BitVector::s_printBasePrefix = true;
 bool BitVector::s_printPrependZeros = true;
 bool BitVector::s_printFullWord = true;
 bool BitVector::s_printHexWordDivider = true;
+bool BitVector::s_printDecCommas = true;
 
 // =============================
 // ===**   Constructors    **===
@@ -115,6 +118,7 @@ void BitVector::init(string iName, UInt32 iSize, NB_STATES iStates)
   m_printPrependZeros = s_printPrependZeros;
   m_printFullWord = s_printFullWord;
   m_printHexWordDivider = s_printHexWordDivider;
+  m_printDecCommas = s_printDecCommas;
 }
 void BitVector::initCopy(const BitVector & iSource, UInt32 iSize)
 {
@@ -235,20 +239,58 @@ bool BitVector::bitSet(UInt32 iIndex) const
   }
   return false;
 }
-vector<Byte> BitVector::add(const vector<Byte> & iArr0, const vector<Byte> & iArr1) const
+vector<Byte> BitVector::add(const vector<Byte> * iArr0, const vector<Byte> * iArr1) const
 {
-
+  vector<Byte> l_retVal(iArr0->size() > iArr1->size() ? *iArr0 : *iArr1);
+  Byte l_carry = 0;
+  for(UInt32 ii=0; ii<l_retVal.size(); ii++)
+  {
+    if((ii < iArr0->size()) && (ii < iArr1->size()))
+    {
+      l_retVal[ii] = (*iArr0)[ii] + (*iArr1)[ii] + l_carry;
+      l_carry = l_retVal[ii] / 10;
+      l_retVal[ii] %= 10;
+    }
+    if(ii >= iArr0->size())
+    {
+      l_retVal[ii] = (*iArr1)[ii] + l_carry;
+      l_carry = 0;
+    }
+    else if(ii >= iArr1->size())
+    {
+      l_retVal[ii] = (*iArr0)[ii] + l_carry;
+      l_carry = 0;
+    }
+    if((ii == (l_retVal.size() - 1)) && (l_carry > 0))
+    {
+      l_retVal.push_back(l_carry);
+      break;
+    }
+  }
+  return l_retVal;
 }
-string BitVector::ToString() const
+vector<Byte> * BitVector::getTwoToN(UInt32 iN) const
 {
-  bool      l_glbl = s_useGlobalPrintSettings;
-  PRINT_FMT l_printFmt = l_glbl ? s_printFmt : m_printFmt;
-  bool      l_printBasePrefix = l_glbl ? s_printBasePrefix : m_printBasePrefix;
-  bool      l_printPrependZeros = l_glbl ? s_printPrependZeros : m_printPrependZeros;
-  bool      l_printFullWord = l_glbl ? s_printFullWord : m_printFullWord;
-  bool      l_printHexWordDivider = l_glbl ? s_printHexWordDivider : m_printHexWordDivider;
+  vector<Byte> * l_retVal = new vector<Byte>(1, 1);
+  for(UInt32 ii=0; ii<iN; ii++) {
+    *l_retVal = add(l_retVal, l_retVal);
+  }
+  return l_retVal;
+}
+string BitVector::toDecimalString() const
+{
+  // TBD - This needs a LOT of streamlining.
+  // 1. Revisit all of the list/vector passing & creation.
+  //    Probably memory leaks as it is now.
+  // 2. Add a const static array of vectors that have
+  //    hard coded the 2^n values up to like 64.
+  //    This should reduce a lot of looping.
+  //    As it is now, for a 64-bit vector, for every set bit,
+  //    the add function is called n-times.
+  //    So for 32 set bits, that's an average of 32 * 32 loops
+  //    (depending on the set positions).
 
-  // TBD - Handle decimal for > 32-bits.
+  // Based on work from http://www.danvk.org/hex2dec.html
   // Create a vector of lists/arrays of digits.
   // Each list/array contains the decimal value of each binary digit.
   // So, for a 6-bit wide BV, we'll need 6 list/arrays of values.
@@ -270,6 +312,45 @@ string BitVector::ToString() const
   // for(UIn32 ii=0; ii<n; ii++) {
   //   arr = add(arr, arr);
   // }
+
+  bool l_printDecCommas = s_useGlobalPrintSettings ? s_printDecCommas : m_printDecCommas;
+  list<vector<Byte>*> l_decList;
+  for(UInt32 ii=0; ii<m_size; ii++)
+  {
+    if(!bitSet(ii))
+    {
+      continue;
+    }
+    vector<Byte> * l_tmp = getTwoToN(ii);
+    l_decList.push_back(l_tmp);
+  }
+  vector<Byte> * l_sum = new vector<Byte>(1, 0);
+  for(list<vector<Byte>*>::iterator ii=l_decList.begin(); ii!=l_decList.end(); ++ii)
+  {
+    *l_sum = add(l_sum, *ii);
+  }
+  string l_retVal("");
+  for(Int32 ii=l_sum->size() - 1; ii >= 0; ii--)
+  {
+    if(l_printDecCommas && ((ii % 3) == 2) && (ii != (l_sum->size() - 1)))
+    {
+      l_retVal += ",";
+    }
+    l_retVal += to_string((*l_sum)[ii]);
+  }
+  return l_retVal;
+}
+string BitVector::ToString() const
+{
+  bool      l_glbl = s_useGlobalPrintSettings;
+  PRINT_FMT l_printFmt = l_glbl ? s_printFmt : m_printFmt;
+  bool      l_printBasePrefix = l_glbl ? s_printBasePrefix : m_printBasePrefix;
+  bool      l_printPrependZeros = l_glbl ? s_printPrependZeros : m_printPrependZeros;
+  bool      l_printFullWord = l_glbl ? s_printFullWord : m_printFullWord;
+  bool      l_printHexWordDivider = l_glbl ? s_printHexWordDivider : m_printHexWordDivider;
+
+  // TBD - Handle decimal for > 32-bits.
+  
   stringstream l_ss;
   if(l_printFmt == PRINT_FMT::HEX)
   {
@@ -277,7 +358,7 @@ string BitVector::ToString() const
   }
   else
   {
-    l_ss << dec;
+    return toDecimalString();
   }
   for(Int32 ii=m_aval->size()-1; ii>=0; ii--)
   {

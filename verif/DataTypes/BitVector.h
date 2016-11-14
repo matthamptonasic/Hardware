@@ -365,6 +365,7 @@ class BitVector {
     static bool           s_printPrependZeros;  // For hex only.
     static bool           s_printFullWord;      // Always prints 4 bytes even if they're 0.
     static bool           s_printHexWordDivider;// Underscore between words.
+    static bool           s_printDecCommas;     // 1000's comma seperator.
 
   // Static Properties
   public:
@@ -396,6 +397,7 @@ class BitVector {
     bool m_printPrependZeros;
     bool m_printFullWord;
     bool m_printHexWordDivider;
+    bool m_printDecCommas;
 
   // Public Properties
   public:
@@ -412,6 +414,8 @@ class BitVector {
     void      PrintFullWord_set(bool iPrintFull) { m_printFullWord = iPrintFull; }
     bool      PrintHexWordDivider_get() { return m_printHexWordDivider; }
     void      PrintHexWordDivider_set(bool iUseDivider) { m_printHexWordDivider = iUseDivider; }
+    bool      PrintDecCommas_get() { return m_printDecCommas; }
+    void      PrintDecCommas_set(bool iUseDivider) { m_printDecCommas = iUseDivider; }
 
   // Constructors
   public:
@@ -464,7 +468,9 @@ class BitVector {
     bool    gt      (UInt32 iVal, UInt32 iWordNb, bool & oEqual) const;
     bool    allZero (UInt32 iLowerWordNb = 0) const;
     bool    bitSet(UInt32 iIndex) const;
-    vector<Byte> add(const vector<Byte> & iArr0, const vector<Byte> & iArr1) const;
+    vector<Byte>   add(const vector<Byte> * iArr0, const vector<Byte> * iArr1) const;
+    vector<Byte> * getTwoToN(UInt32 iN) const;
+    string  toDecimalString() const;
 
   // BitVector Operators
   // Generally speaking, the operator overloads are organized as such (in this order):
