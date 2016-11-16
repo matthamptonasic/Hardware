@@ -18,6 +18,7 @@
 
 #include "Common.h"
 #include "Event.h"
+#include "Types.h"
 #include "vpi.h"
 
 // This (static) class will serve as a layer of test flow control
